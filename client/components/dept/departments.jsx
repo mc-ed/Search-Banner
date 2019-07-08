@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import DepartmentList from './departmentList.jsx';
+import DepartmentSubMenu from './departmentSubMenu.jsx';
+
 class Departments extends Component {
   constructor(props) {
     super(props);
@@ -13,10 +15,12 @@ class Departments extends Component {
 
   onMouseEnterHandler(e) {
     e.target.style.backgroundColor = '#E5E5E5';
+    this.setState({entering: e.target.innerHTML});
   }
 
   onMouseLeaveHandler(e) {
     e.target.style.backgroundColor = 'white';
+    this.setState({entering: null});
   }  
 
   render() { 
@@ -28,7 +32,8 @@ class Departments extends Component {
           <DepartmentList 
             deptList={this.props.deptList} 
             onMouseEnterHandler={this.onMouseEnterHandler} 
-            onMouseLeaveHandler={this.onMouseLeaveHandler} 
+            onMouseLeaveHandler={this.onMouseLeaveHandler}
+            category={this.state.entering}
           />
           <div id="dropdown-icon" className="drop-down-arrow-icon lowes-icon ">{"\uEDBF"}
           </div>

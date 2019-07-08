@@ -14,6 +14,7 @@ const Navbar = (props) => {
           handleSearch={props.handleSearch} 
           filteredList={props.filteredList} 
           dataList={props.dataList}
+          suggestionList={props.suggestionList}
         />
       </div>
     </div>

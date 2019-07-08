@@ -22,12 +22,15 @@
   },
   "homepage": "https://github.com/mc-ed/Search-Banner#readme",
   "dependencies": {
+    "axios": "^0.19.0",
     "body-parser": "^1.19.0",
     "css-loader": "^3.0.0",
     "express": "^4.17.1",
+    "mongoose": "^5.6.3",
     "pg": "^7.11.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-svg": "^10.0.10",
     "style-loader": "^0.23.1"
   },
   "devDependencies": {

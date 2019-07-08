@@ -2,9 +2,20 @@ import React, { Component } from 'react';
 
 const DepartmentSubMenu = (props) => {
   return ( 
-    <li className="dropdown-submenu-list">
-      Hi
-    </li>
+    <div>
+      <div className="dropdown-submenu-list">
+        {props.category}
+      </div>
+      <div className="dropdown-submenu-list">
+        {props.category}
+      </div>
+      <div className="dropdown-submenu-list">
+        {props.category}
+      </div>
+      <div className="dropdown-submenu-list">
+        {props.category}
+      </div>
+    </div>
    );
 }
  

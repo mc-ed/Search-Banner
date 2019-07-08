@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import SearchBar from './searchBar.jsx';
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      deptList: ['Appliances', 'Bathroom', 'Building Supplies', 'Doors & Windows', 'Electrical'],
-      dataList: ['hammer', 'refrigerator', 'door', 'chair', 'sofa', 'hammock', 'deodorant', 'roooooo', 'doggo'],
+      deptList: ['Appliances', 'Bathroom', 'Building Supplies', 'Doors and Windows', 'Electrical'],
+      itemListShowing: [],
+      itemList: [],
+      suggestionList: [],
+      dataList: {},
       filteredList: [],
       noMatch: false
     }
@@ -16,14 +20,45 @@ class App extends Component {
 
   }
 
+  componentDidMount() {
+    axios.get('/itemlist').then((itemlist) => {
+      let data = {};
+      itemlist.data.forEach((item) => {
+        data[item.id] = item;
+      })
+      this.setState({
+        
+          dataList: data,
+          itemList: itemlist.data.map((item) => {
+            let finalName = item.itemName;
+            if(finalName.length > 17) {
+              let words = finalName.split('-');
+              finalName = words[0];
+            }
+            return finalName;
+          }),
+          itemListShowing: [... new Set(itemlist.data.map((item, i) => {
+            return item.category;
+          }))]
+        
+    });
+    })
+  }
+
   handleSearch(e) {
     console.log(e.target.value);
-    const { dataList } = this.state;
-    const filteredDataList = dataList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
+    const { itemListShowing } = this.state;
+    const filteredDataList = itemListShowing.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
     if(filteredDataList.length === 0) {
       this.setState({noMatch: true})
     } else {
-      this.setState({filteredList: filteredDataList});
+      this.setState({filteredList: filteredDataList}, () => {
+        axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+          let suggestionList = result.data;
+          
+          this.setState({ suggestionList });
+        })
+      });
     }
 
   }
@@ -40,12 +75,15 @@ class App extends Component {
   render() { 
     return ( 
       <header>
+        <div className="container">
         <Banner />
+        </div>
         <Navbar 
         handleSearch={this.handleSearch} 
         filteredList={this.state.filteredList} 
         dataList={this.state.dataList}
         deptList={this.state.deptList}
+        suggestionList={this.state.suggestionList}
         />
       </header>
      );

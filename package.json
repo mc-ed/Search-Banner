@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "react-dev": "webpack -d --watch",
-    "server-dev": "nodemon"
+    "server-dev": "nodemon",
+    "restart": "pm2 startOrRestart ecosystem.config.js",
+    "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "repository": {
     "type": "git",

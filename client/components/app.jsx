@@ -17,27 +17,23 @@ class App extends Component {
       noMatch: false
     }
   this.handleSearch = this.handleSearch.bind(this);
-
+  this.reRenderSuggestions = this.reRenderSuggestions.bind(this);
   }
 
   componentDidMount() {
     axios.get('/itemlist').then((itemlist) => {
       let data = {};
       itemlist.data.forEach((item) => {
-        data[item.id] = item;
+        data[item.category] = item;
       })
       this.setState({
         
           dataList: data,
           itemList: itemlist.data.map((item) => {
-            let finalName = item.itemName;
-            if(finalName.length > 17) {
-              let words = finalName.split('-');
-              finalName = words[0];
-            }
-            return finalName;
+            let category = item.category;
+            return category;
           }),
-          itemListShowing: [... new Set(itemlist.data.map((item, i) => {
+          itemListShowing: [... new Set(itemlist.data.slice(0,25).map((item, i) => {
             return item.category;
           }))]
         
@@ -45,14 +41,18 @@ class App extends Component {
     })
   }
 
+  reRenderSuggestions(e) {
+    // console.log(e.target);
+  }
+
   handleSearch(e) {
-    console.log(e.target.value);
-    const { itemListShowing } = this.state;
-    const filteredDataList = itemListShowing.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
+    const { itemList } = this.state;
+    const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
+    
     if(filteredDataList.length === 0) {
       this.setState({noMatch: true})
     } else {
-      this.setState({filteredList: filteredDataList}, () => {
+      this.setState({filteredList: [... new Set(filteredDataList)].slice(0,16)}, () => {
         axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
           let suggestionList = result.data;
           
@@ -63,14 +63,6 @@ class App extends Component {
 
   }
 
-  renderSuggestion() {
-    this.state.filteredList.map((entry) => {
-      return <li role="presentation"><a role="menuitem" tabIndex="-1" href="#">{entry}</a></li>
-    })
-  }
-  // handleMouseEnter() {
-  //   this.setState({deptList: ['Appliances', 'Bathroom', 'Building Supplies', 'Doors & Windows', 'Electrical']});
-  // }
 
   render() { 
     return ( 
@@ -84,6 +76,7 @@ class App extends Component {
         dataList={this.state.dataList}
         deptList={this.state.deptList}
         suggestionList={this.state.suggestionList}
+        reRenderSuggestions={this.reRenderSuggestions}
         />
       </header>
      );

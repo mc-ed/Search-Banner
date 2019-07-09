@@ -14,7 +14,7 @@ const SearchBar = (props) => {
             </div>
             <div className="container dropdown-menu liner" role="menu" aria-labelledby="menu1">
               <div className="row row-adjust">
-                <div className="col-3 search-item">
+                <div className="col-3 search-item" onMouseOver={(e) => props.reRenderSuggestions(e)}>
                   {props.filteredList !== null ? 
                     props.filteredList.map((entry, i) => {
                       return <li className="search-item" key={`${i}`} ><a href="#">{entry}</a></li>

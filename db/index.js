@@ -37,7 +37,9 @@ const getAllItemList = () => {
       } else {
         res(items);
       }
-    })  
+    })
+    .sort({numRating: -1})
+    .sort({rating: -1}) 
   })
 }
 
@@ -52,6 +54,8 @@ const get3Items = (category) => {
       }
     })
     .limit(3)
+    .sort({numRating: -1})
+    .sort({rating: -1}) 
   })
 }
 

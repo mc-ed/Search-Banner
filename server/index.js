@@ -16,6 +16,7 @@ app.get('/itemlist', (req, res) => {
 
 app.get('/item', (req, res) => {
   db.get3Items(req.query.category).then((result) => {
+    // console.log(result);
     res.send(result);
   })
 })

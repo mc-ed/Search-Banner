@@ -16,7 +16,6 @@ class App extends Component {
       noMatch: false
     }
   this.handleSearch = this.handleSearch.bind(this);
-  this.reRenderSuggestions = this.reRenderSuggestions.bind(this);
   }
 
   componentDidMount() {
@@ -71,7 +70,6 @@ class App extends Component {
         dataList={this.state.dataList}
         deptList={this.state.deptList}
         suggestionList={this.state.suggestionList}
-        reRenderSuggestions={this.reRenderSuggestions}
         />
       </header>
      );

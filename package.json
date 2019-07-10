@@ -46,6 +46,8 @@
     "babel-loader": "^8.0.6",
     "bable-loader": "0.0.1-security",
     "file-loader": "^4.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
     "react-svg-loader": "^3.0.3",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DepartmentList from './departmentList.jsx';
 import DepartmentSubMenu from './departmentSubMenu.jsx';
+import style from '';
 
 class Departments extends Component {
   constructor(props) {

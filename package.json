@@ -5,6 +5,7 @@
   "main": "./server/index.js",
   "scripts": {
     "test": "jest",
+    "start": "node ./server/index.js",
     "react-dev": "webpack -d --watch",
     "server-dev": "nodemon",
     "restart": "pm2 startOrRestart ecosystem.config.js",

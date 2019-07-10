@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
-import SearchBar from './searchBar.jsx';
 import axios from 'axios';
 
 class App extends Component {
@@ -17,11 +16,10 @@ class App extends Component {
       noMatch: false
     }
   this.handleSearch = this.handleSearch.bind(this);
-  this.reRenderSuggestions = this.reRenderSuggestions.bind(this);
   }
 
   componentDidMount() {
-    axios.get('/itemlist').then((itemlist) => {
+    axios.get('http://search-banner.us-east-1.elasticbeanstalk.com/itemlist').then((itemlist) => {
       let data = {};
       itemlist.data.forEach((item) => {
         data[item.category] = item;
@@ -41,10 +39,6 @@ class App extends Component {
     })
   }
 
-  reRenderSuggestions(e) {
-    // console.log(e.target);
-  }
-
   handleSearch(e) {
     const { itemList } = this.state;
     const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
@@ -53,7 +47,7 @@ class App extends Component {
       this.setState({noMatch: true})
     } else {
       this.setState({filteredList: [... new Set(filteredDataList)].slice(0,16)}, () => {
-        axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
           let suggestionList = result.data;
           
           this.setState({ suggestionList });
@@ -76,7 +70,6 @@ class App extends Component {
         dataList={this.state.dataList}
         deptList={this.state.deptList}
         suggestionList={this.state.suggestionList}
-        reRenderSuggestions={this.reRenderSuggestions}
         />
       </header>
      );

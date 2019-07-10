@@ -15,7 +15,6 @@ const Navbar = (props) => {
           filteredList={props.filteredList} 
           dataList={props.dataList}
           suggestionList={props.suggestionList}
-          reRenderSuggestions={props.reRenderSuggestions}
         />
       </div>
     </div>

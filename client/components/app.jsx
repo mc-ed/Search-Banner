@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
-import SearchBar from './searchBar.jsx';
 import axios from 'axios';
 
 class App extends Component {
@@ -39,10 +38,6 @@ class App extends Component {
         
     });
     })
-  }
-
-  reRenderSuggestions(e) {
-    // console.log(e.target);
   }
 
   handleSearch(e) {

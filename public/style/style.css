@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'lowes-icon';
-  src: url('./lowes-icons.woff') format('woff');
+  src: url('http://search-banner.us-east-1.elasticbeanstalk.com/style/lowes-icons.woff') format('woff');
 }
 
 @font-face {
   font-family: 'lowes-font';
-  src: url('./din-next.woff') format('woff');
+  src: url('http://search-banner.us-east-1.elasticbeanstalk.com/style/din-next.woff') format('woff');
 }
 
 .lowes-font {

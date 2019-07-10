@@ -19,7 +19,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('/itemlist').then((itemlist) => {
+    axios.get('http://search-banner.us-east-1.elasticbeanstalk.com/itemlist').then((itemlist) => {
       let data = {};
       itemlist.data.forEach((item) => {
         data[item.category] = item;
@@ -47,7 +47,7 @@ class App extends Component {
       this.setState({noMatch: true})
     } else {
       this.setState({filteredList: [... new Set(filteredDataList)].slice(0,16)}, () => {
-        axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
           let suggestionList = result.data;
           
           this.setState({ suggestionList });

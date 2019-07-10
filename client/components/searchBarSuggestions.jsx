@@ -29,8 +29,8 @@ class SearchBarSuggestions extends Component {
       stars = this.props.suggestion.rating*10;
     }
     return ( 
-      <div className="row row-suggestion row-hover"  >
-      <div className="col-4 child">
+      <div className="row row-suggestion row-hover" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}})))} >
+      <div className="col-4 child" >
         {
           this.props.suggestion ? 
               <img className='suggestion' src={`https://fecdj.s3.amazonaws.com/photo/${this.props.suggestion.id}.jpg`}/>

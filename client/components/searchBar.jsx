@@ -9,7 +9,7 @@ const SearchBar = (props) => {
       <div className={`${style['search-wrap']}`}>
         <form className={`form-group ${style['form-group-adjust']}`}>
           <div className={`row ${style['row-adjust']} d-flex dropdown`}>
-            <input className={`col-11 ${style['search-input']}`} autocomplete="rutjfkde" type="text" onClick={()=>{
+            <input className={`col-11 ${style['search-input']}`} autoComplete="rutjfkde" type="text" onClick={()=>{
               props.handleSearch({target:{value: ''}})
               props.suggestionToggler();
           }} onChange={(e)=> (props.handleSearch(e))} data-toggle="dropdown" placeholder="What are you looking for today?" aria-label="Search" id="" aria-describedby="basic-addon1"></input>

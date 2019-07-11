@@ -3,6 +3,7 @@ import DepartmentList from './departmentList.jsx';
 import DepartmentSubMenu from './departmentSubMenu.jsx';
 import style from '../../style/main.less'
 
+
 class Departments extends Component {
   constructor(props) {
     super(props);
@@ -26,17 +27,20 @@ class Departments extends Component {
 
   render() { 
     return ( 
-      <div className={`col-3 ${style['column-adjust']} d-flex dropdown`}>
-        <div className={`${style['drop-down-arrow-icon-wrapper']}`}>
-          <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}
+      <div className={`col-3 ${style['column-adjust']}`}>
+        <div className={`row ${style['row-adjust']}`}>
+          <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
+            <div className={`${style['hamburger-wrapper']}`}>
+              <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
+            </div>
           </div>
-          <DepartmentList 
-            deptList={this.props.deptList} 
-            onMouseEnterHandler={this.onMouseEnterHandler} 
-            onMouseLeaveHandler={this.onMouseLeaveHandler}
-            category={this.state.entering}
-          />
-          <div id="dropdown-icon" className={`${style['drop-down-arrow-icon']} ${style['lowes-icon']} `}>{"\uEDBF"}
+          <div className={`col-9 ${style['column-adjust']}`}>
+            <DepartmentList 
+              deptList={this.props.deptList} 
+              onMouseEnterHandler={this.onMouseEnterHandler} 
+              onMouseLeaveHandler={this.onMouseLeaveHandler}
+              category={this.state.entering}
+            />
           </div>
         </div>
       </div>

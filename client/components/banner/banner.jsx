@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Logo from './logo.jsx'
 import style from '../../style/main.less';
-import font from '../../style/font.less'
+import { Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+
+
 const Banner = (props) => {
   return ( 
     
@@ -40,7 +43,7 @@ const Banner = (props) => {
                   </div>
               </div>
             </div>
-            <div className={`col-2 ${style['column-adjust']}`}>
+            <div className={`col-2 ${style['column-adjust']}`} onClick={()=>props.cartModalToggler()}>
               <div className={`row ${style['row-adjust']} ${style['user-cart']}`}>
                 <div className={`col-6 ${style['destroy-padding']} ${style['carticon-wrapper']}`}>
                   <div className={`${style['destroy-padding']} ${style['lowes-icon']} ${style.usericon}`}>
@@ -53,6 +56,20 @@ const Banner = (props) => {
                   </div>
                 </div>
               </div>
+              <Modal show={props.showCart} onHide={() => props.cartModalToggler()}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => props.cartModalToggler()}>
+                    Close
+                  </Button>
+                  <Button variant="primary" onClick={() => props.cartModalToggler()}>
+                    Save Changes
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </div>
           </div>
         </div>

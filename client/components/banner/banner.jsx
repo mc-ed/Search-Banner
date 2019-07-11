@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Logo from './logo.jsx'
 import style from '../../style/main.less';
+import font from '../../style/font.less'
 const Banner = (props) => {
   return ( 
     

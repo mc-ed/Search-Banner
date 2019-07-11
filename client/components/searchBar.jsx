@@ -8,7 +8,7 @@ const SearchBar = (props) => {
     <div className={`col-9 ${style['column-adjust']}`} >
       <div className={`${style['search-wrap']}`}>
         <form className={`form-group ${style['form-group-adjust']}`}>
-          <div className={`row ${style['row-adjust']} d-flex dropdown ${style['dropdown2']}`}>
+          <div className={`row ${style['row-adjust']} d-flex dropdown`}>
             <input className={`col-11 ${style['search-input']}`} type="text" onClick={()=>{
               props.handleSearch({target:{value: ''}})
               props.suggestionToggler();
@@ -17,7 +17,7 @@ const SearchBar = (props) => {
               <div className={`${style['search-icon']} ${style['lowes-icon']}`}>{"\uEB30"}</div>
             </div>
 
-              <div className={`container dropdown-menu ${style['dropdown2-menu']} ${style.liner}`} role="menu" aria-labelledby="menu1">
+              <div className={`container dropdown-menu ${style.liner}`} role="menu" aria-labelledby="menu1">
                 <div className={`row ${style['row-adjust']}`}>
                   <div className={`col-3 ${style['search-item']}`}>
                     {props.filteredList !== null ? 

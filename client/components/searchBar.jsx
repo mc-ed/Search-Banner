@@ -19,7 +19,7 @@ const SearchBar = (props) => {
 
               <div className={`container dropdown-menu ${style.liner}`} role="menu" aria-labelledby="menu1">
                 <div className={`row ${style['row-adjust']}`}>
-                  <div className={`col-3 ${style['search-item']}`}>
+                  <div className={`col-3 ${style['search-item']} ${style.scrollbar}`}>
                     {props.filteredList !== null ? 
                       props.filteredList.map((entry, i) => {
                         return <li className={`${style['search-item']}`} key={`${i}`} ><a href="#">{entry}</a></li>

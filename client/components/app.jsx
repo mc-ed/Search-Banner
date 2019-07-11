@@ -60,7 +60,7 @@ class App extends Component {
     if(filteredDataList.length === 0) {
       this.setState({noMatch: true})
     } else {
-      this.setState({filteredList: [... new Set(filteredDataList)].slice(0,16)}, () => {
+      this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
         axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
           let suggestionList = result.data;
           

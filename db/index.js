@@ -53,9 +53,8 @@ const get3Items = (category) => {
         res(items);
       }
     })
-    .limit(3)
-    .sort({numRating: -1})
     .sort({rating: -1}) 
+    .sort({numRating: -1})
   })
 }
 

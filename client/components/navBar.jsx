@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import SearchBar from './searchBar.jsx';
 import Departments from './dept/departments.jsx';
+import style from '../style/main.less'
 
 const Navbar = (props) => {
   return ( 
-  <div className="navbar">
-    <div className="container">
-      <div className="row row-adjust">
+  <div className={style.navbar}>
+    <div className={`container`}>
+      <div className={`row ${style['row-adjust']}`}>
         <Departments 
           deptList={props.deptList}
         />
@@ -15,6 +16,8 @@ const Navbar = (props) => {
           filteredList={props.filteredList} 
           dataList={props.dataList}
           suggestionList={props.suggestionList}
+          toggleSuggestion={props.toggleSuggestion}
+          suggestionToggler={props.suggestionToggler}
         />
       </div>
     </div>

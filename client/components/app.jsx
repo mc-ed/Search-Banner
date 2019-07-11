@@ -56,9 +56,7 @@ class App extends Component {
     const { itemList } = this.state;
     const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
     
-    if(filteredDataList.length === 0) {
-      this.setState({noMatch: true})
-    } else {
+    
       if(!hovering) {
         this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
@@ -72,7 +70,7 @@ class App extends Component {
             this.setState({ suggestionList });
           })
       }
-    }
+    
   }
 
 

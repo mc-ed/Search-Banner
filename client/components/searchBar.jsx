@@ -9,10 +9,10 @@ const SearchBar = (props) => {
       <div className={`${style['search-wrap']}`}>
         <form className={`form-group ${style['form-group-adjust']}`}>
           <div className={`row ${style['row-adjust']} d-flex dropdown`}>
-            <input className={`col-11 ${style['search-input']}`} type="text" onClick={()=>{
+            <input className={`col-11 ${style['search-input']}`} autocomplete="rutjfkde" type="text" onClick={()=>{
               props.handleSearch({target:{value: ''}})
               props.suggestionToggler();
-          }} onChange={(e)=> (props.handleSearch(e))} data-toggle="dropdown" placeholder="What are you looking for today?" aria-label="Search..." id="menu1" aria-describedby="basic-addon1"></input>
+          }} onChange={(e)=> (props.handleSearch(e))} data-toggle="dropdown" placeholder="What are you looking for today?" aria-label="Search" id="" aria-describedby="basic-addon1"></input>
             <div className={`col-1 ${style['search-icon-wrapper']}`}>
               <div className={`${style['search-icon']} ${style['lowes-icon']}`}>{"\uEB30"}</div>
             </div>
@@ -22,7 +22,7 @@ const SearchBar = (props) => {
                   <div className={`col-3 ${style['search-item']} ${style.scrollbar}`}>
                     {props.filteredList !== null ? 
                       props.filteredList.map((entry, i) => {
-                        return <li className={`${style['search-item']}`} key={`${i}`} ><a href="#">{entry}</a></li>
+                        return <li className={`${style['search-item']} ${style.category}`} onMouseOver={()=>props.handleSearch({target:{value: entry}}, true)} key={`${i}`} ><a href="#">{entry}</a></li>
                       })
                       : 
                       null

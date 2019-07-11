@@ -28,11 +28,12 @@ const SearchBar = (props) => {
                       null
                     }
                   </div>
-                  <div className={`col-9 ${style['padding-adjust']}`}>
+                  <div className={`col-9 ${style['padding-adjust']} ${style.scrollbar}`}>
                     <div className={`${style['product-suggestion']}`}>Product Suggestions</div>
-                    <Suggestion suggestion={props.suggestionList[0]}/>
-                    <Suggestion suggestion={props.suggestionList[1]}/>
-                    <Suggestion suggestion={props.suggestionList[2]}/>
+                    {console.log(props.suggestionList)}
+                    {props.suggestionList.map((suggestion) => {
+                      return <Suggestion suggestion={suggestion} />
+                    })}
                   </div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DepartmentList from './departmentList.jsx';
 import DepartmentSubMenu from './departmentSubMenu.jsx';
-import style from '';
+import style from '../../style/main.less'
 
 class Departments extends Component {
   constructor(props) {
@@ -26,9 +26,9 @@ class Departments extends Component {
 
   render() { 
     return ( 
-      <div className="col-3 column-adjust d-flex dropdown">
-        <div className="drop-down-arrow-icon-wrapper">
-          <div className="lowes-icon hamburger">{'\uEC6E'}
+      <div className={`col-3 ${style['column-adjust']} d-flex dropdown`}>
+        <div className={`${style['drop-down-arrow-icon-wrapper']}`}>
+          <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}
           </div>
           <DepartmentList 
             deptList={this.props.deptList} 
@@ -36,7 +36,7 @@ class Departments extends Component {
             onMouseLeaveHandler={this.onMouseLeaveHandler}
             category={this.state.entering}
           />
-          <div id="dropdown-icon" className="drop-down-arrow-icon lowes-icon ">{"\uEDBF"}
+          <div id="dropdown-icon" className={`${style['drop-down-arrow-icon']} ${style['lowes-icon']} `}>{"\uEDBF"}
           </div>
         </div>
       </div>

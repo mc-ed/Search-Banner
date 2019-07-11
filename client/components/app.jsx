@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
+import style from '../style/main.less'
 
 class App extends Component {
   constructor(props) {
@@ -13,9 +14,12 @@ class App extends Component {
       suggestionList: [],
       dataList: {},
       filteredList: [],
-      noMatch: false
+      noMatch: false,
+      cartNumItem: 0,
+      toggleSuggestion: false
     }
   this.handleSearch = this.handleSearch.bind(this);
+  this.suggestionToggler = this.suggestionToggler.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +41,10 @@ class App extends Component {
         
     });
     })
+  }
+
+  suggestionToggler() {
+    this.setState({toggleSuggestion: !this.state.toggleSuggestion});
   }
 
   handleSearch(e) {
@@ -62,7 +70,7 @@ class App extends Component {
     return ( 
       <header>
         <div className="container">
-        <Banner />
+        <Banner cartNumItem={this.state.cartNumItem}/>
         </div>
         <Navbar 
         handleSearch={this.handleSearch} 
@@ -70,6 +78,8 @@ class App extends Component {
         dataList={this.state.dataList}
         deptList={this.state.deptList}
         suggestionList={this.state.suggestionList}
+        suggestionToggler={this.suggestionToggler}
+        toggleSuggestion={this.state.toggleSuggestion}
         />
       </header>
      );

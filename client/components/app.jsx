@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
-import style from '../style/main.less'
 
 class App extends Component {
   constructor(props) {
@@ -37,7 +36,7 @@ class App extends Component {
             let category = item.category;
             return category;
           }),
-          itemListShowing: [... new Set(itemlist.data.slice(0,25).map((item, i) => {
+          itemListShowing: [... new Set(itemlist.data.map((item, i) => {
             return item.category;
           }))]
         
@@ -53,23 +52,27 @@ class App extends Component {
     this.setState({showCart: !this.state.showCart});
   }
 
-  handleSearch(e) {
+  handleSearch(e, hovering) {
     const { itemList } = this.state;
     const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
     
-    if(filteredDataList.length === 0) {
-      this.setState({noMatch: true})
-    } else {
-      this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
+    
+      if(!hovering) {
+        this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
+            let suggestionList = result.data;
+            this.setState({ suggestionList });
+          })
+        });
+      } else {
         axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
-          let suggestionList = result.data;
-          
-          this.setState({ suggestionList });
-        })
-      });
-    }
-
+            let suggestionList = result.data;
+            this.setState({ suggestionList });
+          })
+      }
+    
   }
+
 
 
   render() { 

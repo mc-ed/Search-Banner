@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import DepartmentList from './departmentList.jsx';
-import DepartmentSubMenu from './departmentSubMenu.jsx';
 import style from '../../style/main.less'
 
 
@@ -15,13 +14,11 @@ class Departments extends Component {
      this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this);
   }
 
-  onMouseEnterHandler(e) {
-    e.target.style.backgroundColor = '#E5E5E5';
-    this.setState({entering: e.target.innerHTML});
+  onMouseEnterHandler(department) {
+    this.setState({entering: department});
   }
 
-  onMouseLeaveHandler(e) {
-    e.target.style.backgroundColor = 'white';
+  onMouseLeaveHandler(department) {
     this.setState({entering: null});
   }  
 
@@ -29,8 +26,8 @@ class Departments extends Component {
 
     return ( 
       <div className={`col-3 ${style['column-adjust']}`}>
-        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
-          
+        {/* <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}> */}
+        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}}>  
           <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
             <div className={`${style['hamburger-wrapper']}`}>
               <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>

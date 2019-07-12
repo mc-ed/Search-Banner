@@ -1,7 +1,6 @@
 node_modules
 .DS_Store
 FEC.zip
-./public
-public
+
 ./public/bundle.js
 public/bundle.js

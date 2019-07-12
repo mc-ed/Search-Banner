@@ -8,7 +8,7 @@ const DepartmentListEntry = (props) => {
           onMouseEnter={() => (props.onMouseEnterHandler(props.department))} 
           onMouseLeave={() => (props.onMouseLeaveHandler(props.department))}>
           {props.department}
-          <DepartmentSubMenu category={props.category}/> 
+          <DepartmentSubMenu categories={props.categories}/> 
       </li>
    );
 }

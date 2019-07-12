@@ -16,11 +16,13 @@ class App extends Component {
       noMatch: false,
       cartNumItem: 0,
       toggleSuggestion: false,
-      showCart: false
+      showCart: false,
+      showDept: false
     }
   this.handleSearch = this.handleSearch.bind(this);
   this.suggestionToggler = this.suggestionToggler.bind(this);
   this.cartModalToggler = this.cartModalToggler.bind(this);
+  this.deptToggler = this.deptToggler.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +44,10 @@ class App extends Component {
         
     });
     })
+  }
+
+  deptToggler() {
+    this.setState({showDept: !this.state.showDept})
   }
 
   suggestionToggler() {
@@ -79,16 +85,22 @@ class App extends Component {
     return ( 
       <header>
         <div className="container">
-        <Banner cartNumItem={this.state.cartNumItem} showCart={this.state.showCart} cartModalToggler={this.cartModalToggler}/>
+        <Banner 
+          cartNumItem={this.state.cartNumItem} 
+          showCart={this.state.showCart} 
+          cartModalToggler={this.cartModalToggler}
+        />
         </div>
         <Navbar 
-        handleSearch={this.handleSearch} 
-        filteredList={this.state.filteredList} 
-        dataList={this.state.dataList}
-        deptList={this.state.deptList}
-        suggestionList={this.state.suggestionList}
-        suggestionToggler={this.suggestionToggler}
-        toggleSuggestion={this.state.toggleSuggestion}
+          handleSearch={this.handleSearch} 
+          filteredList={this.state.filteredList} 
+          dataList={this.state.dataList}
+          deptList={this.state.deptList}
+          suggestionList={this.state.suggestionList}
+          suggestionToggler={this.suggestionToggler}
+          toggleSuggestion={this.state.toggleSuggestion}
+          deptToggler={this.deptToggler}
+          showDept={this.state.showDept}
         />
       </header>
      );

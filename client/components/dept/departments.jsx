@@ -26,21 +26,31 @@ class Departments extends Component {
   }  
 
   render() { 
+
     return ( 
       <div className={`col-3 ${style['column-adjust']}`}>
-        <div className={`row ${style['row-adjust']}`}>
+        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
+          
           <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
             <div className={`${style['hamburger-wrapper']}`}>
               <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
             </div>
           </div>
           <div className={`col-9 ${style['column-adjust']}`}>
-            <DepartmentList 
-              deptList={this.props.deptList} 
-              onMouseEnterHandler={this.onMouseEnterHandler} 
-              onMouseLeaveHandler={this.onMouseLeaveHandler}
-              category={this.state.entering}
-            />
+            <div className={`${style['department-wrapper']}`}>
+              <a className={`${style.department}`} >  Departments         </a>
+            </div>
+              {this.props.showDept ? 
+                  <DepartmentList 
+                    deptList={this.props.deptList} 
+                    onMouseEnterHandler={this.onMouseEnterHandler} 
+                    onMouseLeaveHandler={this.onMouseLeaveHandler}
+                    category={this.state.entering}
+                    deptToggler={this.props.deptToggler}
+                  />
+                :
+                null
+              }
           </div>
         </div>
       </div>

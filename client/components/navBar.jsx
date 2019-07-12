@@ -10,6 +10,8 @@ const Navbar = (props) => {
       <div className={`row ${style['row-adjust']}`}>
         <Departments 
           deptList={props.deptList}
+          deptToggler={props.deptToggler}
+          showDept={props.showDept}
         />
         <SearchBar 
           handleSearch={props.handleSearch} 

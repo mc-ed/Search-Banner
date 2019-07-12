@@ -5,8 +5,12 @@
   "main": "./server/index.js",
   "scripts": {
     "test": "jest",
-    "react-dev": "webpack --watch",
-    "server-dev": "nodemon"
+    "start": "node ./server/index.js",
+    "react-dev": "webpack -d --watch",
+    "build": "webpack --mode production",
+    "server-dev": "nodemon",
+    "restart": "pm2 startOrRestart ecosystem.config.js",
+    "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "repository": {
     "type": "git",
@@ -22,10 +26,18 @@
   },
   "homepage": "https://github.com/mc-ed/Search-Banner#readme",
   "dependencies": {
+    "axios": "^0.19.0",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "css-loader": "^3.0.0",
     "express": "^4.17.1",
+    "mongoose": "^5.6.3",
+    "pg": "^7.11.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-bootstrap": "^1.0.0-beta.9",
+    "react-dom": "^16.8.6",
+    "react-svg": "^10.0.10",
+    "style-loader": "^0.23.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -34,6 +46,10 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "bable-loader": "0.0.1-security",
+    "file-loader": "^4.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "react-svg-loader": "^3.0.3",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   }

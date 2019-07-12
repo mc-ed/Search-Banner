@@ -1,0 +1,121 @@
+.department-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+  // padding-bottom: 25%;
+}
+
+.department {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #fff !important;
+
+  cursor: pointer;
+
+}
+
+.dept {
+  z-index: -1;
+}
+
+.flyouts {
+  width: 100%;
+  height: 0px;
+}
+
+.hamburger-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 15px;
+  text-align: right;
+}
+
+.hamburger {
+  font-size: 24px;
+  color: #fff;
+}
+
+
+.row-adjust .drop-down-arrow-icon {
+  text-align: right;
+  font-size: 1em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #fff;
+  vertical-align: top;
+  -webkit-transition: ease .3s;
+  transition: ease .3s;
+}
+
+.drop-down-arrow-icon:hover {
+  transform: rotate(180deg);
+}
+
+.dropdown2:hover .dropdown2-menu {
+  display: block;
+  width: 100% !important;
+}
+
+// Still implementing
+.department-wrapper>a:after {
+  font-family: 'lowes-icon';
+  content: "\EDBF";
+  display: inline-flex;
+  float: right;
+  font-size: 0.8em;
+  border: 0;
+  text-align: right;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #fff;
+  vertical-align: top;
+  -webkit-transition: ease .3s;
+  transition: ease .3s;
+}
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  -webkit-border-radius: 0 6px 6px 6px;
+  -moz-border-radius: 0 6px 6px;
+  border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #ccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+  border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+  float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  -webkit-border-radius: 6px 0 6px 6px;
+  -moz-border-radius: 6px 0 6px 6px;
+  border-radius: 6px 0 6px 6px;
+}

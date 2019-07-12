@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://dongjae93:qkrehdwo7@connect4-xkfvh.mongodb.net/FEC?retryWrites=true&w=majority', {useNewUrlParser: true});
+mongoose.connect('mongodb+srv://guest:guest1234@connect4-xkfvh.mongodb.net/FEC?retryWrites=true&w=majority', {useNewUrlParser: true});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -30,6 +30,7 @@ const Item = mongoose.model('Item', itemSchema);
 // })
 
 const getAllItemList = () => {
+  
   return new Promise((res, rej) => {
     Item.find((err, items) => {
       if(err) {
@@ -38,8 +39,9 @@ const getAllItemList = () => {
         res(items);
       }
     })
-    .sort({numRating: -1})
-    .sort({rating: -1}) 
+    .sort({category: 1})
+    // .sort({rating: -1}) 
+    // .sort({numRating: -1})
   })
 }
 

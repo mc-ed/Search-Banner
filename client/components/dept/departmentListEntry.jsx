@@ -4,14 +4,12 @@ import style from '../../style/main.less'
 
 const DepartmentListEntry = (props) => {
   return ( 
-    <li className={`dropdown-submenu ${style['dropdown-submenu']}`}
-        onMouseEnter={() => (props.onMouseEnterHandler(props.department))} 
-        onMouseLeave={() => (props.onMouseLeaveHandler(props.department))}>
-        {props.department}
-        <DepartmentSubMenu category={props.category}/> 
-
-    </li>
-
+      <li className={`dropdown-submenu ${style['dropdown-submenu']}`}
+          onMouseEnter={() => (props.onMouseEnterHandler(props.department))} 
+          onMouseLeave={() => (props.onMouseLeaveHandler(props.department))}>
+          {props.department}
+          <DepartmentSubMenu category={props.category}/> 
+      </li>
    );
 }
  

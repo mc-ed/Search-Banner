@@ -19,7 +19,7 @@ const SearchBar = (props) => {
 
               <div className={`container dropdown-menu ${style.liner}`} role="menu" aria-labelledby="menu1">
                 <div className={`row ${style['row-adjust']}`}>
-                  <div className={`col-3 ${style['search-item']} ${style.scrollbar}`}>
+                  <div className={`col-3 ${style['search-item']} ${style.scrollbar} ${style['destroy-padding-left']} ${style['destroy-adding-right']}`}>
                     {props.filteredList !== null ? 
                       props.filteredList.map((entry, i) => {
                         return <li className={`${style['search-item']} ${style.category}`} onMouseOver={()=>props.handleSearch({target:{value: entry}}, true)} key={`${i}`} ><a href="#">{entry}</a></li>

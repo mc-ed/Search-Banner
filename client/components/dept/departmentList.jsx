@@ -6,13 +6,15 @@ const DepartmentList = (props) => {
   return ( 
     <div className={`${style['category-wrapper']}`}>
         {props.deptList.map((department, i) => {
-            return <DepartmentListEntry
-                    key={i} 
-                    department={department} 
-                    onMouseLeaveHandler={props.onMouseLeaveHandler} 
-                    onMouseEnterHandler={props.onMouseEnterHandler}
-                    category = {props.category}
-                    />
+            return (
+                <DepartmentListEntry
+                  key={i} 
+                  department={department} 
+                  onMouseLeaveHandler={props.onMouseLeaveHandler} 
+                  onMouseEnterHandler={props.onMouseEnterHandler}
+                  category = {props.category}
+                />
+            )
           })} 
     </div>
    );

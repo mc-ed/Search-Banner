@@ -26,8 +26,8 @@ class Departments extends Component {
 
     return ( 
       <div className={`col-3 ${style['column-adjust']}`}>
-        {/* <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}> */}
-        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}}>  
+        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
+        {/* <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}}>   */}
           <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
             <div className={`${style['hamburger-wrapper']}`}>
               <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>

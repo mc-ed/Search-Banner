@@ -52,7 +52,7 @@ class Departments extends Component {
             </div>
           </div>
           <div className={`col-9 ${style['column-adjust']}`}>
-            <div className={`${style['department-wrapper']}`}>
+            <div id="dept-wrapper" className={`${style['department-wrapper']}`}>
               <a className={`${style.department}`} >  Departments         </a>
             </div>
               {this.props.showDept ? 

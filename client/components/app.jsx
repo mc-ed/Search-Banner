@@ -32,7 +32,7 @@ class App extends Component {
       itemlist.data.forEach((item) => {
         data[item.category] = item;
       })
-      console.log(itemlist.data);
+      // console.log(itemlist.data);
       this.setState({
         
           dataList: data,

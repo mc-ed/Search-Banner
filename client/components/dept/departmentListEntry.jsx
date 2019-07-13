@@ -7,8 +7,8 @@ const DepartmentListEntry = (props) => {
       <li className={`dropdown-submenu ${style['dropdown-submenu']}`}
           onMouseEnter={() => (props.onMouseEnterHandler(props.department))} 
           onMouseLeave={() => (props.onMouseLeaveHandler(props.department))}>
-          {props.department}
-          <DepartmentSubMenu categories={props.categories}/> 
+          {props.department}          
+          <DepartmentSubMenu categories={props.categories} items={ props.dataList }/> 
       </li>
    );
 }

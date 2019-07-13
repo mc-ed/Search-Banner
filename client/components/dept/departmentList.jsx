@@ -10,11 +10,11 @@ const DepartmentList = (props) => {
                 <DepartmentListEntry
                   key={i} 
                   department={department} 
+                  dataList={props.dataList}
                   categories={props.categoriesPerDept[i]}
                   sortedCategorySet={props.sortedCategorySet}
                   onMouseLeaveHandler={props.onMouseLeaveHandler} 
                   onMouseEnterHandler={props.onMouseEnterHandler}
-                  category = {props.category}
                 />
             )
           })} 

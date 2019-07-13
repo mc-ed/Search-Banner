@@ -9,6 +9,7 @@ const DepartmentList = (props) => {
             return (
                 <DepartmentListEntry
                   key={i} 
+
                   department={department} 
                   dataList={props.dataList}
                   categories={props.categoriesPerDept[i]}

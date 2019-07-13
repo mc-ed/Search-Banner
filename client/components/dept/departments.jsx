@@ -43,6 +43,8 @@ class Departments extends Component {
 
   render() { 
 
+    const browsingColor = this.props.showDept ? '#004990' : '#0471af';
+
     return ( 
       <div className={`col-3 ${style['column-adjust']}`}>
         <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
@@ -52,11 +54,13 @@ class Departments extends Component {
             </div>
           </div>
           <div className={`col-9 ${style['column-adjust']}`}>
-            <div id="dept-wrapper" className={`${style['department-wrapper']}`}>
+            <div id="dept-wrapper" className={`${style['department-wrapper']}`} style={{backgroundColor: browsingColor}}>
               <a className={`${style.department}`} >  Departments         </a>
             </div>
               {this.props.showDept ? 
+ 
                   <DepartmentList 
+                    handleBrowsing={this.props.handleBrowsing}
                     dataList={this.props.dataList} 
                     deptList={this.props.deptList}
                     categoriesPerDept={this.state.categoriesPerDept}

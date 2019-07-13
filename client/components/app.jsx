@@ -17,12 +17,14 @@ class App extends Component {
       cartNumItem: 0,
       toggleSuggestion: false,
       showCart: false,
-      showDept: false
+      showDept: false,
+      browsing: false
     }
   this.handleSearch = this.handleSearch.bind(this);
   this.suggestionToggler = this.suggestionToggler.bind(this);
   this.cartModalToggler = this.cartModalToggler.bind(this);
   this.deptToggler = this.deptToggler.bind(this);
+  this.handleBrowsing = this.handleBrowsing.bind(this);
   }
 
   componentDidMount() {
@@ -64,6 +66,10 @@ class App extends Component {
     this.setState({showCart: !this.state.showCart});
   }
 
+  handleBrowsing() {
+    this.setState({browsing: !this.state.browsing});
+  }
+
   handleSearch(e, hovering) {
     const { itemList } = this.state;
     const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
@@ -100,6 +106,8 @@ class App extends Component {
         />
         </div>
         <Navbar 
+          browsing={this.state.browsing}
+          handleBrowsing={this.handleBrowsing}
           handleSearch={this.handleSearch} 
           filteredList={this.state.filteredList} 
           dataList={this.state.dataList}

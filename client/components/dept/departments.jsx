@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import DepartmentList from './departmentList.jsx';
 import style from '../../style/main.less'
-import axios from 'axios';
 
 
 class Departments extends Component {
@@ -44,38 +43,41 @@ class Departments extends Component {
   render() { 
 
     const browsingColor = this.props.showDept ? '#004990' : '#0471af';
-
-    return ( 
-      <div className={`col-3 ${style['column-adjust']}`}>
-        <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
-          <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
-            <div className={`${style['hamburger-wrapper']}`}>
-              <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
+    if(this.state.updated) {
+      return ( 
+        <div className={`col-3 ${style['column-adjust']}`}>
+          <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
+            <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
+              <div className={`${style['hamburger-wrapper']}`}>
+                <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
+              </div>
             </div>
-          </div>
-          <div className={`col-9 ${style['column-adjust']}`}>
-            <div id="dept-wrapper" className={`${style['department-wrapper']}`} style={{backgroundColor: browsingColor}}>
-              <a className={`${style.department}`} >  Departments         </a>
+            <div className={`col-9 ${style['column-adjust']} ${style.popper}`}>
+              <div id="dept-wrapper" className={`${style['department-wrapper']}`} style={{backgroundColor: browsingColor}}>
+                <a className={`${style.department}`} >  Departments         </a>
+              </div>
+                {this.props.showDept ? 
+  
+                    <DepartmentList 
+                      handleBrowsing={this.props.handleBrowsing}
+                      dataList={this.props.dataList} 
+                      deptList={this.props.deptList}
+                      categoriesPerDept={this.state.categoriesPerDept}
+                      onMouseEnterHandler={this.onMouseEnterHandler} 
+                      onMouseLeaveHandler={this.onMouseLeaveHandler}
+                      category={this.state.entering}
+                      deptToggler={this.props.deptToggler}
+                    />
+                  :
+                  null
+                }
             </div>
-              {this.props.showDept ? 
- 
-                  <DepartmentList 
-                    handleBrowsing={this.props.handleBrowsing}
-                    dataList={this.props.dataList} 
-                    deptList={this.props.deptList}
-                    categoriesPerDept={this.state.categoriesPerDept}
-                    onMouseEnterHandler={this.onMouseEnterHandler} 
-                    onMouseLeaveHandler={this.onMouseLeaveHandler}
-                    category={this.state.entering}
-                    deptToggler={this.props.deptToggler}
-                  />
-                :
-                null
-              }
           </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return null;
+    }
   }
 }
  

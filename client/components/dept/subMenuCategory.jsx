@@ -17,6 +17,7 @@ class SubMenuCategory extends Component {
       axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.props.category}`).then((items) => {
       // axios.get(`/item?category=${this.props.category}`).then((items) => {
         this.setState({ items: items.data, mounted: true })
+        // console.log(items)
       })
     }
   }
@@ -34,7 +35,6 @@ class SubMenuCategory extends Component {
                   </Carousel.Item>
               )
             })}
-            Giselle
         </Carousel>
       </Popover>
     );

@@ -56,18 +56,23 @@
 }
 
 // Still implementing
+.popper {
+  z-index: 50;
+}
 
 .department-wrapper .category-wrapper {
   position: relative;
   top: 100%;
   width: 100%;
-
+  z-index: 50;
 }
 
 .category-wrapper {
   border: #E5E5E5;
   border-style: solid;
   border-width: 0 1px 1px 1px;
+  z-index: 50;
+  background-color: aliceblue;
 }
 
 .department-wrapper>a:after {
@@ -87,6 +92,7 @@
 .dropdown-submenu {
   color: #5d5d5d;
   position: relative;
+  background-color: aliceblue;
 }
 
 .dropdown-submenu:hover {
@@ -140,6 +146,7 @@
 }
 
 .dropdown-menu li {
+  background-color: aliceblue;
   a {
     color: #5d5d5d;
     text-decoration-line: none;
@@ -149,7 +156,7 @@
     }
   }
   &:hover {
-    
+    color: #004990;
     background-color: #f2f2f2;
   }
 } 

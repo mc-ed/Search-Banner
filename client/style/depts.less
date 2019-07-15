@@ -1,21 +1,20 @@
 .department-wrapper {
   width: 100%;
-  height: 100%;
+  height: 66px;
   padding-top: 20px;
   // padding-bottom: 25%;
+  &:hover {
+    background-color: #004990;
+  }
 }
 
 .department {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 18px;
   color: #fff !important;
-
+  white-space: pre;
   cursor: pointer;
 
-}
-
-.dept {
-  z-index: -1;
 }
 
 .flyouts {
@@ -57,11 +56,29 @@
 }
 
 // Still implementing
+.popper {
+  z-index: 50;
+}
+
+.department-wrapper .category-wrapper {
+  position: relative;
+  top: 100%;
+  width: 100%;
+  z-index: 50;
+}
+
+.category-wrapper {
+  border: #E5E5E5;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
+  z-index: 50;
+  background-color: aliceblue;
+}
+
 .department-wrapper>a:after {
   font-family: 'lowes-icon';
   content: "\EDBF";
   display: inline-flex;
-  float: right;
   font-size: 0.8em;
   border: 0;
   text-align: right;
@@ -73,21 +90,29 @@
   transition: ease .3s;
 }
 .dropdown-submenu {
+  color: #5d5d5d;
   position: relative;
+  background-color: aliceblue;
 }
 
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  -webkit-border-radius: 0 6px 6px 6px;
-  -moz-border-radius: 0 6px 6px;
-  border-radius: 0 6px 6px 6px;
+.dropdown-submenu:hover {
+  cursor: pointer;
+  color: #004990;
+  background-color: #f2f2f2;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
   display: block;
+}
+
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100% !important;
+  margin-top: -1px;
+  // margin-left: -1px;
+  -webkit-border-radius: 0 6px 6px 6px;
+  -moz-border-radius: 0 6px 6px;
+  border-radius: 0 6px 6px 6px;
 }
 
 .dropdown-submenu>a:after {
@@ -105,7 +130,7 @@
 }
 
 .dropdown-submenu:hover>a:after {
-  border-left-color: #fff;
+  border-left-color: #fff !important;
 }
 
 .dropdown-submenu.pull-left {
@@ -118,4 +143,24 @@
   -webkit-border-radius: 6px 0 6px 6px;
   -moz-border-radius: 6px 0 6px 6px;
   border-radius: 6px 0 6px 6px;
+}
+
+.dropdown-menu li {
+  background-color: aliceblue;
+  a {
+    color: #5d5d5d;
+    text-decoration-line: none;
+    &:hover {
+      text-decoration-line: none;
+      color: #004990;
+    }
+  }
+  &:hover {
+    color: #004990;
+    background-color: #f2f2f2;
+  }
+} 
+
+.carousel-img {
+  width: 100%;
 }

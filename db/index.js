@@ -30,6 +30,7 @@ const Item = mongoose.model('Item', itemSchema);
 // })
 
 const getAllItemList = () => {
+  
   return new Promise((res, rej) => {
     Item.find((err, items) => {
       if(err) {
@@ -38,8 +39,9 @@ const getAllItemList = () => {
         res(items);
       }
     })
-    .sort({numRating: -1})
-    .sort({rating: -1}) 
+    .sort({category: 1})
+    // .sort({rating: -1}) 
+    // .sort({numRating: -1})
   })
 }
 

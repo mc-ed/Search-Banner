@@ -3,6 +3,7 @@ import Logo from './logo.jsx'
 import style from '../../style/main.less';
 import { Modal } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
 
 const Banner = (props) => {
@@ -57,10 +58,57 @@ const Banner = (props) => {
                 </div>
               </div>
               <Modal show={props.showCart} onHide={() => props.cartModalToggler()}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Modal heading</Modal.Title>
+                <Modal.Header closeButton >
+                  <Modal.Title>Shopping Cart</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body> 
+                  <div className={style.modalWrapper}>
+                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>
+                      <div className="col-md-auto">1</div>
+                      <div className="col-md-auto"><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></div>
+                      <div className="col-md-auto">Hammer</div>
+                      <div className="col-md-auto">1</div>
+                      <div className="col-md-auto">$45.00</div>
+                      <div className="col-md-auto">$45.00</div>
+                    </div>
+                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
+                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
+                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
+                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
+                  </div>
+                  {/* <div className={style.modalWrapper}>
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Image</th>
+                          <th>Name</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td>1</td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div> */}
+                  <div className={`${style.taxShippingWrapper}`}>
+                    <div>
+                      tax(8.00%):
+                    </div>
+                    <div>
+                      shipping: 
+                    </div>
+                  </div>
+                </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={() => props.cartModalToggler()}>
                     Close

@@ -57,17 +57,18 @@ const Banner = (props) => {
                   </div>
                 </div>
               </div>
-              <Modal show={props.showCart} onHide={() => props.cartModalToggler()}>
+            </div>
+            <Modal dialogClassName={style.modalWidth} show={props.showCart} onHide={()=>props.cartModalToggler()} backdrop={"static"}>
                 <Modal.Header closeButton >
                   <Modal.Title>Shopping Cart</Modal.Title>
                 </Modal.Header>
                 <Modal.Body> 
-                  <div className={style.modalWrapper}>
+                  {/* <div className={style.modalWrapper}>
                     <div className={`row ${style.cartRow} ${style['row-adjust']}`}>
                       <div className="col-md-auto">1</div>
                       <div className="col-md-auto"><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></div>
                       <div className="col-md-auto">Hammer</div>
-                      <div className="col-md-auto">1</div>
+                      <div className="col-md-auto"><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>{1}<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></div>
                       <div className="col-md-auto">$45.00</div>
                       <div className="col-md-auto">$45.00</div>
                     </div>
@@ -75,8 +76,8 @@ const Banner = (props) => {
                     <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
                     <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
                     <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
-                  </div>
-                  {/* <div className={style.modalWrapper}>
+                  </div> */}
+                  <div className={style.modalWrapper}>
                     <Table striped bordered hover>
                       <thead>
                         <tr>
@@ -93,13 +94,53 @@ const Banner = (props) => {
                           <td>1</td>
                           <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
                           <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                        <tr>
                           <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
+                          <td>$45.00</td>
+                          <td>$45.00</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
+                          <td>HAMMER</td>
+                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
                           <td>$45.00</td>
                           <td>$45.00</td>
                         </tr>
                       </tbody>
                     </Table>
-                  </div> */}
+                  </div>
                   <div className={`${style.taxShippingWrapper}`}>
                     <div>
                       tax(8.00%):
@@ -110,15 +151,14 @@ const Banner = (props) => {
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={() => props.cartModalToggler()}>
+                  <Button variant="secondary" onClick={()=>props.cartModalToggler()}>
                     Close
                   </Button>
-                  <Button variant="primary" onClick={() => props.cartModalToggler()}>
+                  <Button variant="primary" onClick={()=>props.cartModalToggler()}>
                     Save Changes
                   </Button>
                 </Modal.Footer>
               </Modal>
-            </div>
           </div>
         </div>
       </div>

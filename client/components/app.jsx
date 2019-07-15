@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
+import adjust from '../style/adjust.less';
 
 class App extends Component {
   constructor(props) {
@@ -119,6 +120,11 @@ class App extends Component {
           showDept={this.state.showDept}
           sortedCategorySet={this.state.sortedCategorySet}
         />
+        {this.state.showDept ? 
+            <div className={`${adjust.greyOut}`}></div>
+            :
+            null
+          }
       </header>
      );
   }

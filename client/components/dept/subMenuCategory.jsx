@@ -39,7 +39,7 @@ class SubMenuCategory extends Component {
       </Popover>
     );
     return ( 
-      <OverlayTrigger trigger={['click','hover']} placement="right" overlay={popover}>
+      <OverlayTrigger trigger={['click']} placement="right" overlay={popover}>
         <li > 
             <a>{this.props.category}</a>
         </li>

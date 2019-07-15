@@ -43,6 +43,7 @@ class Departments extends Component {
   render() { 
 
     const browsingColor = this.props.showDept ? '#004990' : '#0471af';
+    
     if(this.state.updated) {
       return ( 
         <div className={`col-3 ${style['column-adjust']}`}>

@@ -22,13 +22,15 @@ class App extends Component {
       showDept: false,
       browsing: false
     }
-  this.handleSearch = this.handleSearch.bind(this);
-  this.suggestionToggler = this.suggestionToggler.bind(this);
-  this.cartModalToggler = this.cartModalToggler.bind(this);
-  this.deptToggler = this.deptToggler.bind(this);
-  this.handleBrowsing = this.handleBrowsing.bind(this);
-  this.removeItem = this.removeItem.bind(this);
-  this.addItem = this.addItem.bind(this);
+    this.deployed = false;
+    this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
+    this.handleSearch = this.handleSearch.bind(this);
+    this.suggestionToggler = this.suggestionToggler.bind(this);
+    this.cartModalToggler = this.cartModalToggler.bind(this);
+    this.deptToggler = this.deptToggler.bind(this);
+    this.handleBrowsing = this.handleBrowsing.bind(this);
+    this.removeItem = this.removeItem.bind(this);
+    this.addItem = this.addItem.bind(this);
   }
 
   componentDidMount() {
@@ -37,8 +39,13 @@ class App extends Component {
       const element = this.state.cartItemList[index].amount;
       total += element;
     }
-    
-    axios.get('http://search-banner.us-east-1.elasticbeanstalk.com/itemlist').then((itemlist) => {
+    // TO BE DONE WHEN SOMETHING IS ADDED TO CART
+    // axios.post(this.ip + '/savecart', { cartItemList: this.state.cartItemList}).then(() => {
+    //   console.log('saved!')
+    // })
+
+
+    axios.get( this.ip + '/itemlist').then((itemlist) => {
       // axios.get('/itemlist').then((itemlist) => {
       let data = {};
       itemlist.data.forEach((item) => {
@@ -68,13 +75,21 @@ class App extends Component {
   removeItem(cartId) {
     console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
-    this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList});
+    this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
+      axios.post(this.ip + '/savecart', { cartItemList: this.state.cartItemList}).then(() => {
+        console.log('saved!')
+      })
+    });
   }
 
   addItem(cartId) {
     console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
-    this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList});
+    this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
+      axios.post(this.ip + '/savecart', { cartItemList: this.state.cartItemList}).then(() => {
+        console.log('saved!')
+      })
+    });
   }
 
   deptToggler() {
@@ -100,14 +115,14 @@ class App extends Component {
     
       if(!hovering) {
         this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
+          axios.get( this.ip + `/item?category=${filteredDataList[0]}`).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });
           })
         });
       } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
+        axios.get( this.ip + `/item?category=${filteredDataList[0]}`).then((result) => {
           // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });

@@ -34,9 +34,9 @@ const Cart = mongoose.model('Cart', cartSchema);
 //   }
 // })
 
-const saveCart = (ip, cartItemList) => {
+const saveCart = (id, cartItemList) => {
   return new Promise((res, rej) => {
-    Cart.findOneAndUpdate({uid: ip}, { cartItemList }, {upsert: true }, (err, cart) => {
+    Cart.findOneAndUpdate({uid: id}, { cartItemList }, {upsert: true }, (err, cart) => {
       if(err) {
         rej(err);
       }
@@ -45,10 +45,10 @@ const saveCart = (ip, cartItemList) => {
   })
 }
 
-const getCart = (ip) => {
+const getCart = (id) => {
   return new Promise((res, rej) => {
     console.log('requesting from ip: ', ip);
-    Cart.findOne({uid: ip}, (err, cart) => {
+    Cart.findOne({uid: id}, (err, cart) => {
       console.log('found cart from getCart', cart)
       if(err) {
         rej(err);

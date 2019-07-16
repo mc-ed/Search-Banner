@@ -6,6 +6,7 @@ const PORT = 3000;
 const db = require('../db/index.js');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
+const uuidv4 = require('uuid/v4');
 
 app.use(cors());
 app.use(function(req, res, next) {
@@ -21,10 +22,13 @@ app.use((req, res, next) => {
   const origin = req.get('origin');
   console.log(origin);
   if(Object.keys(req.signedCookies).length === 0) {
-    res.cookie('user_ip', req.ip, {signed: true});
-    console.log('am I stuck here? saving to ip: ', req.ip)
-    db.saveCart(req.ip, []).then(() => {
-      next();
+    let cookie = uuidv4();
+    res.cookie('user_id', cookie, {signed: true});
+    console.log('am I stuck here? saving to cookie: ', cookie)
+    db.saveCart(cookie, []).then(() => {
+      db.getCart(cookie).then((cart) => {
+        res.send(cart);
+      })
     })
   } else {
     next();
@@ -50,14 +54,14 @@ app.get('/item', (req, res) => {
 })
 
 app.post('/savecart', (req, res) => {
-  db.saveCart(req.signedCookies.user_ip, req.body.cartItemList).then((cart) => {
+  db.saveCart(req.signedCookies.user_id, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
   })
 })
 
 app.get('/getcart', (req, res) => {
-  console.log('getting resquest from getcart from signedcookie:', req.ip);
-  db.getCart(req.ip).then((cart) => {
+  console.log('getting resquest from getcart from signedcookie:');
+  db.getCart(req.signedCookies.user_id).then((cart) => {
     res.send(cart);
   })
 })

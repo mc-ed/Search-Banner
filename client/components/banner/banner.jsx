@@ -53,7 +53,7 @@ const Banner = (props) => {
                 </div>
                 <div className={`col-6 ${style['column-adjust']} ${style['destroy-padding-left']} ${style['destroy-padding-right']} ${style['carticon-wrapper']}`}>
                   <div className={`${style['cart-item-number']}`}>
-                    {props.cartNumItem}
+                    {props.cartNumItemTotal}
                   </div>
                 </div>
               </div>
@@ -90,60 +90,25 @@ const Banner = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
-                        <tr>
-                          <td>1</td>
-                          <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></td>
-                          <td>HAMMER</td>
-                          <td><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>1<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></td>
-                          <td>$45.00</td>
-                          <td>$45.00</td>
-                        </tr>
+                        {props.cartItemList.map((cartItem, i) => {
+                          {console.log(cartItem.id)}
+                          return (
+                            <tr key = {i}>
+                              <td>{i+1}</td>
+                              <td><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/${cartItem.id}.jpg`} alt=""/></td>
+                              <td>{cartItem.name}</td>
+                              <td className={style.allowWhiteSpace}><button value={i} type="button" className="btn btn-outline-secondary btn-sm" onClick={(e)=>props.removeItem(e.target.value)}>{'<'}</button>   {cartItem.amount}   <button value={i} type="button" className="btn btn-outline-secondary btn-sm" onClick={(e)=> props.addItem(e.target.value)}>{'>'}</button></td>
+                              <td>{cartItem.price.toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}</td>
+                              <td>{(cartItem.price*cartItem.amount).toLocaleString('en-EN', { style: 'currency', currency: 'USD' }) }</td>
+                            </tr>
+                          )
+                        })}
                       </tbody>
                     </Table>
                   </div>
                   <div className={`${style.taxShippingWrapper}`}>
                     <div>
-                      tax(8.00%):
+                      tax(8.25%): 
                     </div>
                     <div>
                       shipping: 
@@ -152,7 +117,7 @@ const Banner = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <div className={style.subtotal}>
-                      Subtotal:
+                      Subtotal: 
                     </div>
                   <Button variant="secondary" onClick={()=>props.cartModalToggler()}>
                     Close

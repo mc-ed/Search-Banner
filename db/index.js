@@ -12,8 +12,12 @@ const itemSchema = new mongoose.Schema({
   category: String
 })
 
-const Item = mongoose.model('Item', itemSchema);
+const sessionSchema = new mongoose.Schema({
+  cookie: Number
+})
 
+const Item = mongoose.model('Item', itemSchema);
+const Session = mongoose.model('Session', sessionSchema);
 // new Item({
 //   id: 43,
 //   itemName: "John-Deere-Z335E-20-HP-V-twin-Dual-Hydrostatic-42-in-Zero-turn-Lawn-Mower-with-Mulching-Capability-(Kit-Sold-Separately)",
@@ -40,8 +44,6 @@ const getAllItemList = () => {
       }
     })
     .sort({category: 1})
-    // .sort({rating: -1}) 
-    // .sort({numRating: -1})
   })
 }
 
@@ -55,7 +57,7 @@ const get3Items = (category) => {
         res(items);
       }
     })
-    .sort({rating: -1}) 
+    .sort({rating: -1})
     .sort({numRating: -1})
   })
 }

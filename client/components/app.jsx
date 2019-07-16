@@ -15,7 +15,8 @@ class App extends Component {
       dataList: {},
       filteredList: [],
       noMatch: false,
-      cartNumItem: 0,
+      cartItemList: [{id: 3, name: 'ceiling fan', amount: 3, price: 45.00}, {id: 5, name: 'idk', amount: 2, price: 90.00}, {id: 71, name: 'hello', amount: 5, price: 100.00}],
+      cartNumItemTotal: 0,
       toggleSuggestion: false,
       showCart: false,
       showDept: false,
@@ -26,9 +27,17 @@ class App extends Component {
   this.cartModalToggler = this.cartModalToggler.bind(this);
   this.deptToggler = this.deptToggler.bind(this);
   this.handleBrowsing = this.handleBrowsing.bind(this);
+  this.removeItem = this.removeItem.bind(this);
+  this.addItem = this.addItem.bind(this);
   }
 
   componentDidMount() {
+    let total = 0;
+    for (let index = 0; index < this.state.cartItemList.length; index++) {
+      const element = this.state.cartItemList[index].amount;
+      total += element;
+    }
+    
     axios.get('http://search-banner.us-east-1.elasticbeanstalk.com/itemlist').then((itemlist) => {
       // axios.get('/itemlist').then((itemlist) => {
       let data = {};
@@ -49,10 +58,23 @@ class App extends Component {
           }),
           sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
             return item.category;
-          }))]
+          }))],
+          cartNumItemTotal: total
         
     });
     })
+  }
+
+  removeItem(cartId) {
+    console.log(cartId);
+    this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
+    this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList});
+  }
+
+  addItem(cartId) {
+    console.log(cartId);
+    this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
+    this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList});
   }
 
   deptToggler() {
@@ -101,8 +123,11 @@ class App extends Component {
       <header>
         <div className="container">
         <Banner 
-          cartNumItem={this.state.cartNumItem} 
+          cartNumItemTotal={this.state.cartNumItemTotal} 
           showCart={this.state.showCart} 
+          addItem={this.addItem}
+          cartItemList={this.state.cartItemList}
+          removeItem={this.removeItem}
           cartModalToggler={this.cartModalToggler}
         />
         </div>

@@ -7,11 +7,22 @@ const db = require('../db/index.js');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 
+app.use(cors());
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Credentials', true)
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
 app.set('trust proxy', true)
 app.use(cookieParser('DJDJ'));
 app.use((req, res, next) => {
+  const origin = req.get('origin');
+  console.log(origin);
   if(Object.keys(req.signedCookies).length === 0) {
     res.cookie('user_ip', req.ip, {signed: true});
+    console.log('am I stuck here? saving to ip: ', req.ip)
     db.saveCart(req.ip, []).then(() => {
       next();
     })
@@ -21,14 +32,6 @@ app.use((req, res, next) => {
   // res.clearCookie('user_ip');
   // res.cookie('user_ip', req.ip, {signed: true});
   
-})
-app.use(cors());
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Credentials', true)
-  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
 })
 app.use(bodyparser.json());
 app.use(express.static(path.join(__dirname, '../public')));
@@ -53,10 +56,11 @@ app.post('/savecart', (req, res) => {
 })
 
 app.get('/getcart', (req, res) => {
-  db.getCart(req.signedCookies.user_ip).then((cart) => {
+  console.log('getting resquest from getcart from signedcookie:', req.ip);
+  db.getCart(req.ip).then((cart) => {
     res.send(cart);
   })
 })
 
 
-app.listen(PORT, '127.0.0.1', () => (console.log(`Listening for port: ${PORT}`)));
+app.listen(PORT, () => (console.log(`Listening for port: ${PORT}`)));

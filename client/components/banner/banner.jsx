@@ -151,11 +151,14 @@ const Banner = (props) => {
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
+                    <div className={style.subtotal}>
+                      Subtotal:
+                    </div>
                   <Button variant="secondary" onClick={()=>props.cartModalToggler()}>
                     Close
                   </Button>
                   <Button variant="primary" onClick={()=>props.cartModalToggler()}>
-                    Save Changes
+                    Check Out
                   </Button>
                 </Modal.Footer>
               </Modal>

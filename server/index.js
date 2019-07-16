@@ -10,10 +10,17 @@ const cookieParser = require('cookie-parser');
 app.set('trust proxy', true)
 app.use(cookieParser('DJDJ'));
 app.use((req, res, next) => {
-  console.log(req.signedCookies);
+  if(Object.keys(req.signedCookies).length === 0) {
+    res.cookie('user_ip', req.ip, {signed: true});
+    db.saveCart(req.ip, []).then(() => {
+      next();
+    })
+  } else {
+    next();
+  }
   // res.clearCookie('user_ip');
   // res.cookie('user_ip', req.ip, {signed: true});
-  next();
+  
 })
 app.use(cors());
 app.use(function(req, res, next) {
@@ -42,6 +49,12 @@ app.get('/item', (req, res) => {
 app.post('/savecart', (req, res) => {
   db.saveCart(req.signedCookies.user_ip, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
+  })
+})
+
+app.get('/getcart', (req, res) => {
+  db.getCart(req.signedCookies.user_ip).then((cart) => {
+    res.send(cart);
   })
 })
 

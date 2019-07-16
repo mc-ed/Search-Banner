@@ -7,6 +7,8 @@ import { Table } from 'react-bootstrap';
 
 
 const Banner = (props) => {
+  let subTotal = 0;
+
   return ( 
     
       <div className={`row ${style['row-adjust']}`}>
@@ -63,20 +65,7 @@ const Banner = (props) => {
                   <Modal.Title>Shopping Cart</Modal.Title>
                 </Modal.Header>
                 <Modal.Body> 
-                  {/* <div className={style.modalWrapper}>
-                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>
-                      <div className="col-md-auto">1</div>
-                      <div className="col-md-auto"><img className={`${style['cartImg']}`} src={`https://fecdj.s3.amazonaws.com/photo/3.jpg`} alt=""/></div>
-                      <div className="col-md-auto">Hammer</div>
-                      <div className="col-md-auto"><button type="button" className="btn btn-outline-secondary btn-sm">{'<'}</button>{1}<button type="button" className="btn btn-outline-secondary btn-sm">{'>'}</button></div>
-                      <div className="col-md-auto">$45.00</div>
-                      <div className="col-md-auto">$45.00</div>
-                    </div>
-                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
-                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
-                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
-                    <div className={`row ${style.cartRow} ${style['row-adjust']}`}>hi</div>
-                  </div> */}
+  
                   <div className={style.modalWrapper}>
                     <Table striped bordered hover>
                       <thead>
@@ -91,7 +80,7 @@ const Banner = (props) => {
                       </thead>
                       <tbody>
                         {props.cartItemList.map((cartItem, i) => {
-                          {console.log(cartItem.id)}
+                          {subTotal += cartItem.price*cartItem.amount}
                           return (
                             <tr key = {i}>
                               <td>{i+1}</td>
@@ -108,16 +97,16 @@ const Banner = (props) => {
                   </div>
                   <div className={`${style.taxShippingWrapper}`}>
                     <div>
-                      tax(8.25%): 
+                      tax(8.25%): {(subTotal*0.0825).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
                     </div>
                     <div>
-                      shipping: 
+                      shipping: {(1.99).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
                     </div>
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <div className={style.subtotal}>
-                      Subtotal: 
+                      Subtotal: {(subTotal*1.0825 + 1.99).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
                     </div>
                   <Button variant="secondary" onClick={()=>props.cartModalToggler()}>
                     Close

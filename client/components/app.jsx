@@ -8,14 +8,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      deptList: ['Appliances', 'Bathroom', 'Building Supplies', 'Doors and Windows', 'Electrical'],
+      deptList: [],
       sortedCategorySet: [],
       itemList: [],
       suggestionList: [],
       dataList: {},
       filteredList: [],
       noMatch: false,
-      cartItemList: [{id: 3, name: 'ceiling fan', amount: 3, price: 45.00}, {id: 5, name: 'idk', amount: 2, price: 90.00}, {id: 71, name: 'hello', amount: 5, price: 100.00}],
+      cartItemList: [],
       cartNumItemTotal: 0,
       toggleSuggestion: false,
       showCart: false,
@@ -34,42 +34,48 @@ class App extends Component {
   }
 
   componentDidMount() {
-    let total = 0;
-    for (let index = 0; index < this.state.cartItemList.length; index++) {
-      const element = this.state.cartItemList[index].amount;
-      total += element;
-    }
     // TO BE DONE WHEN SOMETHING IS ADDED TO CART
     // axios.post(this.ip + '/savecart', { cartItemList: this.state.cartItemList}).then(() => {
-    //   console.log('saved!')
-    // })
-
-
-    axios.get( this.ip + '/itemlist').then((itemlist) => {
-      // axios.get('/itemlist').then((itemlist) => {
-      let data = {};
-      itemlist.data.forEach((item) => {
-        data[item.category] = item;
-      })
-      // console.log(itemlist.data);
-      this.setState({
-        
-          dataList: data,
-          deptList: [... new Set(itemlist.data.map((item) => {
-            let dept = item.department;
-            return dept;
-          }).sort())],
-          itemList: itemlist.data.map((item) => {
-            let category = item.category;
-            return category;
-          }),
-          sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
-            return item.category;
-          }))],
-          cartNumItemTotal: total
-        
-    });
+      //   console.log('saved!')
+      // })
+      
+      axios.get( this.ip + '/getcart').then((cart) => {
+        let total = 0;
+        let cartItemList = cart.data.cartItemList;
+        if(cart) {
+          for (let index = 0; index < cartItemList.length; index++) {
+            const element = cartItemList[index].amount;
+            total += element;
+          }
+        } else {
+          cartItemList = [];
+        }
+        axios.get( this.ip + '/itemlist').then((itemlist) => {
+          // axios.get('/itemlist').then((itemlist) => {
+          let data = {};
+          itemlist.data.forEach((item) => {
+            data[item.category] = item;
+          })
+          // console.log(itemlist.data);
+          this.setState({
+              dataList: data,
+              deptList: [... new Set(itemlist.data.map((item) => {
+                let dept = item.department;
+                return dept;
+              }).sort())],
+              itemList: itemlist.data.map((item) => {
+                let category = item.category;
+                return category;
+              }),
+              sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
+                return item.category;
+              }))],
+              cartItemList: cartItemList,
+              cartNumItemTotal: total
+          });
+        })
     })
+
   }
 
   removeItem(cartId) {
@@ -130,8 +136,6 @@ class App extends Component {
       }
     
   }
-
-
 
   render() { 
     return ( 

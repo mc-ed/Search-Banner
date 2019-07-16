@@ -40,7 +40,17 @@ const saveCart = (ip, cartItemList) => {
       if(err) {
         rej(err);
       }
-      console.log(cart);
+      res(cart);
+    })
+  })
+}
+
+const getCart = (ip) => {
+  return new Promise((res, rej) => {
+    Cart.findOne({uid: ip.toString()}, (err, cart) => {
+      if(err) {
+        rej(err);
+      }
       res(cart);
     })
   })
@@ -75,4 +85,4 @@ const get3Items = (category) => {
   })
 }
 
-module.exports = { getAllItemList, get3Items, saveCart };
+module.exports = { getAllItemList, get3Items, saveCart, getCart };

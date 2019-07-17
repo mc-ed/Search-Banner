@@ -51,6 +51,12 @@ app.post('/savecart', (req, res) => {
   })
 })
 
+app.post('/deleteCartItem', (req, res) => {
+  db.deleteCartItem(req.signedCookies.user_id).then((cart) => {
+    res.send('deleted 0 item');
+  })
+})
+
 function cartshit(req, res, next) {
   const origin = req.get('origin');
   console.log('origin', origin);

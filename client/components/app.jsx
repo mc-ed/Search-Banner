@@ -40,12 +40,12 @@ class App extends Component {
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {
-      console.log('got response from itemlist: ', itemlist)
+      // console.log('got response from itemlist: ', itemlist)
       axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true})
       // axios.get( '/getcart')
       .then((cart) => {
 
-        console.log('got cart!: ', cart);
+        // console.log('got cart!: ', cart);
         let total = 0;
         let cartItemList = cart.data.cartItemList;
         if(cartItemList && cartItemList.length > 0) {
@@ -84,12 +84,24 @@ class App extends Component {
 
   removeItem(cartId) {
     console.log(cartId);
-    this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
-    this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        console.log('saved!')
+    if(this.state.cartItemList[cartId].amount === 1) {
+      this.state.cartItemList.splice(cartId, 1);
+      this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+          console.log('saved!')
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}).then(() => {
+            console.log('delted 0 item from cart!');
+          })
+        })
+      });
+    } else {
+      this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
+      this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+          console.log('saved!')
+        })
       })
-    });
+    }
   }
 
   addItem(cartId) {

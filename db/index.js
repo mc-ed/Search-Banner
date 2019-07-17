@@ -34,8 +34,22 @@ const Cart = mongoose.model('Cart', cartSchema);
 //   }
 // })
 
+const deleteCartItem = (id) => {
+  // console.log('deleting cart of: ', id);
+  return new Promise((res, rej) => {
+    Cart.updateOne({uid: id}, {"$pull": {"cartItemList": {"amount": '0'}}}, { multi:true }, (err, obj) => {
+      if(err) {
+        rej(err)
+      } else {
+        console.log('removed ', obj);
+        res(obj)
+      }
+    })
+  })
+}
+
 const saveCart = (id, cartItemList) => {
-  console.log('saving this id', id);
+  // console.log('saving this id', id);
   return new Promise((res, rej) => {
     Cart.findOneAndUpdate({uid: id}, { cartItemList }, {upsert: true }, (err, cart) => {
       if(err) {
@@ -44,6 +58,7 @@ const saveCart = (id, cartItemList) => {
       }
       res(cart);
     })
+    
   })
 }
 
@@ -91,4 +106,4 @@ const get3Items = (category) => {
   })
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart };
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem };

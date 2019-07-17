@@ -20,7 +20,8 @@ class App extends Component {
       toggleSuggestion: false,
       showCart: false,
       showDept: false,
-      browsing: false
+      browsing: false,
+      reviewstat: []
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -35,19 +36,38 @@ class App extends Component {
 
   componentDidMount() {
     window.addEventListener('cart', (data) => {
-      console.log(data);
+      let newCartItem = data.detail;
+      newCartItem.price = Number(data.detail.price);
+      let exists = false;
+      let existingIndex = -1;
+      for (let index = 0; index < this.state.cartItemList.length; index++) {
+        const element = this.state.cartItemList[index];
+        if(element.id === newCartItem.id) {
+          exists = true;
+          existingIndex = index;
+        }
+      }
+      if(exists) {
+        this.state.cartItemList[existingIndex].amount += newCartItem.amount;
+      } else {
+        this.state.cartItemList.push(newCartItem);
+      }
+      this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+          console.log('saved!')
+        })
+      })
     })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {
       // console.log('got response from itemlist: ', itemlist)
-      axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true})
-      // axios.get( '/getcart')
-      .then((cart) => {
-
-        // console.log('got cart!: ', cart);
+      let promises =[];
+      promises.push(axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true}))
+      promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      Promise.all(promises).then((results) => {
         let total = 0;
-        let cartItemList = cart.data.cartItemList;
+        let cartItemList = results[0].data.cartItemList;
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
             const element = cartItemList[index].amount;
@@ -59,23 +79,23 @@ class App extends Component {
         let data = {};
         itemlist.data.forEach((item) => {
           data[item.category] = item;
-        })
-        // console.log(itemlist.data);
+        });
         this.setState({
-            dataList: data,
-            deptList: [... new Set(itemlist.data.map((item) => {
-              let dept = item.department;
-              return dept;
-            }).sort())],
-            itemList: itemlist.data.map((item) => {
-              let category = item.category;
-              return category;
-            }),
-            sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
-              return item.category;
-            }))],
-            cartItemList: cartItemList,
-            cartNumItemTotal: total
+          dataList: data,
+          deptList: [... new Set(itemlist.data.map((item) => {
+            let dept = item.department;
+            return dept;
+          }).sort())],
+          itemList: itemlist.data.map((item) => {
+            let category = item.category;
+            return category;
+          }),
+          sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
+            return item.category;
+          }))],
+          cartItemList: cartItemList,
+          cartNumItemTotal: total,
+          reviewstat: results[1].data
         });
       })
     })

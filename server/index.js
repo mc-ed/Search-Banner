@@ -12,9 +12,9 @@ const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticb
 const corsOptions = {
   credentials: true,
   origin: function (origin, callback) {
-    console.log('in corsoption origin is: ', origin);
+    // console.log('in corsoption origin is: ', origin);
     if (whitelist.indexOf(origin) !== -1 || !origin) {
-      console.log('hi');
+      // console.log('hi');
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))

@@ -51,7 +51,7 @@ const CartModal = (props) => {
             tax(8.25%): {(subTotal*0.0825).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
           </div>
           <div>
-            shipping: {(shippingItems === 0 ? 0 : Number.parseInt(props.cartItemList.length/5) + 1.99).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
+            shipping: {(shippingItems === 0 ? 0 : Number.parseInt(shippingItems/5) + 1.99).toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}
           </div>
         </div>
       </Modal.Body>

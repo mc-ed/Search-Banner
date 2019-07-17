@@ -34,7 +34,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-
+    window.addEventListener('cart', (data) => {
+      console.log(data);
+    })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {

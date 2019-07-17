@@ -21,7 +21,7 @@ class App extends Component {
       showCart: false,
       showDept: false,
       browsing: false,
-      reviewstat: []
+      reviewStat: []
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -68,6 +68,7 @@ class App extends Component {
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
+        console.log(results[1].data);
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
             const element = cartItemList[index].amount;
@@ -95,7 +96,7 @@ class App extends Component {
           }))],
           cartItemList: cartItemList,
           cartNumItemTotal: total,
-          reviewstat: results[1].data
+          reviewStat: results[1].data
         });
       })
     })
@@ -199,6 +200,7 @@ class App extends Component {
           deptToggler={this.deptToggler}
           showDept={this.state.showDept}
           sortedCategorySet={this.state.sortedCategorySet}
+          reviewStat={this.state.reviewStat}
         />
         {this.state.showDept ? 
             <div className={`${adjust.greyOut}`}></div>

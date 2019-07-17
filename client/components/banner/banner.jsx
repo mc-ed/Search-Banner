@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import Logo from './logo.jsx'
 import style from '../../style/main.less';
-import { Modal } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
+import CartModal from './cartModal.jsx';
 
 
 const Banner = (props) => {
+
   return ( 
     
       <div className={`row ${style['row-adjust']}`}>
@@ -52,25 +52,12 @@ const Banner = (props) => {
                 </div>
                 <div className={`col-6 ${style['column-adjust']} ${style['destroy-padding-left']} ${style['destroy-padding-right']} ${style['carticon-wrapper']}`}>
                   <div className={`${style['cart-item-number']}`}>
-                    {props.cartNumItem}
+                    {props.cartNumItemTotal}
                   </div>
                 </div>
               </div>
-              <Modal show={props.showCart} onHide={() => props.cartModalToggler()}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Modal heading</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={() => props.cartModalToggler()}>
-                    Close
-                  </Button>
-                  <Button variant="primary" onClick={() => props.cartModalToggler()}>
-                    Save Changes
-                  </Button>
-                </Modal.Footer>
-              </Modal>
             </div>
+            <CartModal {...props}/>
           </div>
         </div>
       </div>

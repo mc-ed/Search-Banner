@@ -34,13 +34,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // TO BE DONE WHEN SOMETHING IS ADDED TO CART
-    // axios.post(this.ip + '/savecart', { cartItemList: this.state.cartItemList}).then(() => {
-      //   console.log('saved!')
-      // })
-      
-      axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart').then((cart) => {
-        // axios.get( '/getcart').then((cart) => {
+
+    axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
+    // axios.get('/itemlist')
+    .then((itemlist) => {
+      console.log('got response from itemlist: ', itemlist)
+      axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true})
+      // axios.get( '/getcart')
+      .then((cart) => {
+
+        console.log('got cart!: ', cart);
         let total = 0;
         let cartItemList = cart.data.cartItemList;
         if(cartItemList && cartItemList.length > 0) {
@@ -51,30 +54,28 @@ class App extends Component {
         } else {
           cartItemList = [];
         }
-        axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist').then((itemlist) => {
-          // axios.get('/itemlist').then((itemlist) => {
-          let data = {};
-          itemlist.data.forEach((item) => {
-            data[item.category] = item;
-          })
-          // console.log(itemlist.data);
-          this.setState({
-              dataList: data,
-              deptList: [... new Set(itemlist.data.map((item) => {
-                let dept = item.department;
-                return dept;
-              }).sort())],
-              itemList: itemlist.data.map((item) => {
-                let category = item.category;
-                return category;
-              }),
-              sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
-                return item.category;
-              }))],
-              cartItemList: cartItemList,
-              cartNumItemTotal: total
-          });
+        let data = {};
+        itemlist.data.forEach((item) => {
+          data[item.category] = item;
         })
+        // console.log(itemlist.data);
+        this.setState({
+            dataList: data,
+            deptList: [... new Set(itemlist.data.map((item) => {
+              let dept = item.department;
+              return dept;
+            }).sort())],
+            itemList: itemlist.data.map((item) => {
+              let category = item.category;
+              return category;
+            }),
+            sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
+              return item.category;
+            }))],
+            cartItemList: cartItemList,
+            cartNumItemTotal: total
+        });
+      })
     })
 
   }
@@ -83,7 +84,7 @@ class App extends Component {
     console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList}).then(() => {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
         console.log('saved!')
       })
     });
@@ -93,7 +94,7 @@ class App extends Component {
     console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList}).then(() => {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
         console.log('saved!')
       })
     });
@@ -122,14 +123,14 @@ class App extends Component {
     
       if(!hovering) {
         this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });
           })
         });
       } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`).then((result) => {
+        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
           // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });

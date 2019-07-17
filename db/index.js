@@ -35,9 +35,11 @@ const Cart = mongoose.model('Cart', cartSchema);
 // })
 
 const saveCart = (id, cartItemList) => {
+  console.log('saving this id', id);
   return new Promise((res, rej) => {
     Cart.findOneAndUpdate({uid: id}, { cartItemList }, {upsert: true }, (err, cart) => {
       if(err) {
+        console.log('save cart error: ', err);
         rej(err);
       }
       res(cart);
@@ -47,10 +49,12 @@ const saveCart = (id, cartItemList) => {
 
 const getCart = (id) => {
   return new Promise((res, rej) => {
-    console.log('requesting from ip: ', ip);
+    console.log('requesting from ip: ', id);
     Cart.findOne({uid: id}, (err, cart) => {
+      
       console.log('found cart from getCart', cart)
       if(err) {
+        console.log('get cart error: ', err);
         rej(err);
       }
       res(cart);

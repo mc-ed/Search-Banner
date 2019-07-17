@@ -8,35 +8,26 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
 
-app.use(cors());
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Credentials', true)
-  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
-})
-app.set('trust proxy', true)
-app.use(cookieParser('DJDJ'));
-app.use((req, res, next) => {
-  const origin = req.get('origin');
-  console.log(origin);
-  if(Object.keys(req.signedCookies).length === 0) {
-    let cookie = uuidv4();
-    res.cookie('user_id', cookie, {signed: true});
-    console.log('am I stuck here? saving to cookie: ', cookie)
-    db.saveCart(cookie, []).then(() => {
-      db.getCart(cookie).then((cart) => {
-        res.send(cart);
-      })
-    })
-  } else {
-    next();
+const whitelist = ['http://localhost.com:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com']
+const corsOptions = {
+  credentials: true,
+  origin: function (origin, callback) {
+    console.log('in corsoption origin is: ', origin);
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      console.log('hi');
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
   }
-  // res.clearCookie('user_ip');
-  // res.cookie('user_ip', req.ip, {signed: true});
-  
+}
+app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  console.log(`Accepting ${req.method} method from ${req.ip} to ${req.url}`);
+  next();
 })
+
+app.use(cookieParser('DJDJ'));
 app.use(bodyparser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -54,15 +45,41 @@ app.get('/item', (req, res) => {
 })
 
 app.post('/savecart', (req, res) => {
+  console.log('saving to cart')
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
   })
 })
 
-app.get('/getcart', (req, res) => {
-  console.log('getting resquest from getcart from signedcookie:');
+function cartshit(req, res, next) {
+  const origin = req.get('origin');
+  console.log('origin', origin);
+  console.log('length: ', Object.keys(req.signedCookies).length);
+  
+  if(Object.keys(req.signedCookies).length === 0) {
+    
+    let cookie = uuidv4();
+    res.cookie('user_id', cookie, {signed: true});
+    
+    db.saveCart(cookie, [])
+    .then((cart) => {
+      next();
+    })
+    .catch((err) => {
+      console.log('error in server saveCart', err);
+      next();
+    })
+  
+  } else {
+    next();
+  }
+}
+
+app.get('/getcart', cartshit, (req, res) => {
   db.getCart(req.signedCookies.user_id).then((cart) => {
     res.send(cart);
+  }).catch(() => {
+    res.send({data:[]});
   })
 })
 

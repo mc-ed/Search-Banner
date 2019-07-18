@@ -10,11 +10,17 @@ const Navbar = (props) => {
       <div className={`row ${style['row-adjust']}`}>
         <Departments 
           deptList={props.deptList}
+          browsing={props.browsing}
+          handleBrowsing={props.handleBrowsing}
+          dataList={props.dataList}
+          sortedCategorySet={props.sortedCategorySet}
+          deptToggler={props.deptToggler}
+          showDept={props.showDept}
         />
         <SearchBar 
+          reviewStat={props.reviewStat}
           handleSearch={props.handleSearch} 
           filteredList={props.filteredList} 
-          dataList={props.dataList}
           suggestionList={props.suggestionList}
           toggleSuggestion={props.toggleSuggestion}
           suggestionToggler={props.suggestionToggler}

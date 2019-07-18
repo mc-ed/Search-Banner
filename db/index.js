@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://dongjae93:qkrehdwo7@connect4-xkfvh.mongodb.net/FEC?retryWrites=true&w=majority', {useNewUrlParser: true});
-
+mongoose.set('useFindAndModify', false);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -12,8 +12,13 @@ const itemSchema = new mongoose.Schema({
   category: String
 })
 
-const Item = mongoose.model('Item', itemSchema);
+const cartSchema = new mongoose.Schema({
+  uid: String,
+  cartItemList: Array
+})
 
+const Item = mongoose.model('Item', itemSchema);
+const Cart = mongoose.model('Cart', cartSchema);
 // new Item({
 //   id: 43,
 //   itemName: "John-Deere-Z335E-20-HP-V-twin-Dual-Hydrostatic-42-in-Zero-turn-Lawn-Mower-with-Mulching-Capability-(Kit-Sold-Separately)",
@@ -29,7 +34,51 @@ const Item = mongoose.model('Item', itemSchema);
 //   }
 // })
 
+const deleteCartItem = (id) => {
+  // console.log('deleting cart of: ', id);
+  return new Promise((res, rej) => {
+    Cart.updateOne({uid: id}, {"$pull": {"cartItemList": {"amount": '0'}}}, { multi:true }, (err, obj) => {
+      if(err) {
+        rej(err)
+      } else {
+        console.log('removed ', obj);
+        res(obj)
+      }
+    })
+  })
+}
+
+const saveCart = (id, cartItemList) => {
+  // console.log('saving this id', id);
+  return new Promise((res, rej) => {
+    Cart.findOneAndUpdate({uid: id}, { cartItemList }, {upsert: true }, (err, cart) => {
+      if(err) {
+        console.log('save cart error: ', err);
+        rej(err);
+      }
+      res(cart);
+    })
+    
+  })
+}
+
+const getCart = (id) => {
+  return new Promise((res, rej) => {
+    console.log('requesting from ip: ', id);
+    Cart.findOne({uid: id}, (err, cart) => {
+      
+      console.log('found cart from getCart', cart)
+      if(err) {
+        console.log('get cart error: ', err);
+        rej(err);
+      }
+      res(cart);
+    })
+  })
+}
+
 const getAllItemList = () => {
+  
   return new Promise((res, rej) => {
     Item.find((err, items) => {
       if(err) {
@@ -38,8 +87,7 @@ const getAllItemList = () => {
         res(items);
       }
     })
-    .sort({numRating: -1})
-    .sort({rating: -1}) 
+    .sort({category: 1});
   })
 }
 
@@ -53,9 +101,9 @@ const get3Items = (category) => {
         res(items);
       }
     })
-    .sort({rating: -1}) 
+    .sort({rating: -1})
     .sort({numRating: -1})
   })
 }
 
-module.exports = { getAllItemList, get3Items };
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem };

@@ -8,16 +8,8 @@
   height: 100%;
   width: 100%;
   margin: 0;
-
-  .row-adjust {
-
-    &:hover {
-      a:after{
-        transform: rotateZ(180deg);
-      }
-    }
-  }
 }
+
 
 .v-spacing-small {
   margin-bottom: 10px !important;
@@ -50,4 +42,17 @@
 
 .destroy-padding-right {
   padding-right: 0 !important;
+}
+
+.greyOut {
+  z-index: 1;
+  opacity: 0.5;
+  background-color: #000;
+  position: absolute;
+  height: 2000px;
+  width: 2000px;
+}
+
+.allowWhiteSpace {
+  white-space: pre;
 }

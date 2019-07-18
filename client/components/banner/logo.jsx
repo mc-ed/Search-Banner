@@ -6,10 +6,10 @@ const Logo = () => {
   return ( 
 
     <div className={`col-5 ${style.logo}`}>
-        <ReactSVG src="http://search-banner.us-east-1.elasticbeanstalk.com/style/logo.svg"></ReactSVG>
+        <ReactSVG src="http://search-banner.us-east-1.elasticbeanstalk.com/fonts/logo.svg"></ReactSVG>
     </div>
 
    );
 }
  
-export default Logo;
+export default Logo; 

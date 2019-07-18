@@ -39,11 +39,26 @@ class SubMenuCategory extends Component {
       </Popover>
     );
     return ( 
-      <OverlayTrigger trigger={['click']} placement="right" overlay={popover}>
-        <li > 
+      // <OverlayTrigger trigger={['click']} placement="right" overlay={popover}>
+        <li className={`dropdown-submenu ${style['dropdown-submenu']}`}> 
             <a>{this.props.category}</a>
+            <div className={`dropdown-menu ${style['dropdown-menu']}`}>
+              <Carousel interval={1000}>
+                {this.state.items.map((item, i) => {
+                  return (
+                    <Carousel.Item key={i}>
+                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}})))}/>
+                    </Carousel.Item>
+                    )
+                })}
+              </Carousel>
+            </div>
         </li>
-      </OverlayTrigger>
+      // {/* </OverlayTrigger> */}
+      // <div className={`dropdown-submenu`}>
+      //   Hi
+      // </div>
+      // null
      );
   }
 }

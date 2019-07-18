@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Logo from './logo.jsx'
 import style from '../../style/main.less';
 import CartModal from './cartModal.jsx';
+import LoginModal from './loginModal.jsx';
 
 
 const Banner = (props) => {
@@ -26,7 +27,7 @@ const Banner = (props) => {
             <div className={`col-3 ${style['destroy-padding']}`}>
               <div className={`row ${style['row-adjust']} ${style['user-cart']}`}>
                 <div className={`col-6 ${style['usericon-wrapper']}`}>
-                  <div className={`${style['destroy-padding']} ${style['lowes-icon']} ${style.usericon}`}>
+                  <div className={`${style['destroy-padding']} ${style['lowes-icon']} ${style.usericon}`} onClick={()=>props.loginWindowToggler()}>
                     {'\u0050'}
                   </div>
                 </div>
@@ -37,7 +38,7 @@ const Banner = (props) => {
                     <span className={`${style['bold-lowes']}`}>
                     {"lowes \n"}
                     </span>
-                    <span className={`${style['signin-font']}`}>
+                    <span className={`${style['signin-font']}`} onClick={()=>props.loginWindowToggler()}>
                       Sign in
                     </span>
                   </div>
@@ -60,6 +61,7 @@ const Banner = (props) => {
             <CartModal {...props}/>
           </div>
         </div>
+        <LoginModal {...props}/>
       </div>
     
    );

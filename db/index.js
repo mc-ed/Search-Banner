@@ -133,4 +133,10 @@ const signUp = (cookie, username, password) => {
   return Promise.all(promises);
 }
 
+const logIn = (username, password) => {
+  return new Promise((res, rej) => {
+    User.findOne({username})
+  })
+}
+
 module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp };

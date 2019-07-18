@@ -182,14 +182,13 @@ class App extends Component {
 
   handlePassword(e) {
     let password = e.target.value;
-    console.log(password)
     this.setState({ password: password });
   }
 
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
       console.log('signed up! got back: ', signedUp);
     })
   }

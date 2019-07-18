@@ -27,7 +27,7 @@ const LoginModal = (props) => {
          <Form.Group controlId="formBasicChecbox">
            <Form.Check type="checkbox" label="Check me out" />
          </Form.Group>
-         <Button variant="primary" type="submit" onClick={() => props.createAccount()}>
+         <Button variant="success" type="submit" onClick={() => props.createAccount()}>
            Create Account
          </Button>
        </Form>
@@ -48,6 +48,9 @@ const LoginModal = (props) => {
           <Form.Group controlId="formBasicChecbox">
             <Form.Check type="checkbox" label="Check me out" />
           </Form.Group>
+          <Button variant="primary" type="submit" >
+           Sign In
+          </Button>
         </Form>
         }
       </Modal.Body>
@@ -61,7 +64,7 @@ const LoginModal = (props) => {
             Back
           </Button>  
           : 
-          <Button variant="primary" onClick={()=>props.signUpWindowToggler()}>
+          <Button variant="info" onClick={()=>props.signUpWindowToggler()}>
             Sign Up
           </Button>  
         }

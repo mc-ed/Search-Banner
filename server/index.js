@@ -7,6 +7,9 @@ const db = require('../db/index.js');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
+const bcrypt = require('bcrypt');
+const round = 10;
+
 
 const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com']
 const corsOptions = {

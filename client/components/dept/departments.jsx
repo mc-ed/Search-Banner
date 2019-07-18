@@ -48,7 +48,7 @@ class Departments extends Component {
       return ( 
         <React.Fragment>
           <div className={`col-3 ${style['column-adjust']}`} style={{backgroundColor: browsingColor}}  onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
-            <div className={`dropdown-toggle  ${style.deptDropDownWrapper}`} data-toggle="dropdown" >
+            <div className={`${style.deptDropDownWrapper}`}>
           <div className={`row ${style['row-adjust']}`} >  
             <div className={`col-2 ${style['column-adjust']} ${style['destroy-padding-right']}`} >
               <div className={`${style['hamburger-wrapper']}`} >
@@ -60,8 +60,10 @@ class Departments extends Component {
                 <a className={`${style.department}`} >Departments</a>
               </div>
             </div>
-            <div className={`col-3 ${style['drop-down-icon']}`}>
-              {'\uEDBF'}
+            <div className={`col-3`}>
+              <div className={`${style.dropDownIconWrapper}`} >
+                <div className={`${style['drop-down-icon']}`}></div>
+              </div>
             </div>
           </div>
           <DepartmentList 

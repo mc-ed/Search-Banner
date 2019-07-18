@@ -4,7 +4,7 @@ import style from '../../style/main.less'
 
 const DepartmentList = (props) => {
   return ( 
-    <div className={`dropdown-menu ${style['category-wrapper']}`}>
+    <div className={`${style['category-wrapper']}`}>
         {props.deptList.map((department, i) => {
             return (
                 <DepartmentListEntry

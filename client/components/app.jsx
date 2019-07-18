@@ -37,6 +37,7 @@ class App extends Component {
   componentDidMount() {
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
+      console.log('woo new item to cart!', data.detail);
       newCartItem.price = Number(data.detail.price);
       let exists = false;
       let existingIndex = -1;

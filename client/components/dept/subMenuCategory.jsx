@@ -17,7 +17,6 @@ class SubMenuCategory extends Component {
       axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.props.category}`, {withCredentials: true}).then((items) => {
       // axios.get(`/item?category=${this.props.category}`).then((items) => {
         this.setState({ items: items.data, mounted: true })
-        // console.log(items)
       })
     }
   }
@@ -28,7 +27,7 @@ class SubMenuCategory extends Component {
             {this.state.items.map((item, i) => {
               return (
                   <Carousel.Item key={i}>
-                    <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt=""/>
+                    <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.state.items[i].id}})))}/>
                     {/* <Carousel.Caption>
                       <div style={{color: '#5d5d5d'}}>And here's some <strong>{item.itemName}</strong> content. It's very engaging. right?</div>
                     </Carousel.Caption> */}
@@ -47,7 +46,7 @@ class SubMenuCategory extends Component {
                 {this.state.items.map((item, i) => {
                   return (
                     <Carousel.Item key={i}>
-                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}})))}/>
+                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id} })))}/>
                     </Carousel.Item>
                     )
                 })}

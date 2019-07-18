@@ -46,35 +46,40 @@ class Departments extends Component {
     
     if(this.state.updated) {
       return ( 
-        <div className={`col-3 ${style['column-adjust']}`}>
-          <div className={`row ${style['row-adjust']}`} style={{position: 'absolute'}} onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
-            <div className={`col-3 ${style['column-adjust']} ${style['destroy-padding-right']}`}>
-              <div className={`${style['hamburger-wrapper']}`}>
+        <React.Fragment>
+          <div className={`col-3 ${style['column-adjust']}`} style={{backgroundColor: browsingColor}}  onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
+            <div className={`dropdown-toggle  ${style.deptDropDownWrapper}`} data-toggle="dropdown" >
+          <div className={`row ${style['row-adjust']}`} >  
+            <div className={`col-2 ${style['column-adjust']} ${style['destroy-padding-right']}`} >
+              <div className={`${style['hamburger-wrapper']}`} >
                 <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
               </div>
             </div>
-            <div className={`col-9 ${style['column-adjust']} ${style.popper}`}>
-              <div id="dept-wrapper" className={`${style['department-wrapper']}`} style={{backgroundColor: browsingColor}}>
-                <a className={`${style.department}`} >  Departments         </a>
+            <div className={`col-7 ${style['column-adjust']} ${style.popper}`} >
+              <div id="dept-wrapper" className={`${style['department-wrapper']}`} >
+                <a className={`${style.department}`} >Departments</a>
               </div>
-                {this.props.showDept ? 
-  
-                    <DepartmentList 
-                      handleBrowsing={this.props.handleBrowsing}
-                      dataList={this.props.dataList} 
-                      deptList={this.props.deptList}
-                      categoriesPerDept={this.state.categoriesPerDept}
-                      onMouseEnterHandler={this.onMouseEnterHandler} 
-                      onMouseLeaveHandler={this.onMouseLeaveHandler}
-                      category={this.state.entering}
-                      deptToggler={this.props.deptToggler}
-                    />
-                  :
-                  null
-                }
+            </div>
+            <div className={`col-3 ${style['drop-down-icon']}`}>
+              {'\uEDBF'}
             </div>
           </div>
+          <DepartmentList 
+            handleBrowsing={this.props.handleBrowsing}
+            dataList={this.props.dataList} 
+            deptList={this.props.deptList}
+            categoriesPerDept={this.state.categoriesPerDept}
+            onMouseEnterHandler={this.onMouseEnterHandler} 
+            onMouseLeaveHandler={this.onMouseLeaveHandler}
+            category={this.state.entering}
+            deptToggler={this.props.deptToggler}
+          />
+          </div>
         </div>
+          
+        </React.Fragment>
+        
+        
       );
     } else {
       return null;

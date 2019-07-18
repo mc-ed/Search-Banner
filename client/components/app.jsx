@@ -21,7 +21,11 @@ class App extends Component {
       showCart: false,
       showDept: false,
       browsing: false,
-      reviewStat: []
+      reviewStat: [],
+      loginWindow: false,
+      logoutWindow: false,
+      loggedIn: false,
+      username: ''
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -32,6 +36,8 @@ class App extends Component {
     this.handleBrowsing = this.handleBrowsing.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.addItem = this.addItem.bind(this);
+    this.loginWindowToggler = this.loginWindowToggler.bind(this);
+    this.logoutWindowToggler =this.logoutWindowToggler.bind(this);
   }
 
   componentDidMount() {
@@ -147,6 +153,14 @@ class App extends Component {
     this.setState({showCart: !this.state.showCart});
   }
 
+  loginWindowToggler() {
+    this.setState({loginWindow: !this.state.loginWindow});
+  }
+
+  logoutWindowToggler() {
+    this.setState({logoutWindow: !this.state.logoutWindow});
+  }
+
   handleBrowsing() {
     this.setState({browsing: !this.state.browsing});
   }
@@ -185,6 +199,12 @@ class App extends Component {
           cartItemList={this.state.cartItemList}
           removeItem={this.removeItem}
           cartModalToggler={this.cartModalToggler}
+          loggedIn={this.state.loggedIn}
+          loginWindow={this.state.loginWindow}
+          logoutWindow={this.state.logoutWindow}
+          loginWindowToggler={this.loginWindowToggler}
+          logoutWindowToggler={this.logoutWindowToggler}
+          username={this.state.username}
         />
         </div>
         <Navbar 

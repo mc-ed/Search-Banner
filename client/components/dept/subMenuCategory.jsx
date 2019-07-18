@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import style from '../../style/main.less'
-import { Popover, OverlayTrigger, Carousel } from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import axios from 'axios';
 
 class SubMenuCategory extends Component {
@@ -21,22 +21,6 @@ class SubMenuCategory extends Component {
     }
   }
   render() { 
-    const popover = (
-      <Popover id="popover-basic" title={this.props.category}>
-        <Carousel interval={1000}>
-            {this.state.items.map((item, i) => {
-              return (
-                  <Carousel.Item key={i}>
-                    <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.state.items[i].id}})))}/>
-                    {/* <Carousel.Caption>
-                      <div style={{color: '#5d5d5d'}}>And here's some <strong>{item.itemName}</strong> content. It's very engaging. right?</div>
-                    </Carousel.Caption> */}
-                  </Carousel.Item>
-              )
-            })}
-        </Carousel>
-      </Popover>
-    );
     return ( 
       // <OverlayTrigger trigger={['click']} placement="right" overlay={popover}>
         <li className={`dropdown-submenu ${style['dropdown-submenu']}`}> 
@@ -46,7 +30,7 @@ class SubMenuCategory extends Component {
                 {this.state.items.map((item, i) => {
                   return (
                     <Carousel.Item key={i}>
-                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id} })))}/>
+                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: item.id}})))}/>
                     </Carousel.Item>
                     )
                 })}

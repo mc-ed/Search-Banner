@@ -89,6 +89,13 @@ app.get('/getcart', cartshit, (req, res) => {
   })
 })
 
+app.post('/signup', (req, res) => {
+  console.log(req.body);
+  db.signUp(req.signedCookies.user_id, req.body.username, req.body.password).then((signedup) => {
+    console.log('signed up! got back: ', signedup);
+    res.send();
+  })
+})
 
 
 app.listen(PORT, () => (console.log(`Listening for port: ${PORT}`)));

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://dongjae93:qkrehdwo7@connect4-xkfvh.mongodb.net/FEC?retryWrites=true&w=majority', {useNewUrlParser: true});
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -13,12 +14,22 @@ const itemSchema = new mongoose.Schema({
 })
 
 const cartSchema = new mongoose.Schema({
-  uid: String,
+  uid: {type: String, unique: true},
+  username: { type: String, default: 'Anonymous' },
   cartItemList: Array
 })
 
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  cookie: String
+})
+
+
+
 const Item = mongoose.model('Item', itemSchema);
 const Cart = mongoose.model('Cart', cartSchema);
+const User = mongoose.model('User', userSchema);
 // new Item({
 //   id: 43,
 //   itemName: "John-Deere-Z335E-20-HP-V-twin-Dual-Hydrostatic-42-in-Zero-turn-Lawn-Mower-with-Mulching-Capability-(Kit-Sold-Separately)",
@@ -106,4 +117,20 @@ const get3Items = (category) => {
   })
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem };
+const signUp = (cookie, username, password) => {
+  let promises = [];
+  promises.push(new Promise((res, rej) => {
+    Cart.findOneAndUpdate({uid: cookie}, { username }, (err, cart) => {
+      if(err) {
+        console.log('signing into cart error: ', err);
+        rej(err);
+      }
+      res(cart);
+    })
+  }))
+  let newUser = new User({ username, password, cookie });
+  promises.push(newUser.save());
+  return Promise.all(promises);
+}
+
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp };

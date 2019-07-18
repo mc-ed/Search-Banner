@@ -25,7 +25,9 @@ class App extends Component {
       loginWindow: false,
       logoutWindow: false,
       loggedIn: false,
-      username: ''
+      signUpWindow: false,
+      username: '',
+      password: '',
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -38,6 +40,10 @@ class App extends Component {
     this.addItem = this.addItem.bind(this);
     this.loginWindowToggler = this.loginWindowToggler.bind(this);
     this.logoutWindowToggler =this.logoutWindowToggler.bind(this);
+    this.signUpWindowToggler = this.signUpWindowToggler.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
+    this.handleUsername = this.handleUsername.bind(this);
+    this.createAccount = this.createAccount.bind(this);
   }
 
   componentDidMount() {
@@ -154,11 +160,38 @@ class App extends Component {
   }
 
   loginWindowToggler() {
-    this.setState({loginWindow: !this.state.loginWindow});
+    this.setState({loginWindow: !this.state.loginWindow}, () => {
+      setTimeout(() => {
+        this.setState({signUpWindow: false})
+      }, 100);
+    });
   }
 
   logoutWindowToggler() {
     this.setState({logoutWindow: !this.state.logoutWindow});
+  }
+
+  signUpWindowToggler() {
+    this.setState({signUpWindow: !this.state.signUpWindow, username: '', password: ''});
+  }
+
+  handleUsername(e) {
+    let username = e.target.value;
+    this.setState({ username: username });
+  }
+
+  handlePassword(e) {
+    let password = e.target.value;
+    console.log(password)
+    this.setState({ password: password });
+  }
+
+  createAccount() {
+    let username = this.state.username;
+    let password = this.state.password;
+    axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+      console.log('signed up! got back: ', signedUp);
+    })
   }
 
   handleBrowsing() {
@@ -205,6 +238,12 @@ class App extends Component {
           loginWindowToggler={this.loginWindowToggler}
           logoutWindowToggler={this.logoutWindowToggler}
           username={this.state.username}
+          password={this.state.password}
+          signUpWindow={this.state.signUpWindow}
+          signUpWindowToggler={this.signUpWindowToggler}
+          handlePassword={this.handlePassword}
+          handleUsername={this.handleUsername}
+          createAccount={this.createAccount}
         />
         </div>
         <Navbar 

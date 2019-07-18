@@ -84,6 +84,8 @@ class App extends Component {
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
+        let username = results[0].data.username;
+        let loggedIn = (username === undefined || username === 'Anonymous') ? false : true;
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
             const element = cartItemList[index].amount;
@@ -111,7 +113,10 @@ class App extends Component {
           }))],
           cartItemList: cartItemList,
           cartNumItemTotal: total,
-          reviewStat: results[1].data
+          reviewStat: results[1].data,
+          loggedIn: loggedIn,
+          logoutWindow: loggedIn,
+          usernameShow: username
         });
       })
     })
@@ -191,7 +196,7 @@ class App extends Component {
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
       console.log('signed up! got back: ', signedUp);
     })
   }
@@ -201,7 +206,7 @@ class App extends Component {
     let password = this.state.password;
     console.log('hi');
     this.setState({loggingIn: true}, () => {
-      axios.post('/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
         setTimeout(() => {
           this.setState({loggedIn: loggedIn.data, usernameShow: username, loggingIn: false ,username: '', password: ''});
         }, 1500);

@@ -133,10 +133,21 @@ const signUp = (cookie, username, password) => {
   return Promise.all(promises);
 }
 
-const logIn = (username, password) => {
+const logIn = (username) => {
   return new Promise((res, rej) => {
     User.findOne({username})
+    .then((user) => {
+      if(!user) {
+        console.log('user not found');
+        rej('user not found');
+      } else {
+        res(user.password);
+      }
+    })
+    .catch((err) => {
+      rej(err);
+    })
   })
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp };
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn };

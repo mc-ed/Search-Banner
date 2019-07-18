@@ -28,6 +28,8 @@ class App extends Component {
       signUpWindow: false,
       username: '',
       password: '',
+      loggingIn: false,
+      usernameShow: '',
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -44,6 +46,7 @@ class App extends Component {
     this.handlePassword = this.handlePassword.bind(this);
     this.handleUsername = this.handleUsername.bind(this);
     this.createAccount = this.createAccount.bind(this);
+    this.logIn = this.logIn.bind(this);
   }
 
   componentDidMount() {
@@ -188,9 +191,23 @@ class App extends Component {
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+    axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
       console.log('signed up! got back: ', signedUp);
     })
+  }
+
+  logIn() {
+    let username = this.state.username;
+    let password = this.state.password;
+    console.log('hi');
+    this.setState({loggingIn: true}, () => {
+      axios.post('/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+        setTimeout(() => {
+          this.setState({loggedIn: loggedIn.data, usernameShow: username, loggingIn: false ,username: '', password: ''});
+        }, 1500);
+    })}
+    );
+    
   }
 
   handleBrowsing() {
@@ -237,12 +254,15 @@ class App extends Component {
           loginWindowToggler={this.loginWindowToggler}
           logoutWindowToggler={this.logoutWindowToggler}
           username={this.state.username}
+          usernameShow={this.state.usernameShow}
           password={this.state.password}
           signUpWindow={this.state.signUpWindow}
           signUpWindowToggler={this.signUpWindowToggler}
           handlePassword={this.handlePassword}
           handleUsername={this.handleUsername}
           createAccount={this.createAccount}
+          loggingIn={this.state.loggingIn}
+          logIn={this.logIn}
         />
         </div>
         <Navbar 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Spinner } from 'react-bootstrap';
 import style from '../../style/main.less';
 
 const LoginModal = (props) => {
@@ -33,25 +33,31 @@ const LoginModal = (props) => {
        </Form>
        :
        <Form>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Username</Form.Label>
-            <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
-          </Form.Group>
-        
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
-          </Form.Group>
-          <Form.Group controlId="formBasicChecbox">
-            <Form.Check type="checkbox" label="Check me out" />
-          </Form.Group>
-          <Button variant="primary" type="submit" >
-           Sign In
-          </Button>
-        </Form>
+          {props.loggingIn ? 
+          <Spinner animation="border" variant="info" /> 
+          : 
+          <React.Fragment>
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label>Username</Form.Label>
+              <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+              <Form.Text className="text-muted">
+                We'll never share your email with anyone else.
+              </Form.Text>
+            </Form.Group>
+          
+            <Form.Group controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
+            </Form.Group>
+            <Form.Group controlId="formBasicChecbox">
+              <Form.Check type="checkbox" label="Check me out" />
+            </Form.Group>
+            <Button variant="primary" onClick={() =>props.logIn()}>
+            Sign In
+            </Button>
+          </React.Fragment>
+          }
+      </Form>
         }
       </Modal.Body>
 

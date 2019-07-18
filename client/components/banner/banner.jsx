@@ -39,7 +39,7 @@ const Banner = (props) => {
                     {"lowes \n"}
                     </span>
                     <span className={`${style['signin-font']}`} onClick={()=>props.loginWindowToggler()}>
-                      {props.loggedIn ? props.username : 'Sign in'}
+                      {props.loggedIn ? props.usernameShow : 'Sign in'}
                     </span>
                   </div>
               </div>

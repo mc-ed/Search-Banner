@@ -94,9 +94,37 @@ app.get('/getcart', cartshit, (req, res) => {
 
 app.post('/signup', (req, res) => {
   console.log(req.body);
-  db.signUp(req.signedCookies.user_id, req.body.username, req.body.password).then((signedup) => {
-    console.log('signed up! got back: ', signedup);
-    res.send();
+  bcrypt.genSalt(round, (err, salt) => {
+    if(err) {
+      console.log(err)
+      res.send('HAHAHAHLOLOLOLOL')
+    } else {
+      bcrypt.hash(req.body.password, salt, (error, hashedPW) => {
+        if(err) {
+          console.log('error in hash:', error)
+          res.send('HASHAHHAHDLOLOLO@@@@@')
+        } else {
+          console.log('cookies', req.signedCookies);
+          db.signUp(req.signedCookies.user_id, req.body.username, hashedPW).then((signedup) => {
+            console.log('signed up! got back: ', signedup); 
+            res.send();
+          })
+        }
+      })
+    }
+  })
+})
+
+app.post('/login', (req, res) => {
+  db.logIn(req.body.username).then((hashedPW) => {
+    bcrypt.compare(req.body.password, hashedPW).then((result) => {
+      console.log(result);
+      if(result) {
+        res.send(true);
+      } else {
+        res.send(false);
+      }
+    })
   })
 })
 

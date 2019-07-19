@@ -14,7 +14,7 @@ const itemSchema = new mongoose.Schema({
 })
 
 const cartSchema = new mongoose.Schema({
-  cookie: {type: String, unique: true},
+  cookie: String,
   username: { type: String, default: 'Anonymous' },
   cartItemList: Array
 })
@@ -66,8 +66,9 @@ const saveCart = (id, cartItemList) => {
       if(err) {
         console.log('save cart error: ', err);
         rej(err);
+      } else {
+        res(cart);
       }
-      res(cart);
     })
     
   })
@@ -88,14 +89,21 @@ const getCart = (id) => {
   })
 }
 
-const getUserCart = (username) => {
+const getUserCart = (username, cookie) => {
   return new Promise((res, rej) => {
     Cart.findOne({ username }, (err, cart) => {
       if(err) {
         console.log('error getting specific user', err);
-        rej(err)
+        rej(err);
       } else {
-        res(cart)
+        Cart.findOneAndUpdate({ username }, {cookie}, (err, updated) => {
+          if(err) {
+            console.log('updating user cart cookie error:', err);
+          } else {
+            console.log('updated cookie of user cart succcessfully', updated);
+            res(cart);
+          }
+        })
       }
     })
   })
@@ -184,7 +192,7 @@ const logOut = (username) => {
 
   return (
     new Promise((res, rej) => {
-      User.findOneAndUpdate({ username }, { cookie: "" }, (err, deletedCoikie) => {
+      User.findOneAndUpdate({ username }, { cookie: "" }, (err, deletedCookie) => {
         if(err) {
           console.log('error occure logging out user cookie', err);
           rej(err);

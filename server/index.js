@@ -48,7 +48,7 @@ app.get('/item', (req, res) => {
 })
 
 app.post('/savecart', (req, res) => {
-  console.log('saving to cart')
+  console.log('saving to cart cookie: ', req.signedCookies.user_id)
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
   })
@@ -133,7 +133,7 @@ app.post('/login', (req, res) => {
 
 app.get('/getusercart', (req, res) => {
   // console.log(req.query.username)
-  db.getUserCart(req.query.username).then((userCart) => {
+  db.getUserCart(req.query.username, req.signedCookies.user_id).then((userCart) => {
     console.log(userCart)
     res.send(userCart);
   }).catch((nocart) => {
@@ -146,6 +146,8 @@ app.get('/logout', (req, res) => {
   db.logOut(req.query.username).then((loggedOut) => {
     console.log('logoutted', loggedOut);
     res.clearCookie('user_id');
+    let cookie = uuidv4();
+    res.cookie('user_id', cookie, {signed: true});
     res.send();
   }).catch((didnt) => {
     console.log('logout route error: ', didnt)

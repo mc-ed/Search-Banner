@@ -33,7 +33,6 @@ class App extends Component {
       usernameShow: ''
     }
     this.deployed = true;
-    this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
     this.handleSearch = this.handleSearch.bind(this);
     this.suggestionToggler = this.suggestionToggler.bind(this);
     this.cartModalToggler = this.cartModalToggler.bind(this);
@@ -83,7 +82,6 @@ class App extends Component {
       let promises =[];
       promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
-      // promises.push(axios.get('/verify', {withCredentials: true}))
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
@@ -136,7 +134,7 @@ class App extends Component {
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
           console.log('saved!')
-          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}).then(() => {
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}, {withCredentials: true}).then(() => {
             console.log('delted 0 item from cart!');
           })
         })
@@ -212,12 +210,17 @@ class App extends Component {
     let password = this.state.password;
     this.setState({loggingIn: true}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
-        if(loggedIn.data) {
+        if(loggedIn.data === true) {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
             let totalCartItem = 0;
-            userCart.data.cartItemList.forEach((cartItem) => {
-              totalCartItem += cartItem.amount;
-            })
+            let userCartItemList = [];
+            console.log('usercart', userCart);
+            if(userCart.data) {
+              userCart.data.cartItemList.forEach((cartItem) => {
+                totalCartItem += cartItem.amount;
+              })
+              userCartItemList = userCart.data.cartItemList;
+            }
             setTimeout(() => {
               this.setState({
                 loggedIn: loggedIn.data, 
@@ -226,9 +229,9 @@ class App extends Component {
                 loggingIn: false , 
                 username: '', 
                 password: '', 
-                cartItemList: userCart.data.cartItemList, 
+                cartItemList: userCartItemList, 
                 logoutWindow: loggedIn.data,
-                totalCartItem: totalCartItem
+                cartNumItemTotal: totalCartItem
                 });
             }, 1500);
           })
@@ -246,7 +249,7 @@ class App extends Component {
     this.setState({loggingOut: true}, () => {
       axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
         console.log(result);
-        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false});
+        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
       })
     })
     

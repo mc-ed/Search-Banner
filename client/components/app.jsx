@@ -30,7 +30,8 @@ class App extends Component {
       password: '',
       loggingIn: false,
       loggingOut: false,
-      usernameShow: ''
+      usernameShow: '',
+      signInPopover: false
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -74,6 +75,17 @@ class App extends Component {
           console.log('saved!')
         })
       })
+    })
+    window.addEventListener('favorite', (data) => {
+      console.log(data.detail);
+      let favorite = data.detail;
+      if(this.state.loggedIn) {
+        axios.post('/favorite', { favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+        
+        })
+      }
+
+      
     })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
@@ -203,6 +215,10 @@ class App extends Component {
     axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
       console.log('signed up! got back: ', signedUp);
     })
+  }
+
+  signInPopoverToggler() {
+    
   }
 
   logIn() {

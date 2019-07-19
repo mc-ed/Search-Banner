@@ -22,7 +22,8 @@ const cartSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  cookie: String
+  cookie: String,
+  favorite: Array
 })
 
 

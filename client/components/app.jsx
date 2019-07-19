@@ -29,7 +29,8 @@ class App extends Component {
       username: '',
       password: '',
       loggingIn: false,
-      usernameShow: '',
+      loggingOut: false,
+      usernameShow: ''
     }
     this.deployed = true;
     this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
@@ -47,6 +48,7 @@ class App extends Component {
     this.handleUsername = this.handleUsername.bind(this);
     this.createAccount = this.createAccount.bind(this);
     this.logIn = this.logIn.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount() {
@@ -79,12 +81,14 @@ class App extends Component {
     .then((itemlist) => {
       // console.log('got response from itemlist: ', itemlist)
       let promises =[];
-      promises.push(axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true}))
+      promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      // promises.push(axios.get('/verify', {withCredentials: true}))
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
         let username = results[0].data.username;
+        console.log('username:', username);
         let loggedIn = (username === undefined || username === 'Anonymous') ? false : true;
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
@@ -92,7 +96,9 @@ class App extends Component {
             total += element;
           }
         } else {
+
           cartItemList = [];
+          
         }
         let data = {};
         itemlist.data.forEach((item) => {
@@ -204,14 +210,45 @@ class App extends Component {
   logIn() {
     let username = this.state.username;
     let password = this.state.password;
-    console.log('hi');
     this.setState({loggingIn: true}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
-        setTimeout(() => {
-          this.setState({loggedIn: loggedIn.data, usernameShow: username, loggingIn: false ,username: '', password: ''});
-        }, 1500);
+        if(loggedIn.data) {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
+            let totalCartItem = 0;
+            userCart.data.cartItemList.forEach((cartItem) => {
+              totalCartItem += cartItem.amount;
+            })
+            setTimeout(() => {
+              this.setState({
+                loggedIn: loggedIn.data, 
+                loginWindow: false, 
+                usernameShow: username, 
+                loggingIn: false , 
+                username: '', 
+                password: '', 
+                cartItemList: userCart.data.cartItemList, 
+                logoutWindow: loggedIn.data,
+                totalCartItem: totalCartItem
+                });
+            }, 1500);
+          })
+        } else {
+          setTimeout(() => {
+            this.setState({loggedIn: loggedIn.data, usernameShow: '', loggingIn: false , username: username, password: ''});
+          }, 1500);
+        }
     })}
     );
+  }
+
+  logOut() {
+    let username = this.state.usernameShow;
+    this.setState({loggingOut: true}, () => {
+      axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
+        console.log(result);
+        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false});
+      })
+    })
     
   }
 
@@ -267,7 +304,9 @@ class App extends Component {
           handleUsername={this.handleUsername}
           createAccount={this.createAccount}
           loggingIn={this.state.loggingIn}
+          loggingOut={this.state.loggingOut}
           logIn={this.logIn}
+          logOut={this.logOut}
         />
         </div>
         <Navbar 

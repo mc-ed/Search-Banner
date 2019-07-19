@@ -11,7 +11,7 @@ const bcrypt = require('bcrypt');
 const round = 10;
 
 
-const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com']
+const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com', 'http://fec-lowes-proxy.us-east-2.elasticbeanstalk.com']
 const corsOptions = {
   credentials: true,
   origin: function (origin, callback) {
@@ -120,11 +120,26 @@ app.post('/login', (req, res) => {
     bcrypt.compare(req.body.password, hashedPW).then((result) => {
       console.log(result);
       if(result) {
+        
         res.send(true);
       } else {
         res.send(false);
       }
     })
+  })
+})
+
+app.get('/getusercart', (req, res) => {
+  // console.log(req.query.username)
+  db.getUserCart(req.query.username).then((userCart) => {
+    console.log(userCart)
+    res.send(userCart);
+  })
+})
+
+app.get('/logout', (req, res) => {
+  db.logOut(req.query.username).then((loggedOut) => {
+    res.send();
   })
 })
 

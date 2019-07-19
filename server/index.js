@@ -120,12 +120,14 @@ app.post('/login', (req, res) => {
     bcrypt.compare(req.body.password, hashedPW).then((result) => {
       console.log(result);
       if(result) {
-        
         res.send(true);
       } else {
         res.send(false);
       }
     })
+  }).catch((longinFail) => {
+    console.log('login route fail', longinFail);
+    res.send({msg: 'Username not found'})
   })
 })
 
@@ -134,12 +136,20 @@ app.get('/getusercart', (req, res) => {
   db.getUserCart(req.query.username).then((userCart) => {
     console.log(userCart)
     res.send(userCart);
+  }).catch((nocart) => {
+    console.log('getusercart route error: ', nocart);
+    res.send('noPe');
   })
 })
 
 app.get('/logout', (req, res) => {
   db.logOut(req.query.username).then((loggedOut) => {
+    console.log('logoutted', loggedOut);
+    res.clearCookie('user_id');
     res.send();
+  }).catch((didnt) => {
+    console.log('logout route error: ', didnt)
+    res.send('nope');
   })
 })
 

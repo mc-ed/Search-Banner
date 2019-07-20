@@ -3,6 +3,7 @@ import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
 import adjust from '../style/adjust.less';
+import { Toast } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -28,9 +29,16 @@ class App extends Component {
       signUpWindow: false,
       username: '',
       password: '',
+      loggingIn: false,
+      loggingOut: false,
+      usernameShow: '',
+      signInPopover: false,
+      showToast: false,
+      favorite: {},
+      saved: false,
+      favoriteList: {}
     }
     this.deployed = true;
-    this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
     this.handleSearch = this.handleSearch.bind(this);
     this.suggestionToggler = this.suggestionToggler.bind(this);
     this.cartModalToggler = this.cartModalToggler.bind(this);
@@ -44,12 +52,14 @@ class App extends Component {
     this.handlePassword = this.handlePassword.bind(this);
     this.handleUsername = this.handleUsername.bind(this);
     this.createAccount = this.createAccount.bind(this);
+    this.logIn = this.logIn.bind(this);
+    this.logOut = this.logOut.bind(this);
+    this.toastToggler = this.toastToggler.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
-      console.log('woo new item to cart!', data.detail);
       newCartItem.price = Number(data.detail.price);
       let exists = false;
       let existingIndex = -1;
@@ -67,27 +77,51 @@ class App extends Component {
       }
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
+    })
+    window.addEventListener('favorite', (data) => {
+      let favorite = data.detail;
+      if(this.state.loggedIn) {
+        let username = this.state.usernameShow
+        if(!favorite.saved) {
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            let favoriteList = this.state.favoriteList;
+            delete favoriteList[favorite.product_id];
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
+          })
+        } else {
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            this.toastToggler.state.favoriteList[favorite[product_id]] = favorite;
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
+          })
+        }
+      } else {
+        this.setState({loginWindow: true});
+      }
     })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {
       // console.log('got response from itemlist: ', itemlist)
       let promises =[];
-      promises.push(axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true}))
+      promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
+        let username = results[0].data.username;
+        console.log('username:', username);
+        let loggedIn = (username === undefined || username === 'Anonymous') ? false : true;
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
             const element = cartItemList[index].amount;
             total += element;
           }
         } else {
+
           cartItemList = [];
+          
         }
         let data = {};
         itemlist.data.forEach((item) => {
@@ -108,7 +142,17 @@ class App extends Component {
           }))],
           cartItemList: cartItemList,
           cartNumItemTotal: total,
-          reviewStat: results[1].data
+          reviewStat: results[1].data,
+          loggedIn: loggedIn,
+          logoutWindow: loggedIn,
+          usernameShow: username
+        }, () => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
+            console.log(favorite.data.favorite)
+            this.setState({
+              favoriteList: favorite.data.favorite
+            })
+          })
         });
       })
     })
@@ -121,9 +165,7 @@ class App extends Component {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
-          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}).then(() => {
-            console.log('delted 0 item from cart!');
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}, {withCredentials: true}).then(() => {
           })
         })
       });
@@ -131,7 +173,6 @@ class App extends Component {
       this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
     }
@@ -142,7 +183,6 @@ class App extends Component {
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        console.log('saved!')
       })
     });
   }
@@ -182,16 +222,72 @@ class App extends Component {
 
   handlePassword(e) {
     let password = e.target.value;
-    console.log(password)
     this.setState({ password: password });
   }
 
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
-      console.log('signed up! got back: ', signedUp);
+    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
     })
+  }
+
+  toastToggler() {
+    this.setState({showToast: false});
+  }
+
+  signInPopoverToggler() {
+
+  }
+
+  logIn() {
+    let username = this.state.username;
+    let password = this.state.password;
+    this.setState({loggingIn: true}, () => {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+        if(loggedIn.data === true) {
+          window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true}}));
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
+            let totalCartItem = 0;
+            let userCartItemList = [];
+            if(userCart.data) {
+              userCart.data.cartItemList.forEach((cartItem) => {
+                totalCartItem += cartItem.amount;
+              })
+              userCartItemList = userCart.data.cartItemList;
+            }
+            setTimeout(() => {
+              this.setState({
+                loggedIn: loggedIn.data, 
+                loginWindow: false, 
+                usernameShow: username, 
+                loggingIn: false , 
+                username: '', 
+                password: '', 
+                cartItemList: userCartItemList, 
+                logoutWindow: loggedIn.data,
+                cartNumItemTotal: totalCartItem
+                });
+            }, 1500);
+          })
+        } else {
+          setTimeout(() => {
+            this.setState({loggedIn: loggedIn.data, usernameShow: '', loggingIn: false , username: username, password: ''});
+          }, 1500);
+        }
+    })}
+    );
+  }
+
+  logOut() {
+    let username = this.state.usernameShow;
+    this.setState({loggingOut: true}, () => {
+      axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
+        window.dispatchEvent(new CustomEvent('loggedOut', {detail: {loggedIn: false}}));
+        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
+      })
+    })
+    
   }
 
   handleBrowsing() {
@@ -238,12 +334,18 @@ class App extends Component {
           loginWindowToggler={this.loginWindowToggler}
           logoutWindowToggler={this.logoutWindowToggler}
           username={this.state.username}
+          usernameShow={this.state.usernameShow}
           password={this.state.password}
           signUpWindow={this.state.signUpWindow}
           signUpWindowToggler={this.signUpWindowToggler}
           handlePassword={this.handlePassword}
           handleUsername={this.handleUsername}
           createAccount={this.createAccount}
+          loggingIn={this.state.loggingIn}
+          loggingOut={this.state.loggingOut}
+          logIn={this.logIn}
+          logOut={this.logOut}
+          favoriteList={this.state.favoriteList}
         />
         </div>
         <Navbar 
@@ -266,6 +368,44 @@ class App extends Component {
             :
             null
           }
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            style={{
+              position: 'relative',
+              minHeight: '200px',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: '100px',
+              }}
+            >
+            <Toast onClose={() => this.toastToggler()} show={this.state.showToast} delay={3000} autohide>
+              <Toast.Header>
+                <strong className="mr-auto">{this.state.saved ? 'Saved to ' : 'Removed from '} {this.state.usernameShow}'s favorite!</strong>
+                <small>Just Now</small>
+              </Toast.Header>
+              <Toast.Body>
+                <div className="row">
+                  <div className="col-4">
+                    {this.state.showToast ? 
+                      <img style={{width: '100px', height: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${this.state.favorite['product_id']}.jpg`}/>
+                    :
+                      null
+                    }
+                  </div>
+                  <div className="col-8">
+                    {this.state.favorite.name} 
+                  </div>
+                </div>
+              </Toast.Body>
+            </Toast>
+            
+          </div>
+        </div>
       </header>
      );
   }

@@ -14,7 +14,7 @@ const itemSchema = new mongoose.Schema({
 })
 
 const cartSchema = new mongoose.Schema({
-  uid: {type: String, unique: true},
+  cookie: String,
   username: { type: String, default: 'Anonymous' },
   cartItemList: Array
 })
@@ -22,7 +22,8 @@ const cartSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  cookie: String
+  cookie: String,
+  favorite: Object
 })
 
 
@@ -48,7 +49,7 @@ const User = mongoose.model('User', userSchema);
 const deleteCartItem = (id) => {
   // console.log('deleting cart of: ', id);
   return new Promise((res, rej) => {
-    Cart.updateOne({uid: id}, {"$pull": {"cartItemList": {"amount": '0'}}}, { multi:true }, (err, obj) => {
+    Cart.updateOne({cookie: id}, {"$pull": {"cartItemList": {"amount": '0'}}}, { multi:true }, (err, obj) => {
       if(err) {
         rej(err)
       } else {
@@ -62,12 +63,13 @@ const deleteCartItem = (id) => {
 const saveCart = (id, cartItemList) => {
   // console.log('saving this id', id);
   return new Promise((res, rej) => {
-    Cart.findOneAndUpdate({uid: id}, { cartItemList }, {upsert: true }, (err, cart) => {
+    Cart.findOneAndUpdate({cookie: id}, { cartItemList }, {upsert: true }, (err, cart) => {
       if(err) {
         console.log('save cart error: ', err);
         rej(err);
+      } else {
+        res(cart);
       }
-      res(cart);
     })
     
   })
@@ -76,7 +78,7 @@ const saveCart = (id, cartItemList) => {
 const getCart = (id) => {
   return new Promise((res, rej) => {
     console.log('requesting from ip: ', id);
-    Cart.findOne({uid: id}, (err, cart) => {
+    Cart.findOne({cookie: id}, (err, cart) => {
       
       console.log('found cart from getCart', cart)
       if(err) {
@@ -84,6 +86,26 @@ const getCart = (id) => {
         rej(err);
       }
       res(cart);
+    })
+  })
+}
+
+const getUserCart = (username, cookie) => {
+  return new Promise((res, rej) => {
+    Cart.findOne({ username }, (err, cart) => {
+      if(err) {
+        console.log('error getting specific user', err);
+        rej(err);
+      } else {
+        Cart.findOneAndUpdate({ username }, {cookie}, (err, updated) => {
+          if(err) {
+            console.log('updating user cart cookie error:', err);
+          } else {
+            console.log('updated cookie of user cart succcessfully', updated);
+            res(cart);
+          }
+        })
+      }
     })
   })
 }
@@ -120,7 +142,7 @@ const get3Items = (category) => {
 const signUp = (cookie, username, password) => {
   let promises = [];
   promises.push(new Promise((res, rej) => {
-    Cart.findOneAndUpdate({uid: cookie}, { username }, (err, cart) => {
+    Cart.findOneAndUpdate({cookie: cookie}, { username }, (err, cart) => {
       if(err) {
         console.log('signing into cart error: ', err);
         rej(err);
@@ -133,4 +155,102 @@ const signUp = (cookie, username, password) => {
   return Promise.all(promises);
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp };
+const logIn = (username) => {
+  return new Promise((res, rej) => {
+    User.findOne({username})
+    .then((user) => {
+      if(!user) {
+        console.log('user not found');
+        rej('user not found');
+      } else {
+        res(user.password);
+      }
+    })
+    .catch((err) => {
+      rej(err);
+    })
+  })
+}
+
+const resetCookie = (username, cookie) => {
+
+
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({ username }, { cookie }, (err, updatedCookie) => {
+        if(err) {
+          console.log('error occure resetting user cookie', err);
+          rej(err);
+        } else {
+          res(updatedCookie);
+        }
+      })
+    })
+  )
+}
+
+const logOut = (username) => {
+
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({ username }, { cookie: "" }, (err, deletedCookie) => {
+        if(err) {
+          console.log('error occure logging out user cookie', err);
+          rej(err);
+        } else {
+          res(deletedCookie);
+        }
+      })
+    })
+  )
+}
+
+const saveFavorite = (username, favorite) => {
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({ username }, { $set: { [`favorite.${favorite['product_id']}`]: favorite } }, (err, result) => {
+        if(err) {
+          console.log('err happend saving favorite', err);
+          rej(err)
+        } else {
+          console.log('success in saving favorite', result);
+          res(result);
+        }
+      });
+    })
+  )
+}
+
+const removeFavorite = (username, favorite) => {
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({username}, {$unset : {[`favorite.${favorite.product_id}`]: 1}}, (err, removedFavorite) => {
+        if(err) {
+          console.log('err removing fave', err);
+          rej(err);
+        } else {
+          console.log('succeess in removing fave', removedFavorite);
+          res(removeFavorite);
+        }
+      })
+    })
+  )
+}
+
+const getFavorite = (username) => {
+  return(
+    new Promise((res, rej) => {
+      User.findOne({username}, (err, favorite) => {
+        if(err) {
+          console.log('error getting favorite of user: ', username)
+          console.log('error = ', err);
+          rej(err);
+        } else {
+          res(favorite);
+        }
+      })
+    })
+  )
+}
+
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn, logOut, getUserCart, resetCookie, saveFavorite, removeFavorite, getFavorite };

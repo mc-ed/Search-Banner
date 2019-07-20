@@ -373,14 +373,14 @@ class App extends Component {
             aria-atomic="true"
             style={{
               position: 'relative',
-              minHeight: '200px',
             }}
           >
             <div
               style={{
                 position: 'absolute',
                 top: 0,
-                right: '100px',
+                right: '50px',
+                zIndex: '10'
               }}
             >
             <Toast onClose={() => this.toastToggler()} show={this.state.showToast} delay={3000} autohide>

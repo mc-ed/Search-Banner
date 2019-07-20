@@ -19,6 +19,10 @@
   color: #fff !important;
   white-space: pre;
   cursor: pointer;
+  @media(max-width: 991px) {
+    font-size: 16px;
+    white-space: pre;
+  }
 }
 
 .flyouts {
@@ -36,6 +40,9 @@
 .hamburger {
   font-size: 24px;
   color: #fff;
+  @media(max-width: 991px) {
+    font-size: 20px;
+  }
 }
 
 
@@ -50,24 +57,10 @@
   transition: ease .3s;
 }
 
-
-
-.dropdown2:hover .dropdown2-menu {
-  display: block;
-  width: 100% !important;
-}
-
 // Still implementing
 .popper {
   z-index: 50;
 }
-
-// .department-wrapper .category-wrapper {
-//   position: relative;
-//   top: 100%;
-//   width: 100%;
-//   z-index: 50;
-// }
 
 .category-wrapper {
   display: none;
@@ -104,6 +97,9 @@
   vertical-align: top;
   -webkit-transition: ease .3s;
   transition: ease .3s;
+  @media(max-width: 991px) {
+    margin-left: 7px;
+  }
 }
 
 .dropDownIconWrapper {

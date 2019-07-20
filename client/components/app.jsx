@@ -36,7 +36,9 @@ class App extends Component {
       showToast: false,
       favorite: {},
       saved: false,
-      favoriteList: {}
+      favoriteList: {},
+      loginFail: false,
+      signUpFail: false
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -61,12 +63,10 @@ class App extends Component {
     window.addEventListener('stars', e => {
       const id = e.detail.id;
       axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/${id}`, {withCredentials: true}).then((reviews) => {
-        this.state.reviewStat[id] = reviews.data;
+        this.state.reviewStat[id-1] = reviews.data;
+        this.setState({reviewStat: this.state.reviewStat})
       })
     });
-    window.addEventListener('loggedIn', (data) => {
-      console.log(data.detail)
-    })
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
       newCartItem.price = Number(data.detail.price);
@@ -157,7 +157,6 @@ class App extends Component {
           usernameShow: username
         }, () => {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
-            console.log(favorite.data.favorite)
             if(this.state.loggedIn) {
               let userFavorite = [];
               for (const id in favorite.data.favorite) {
@@ -176,7 +175,6 @@ class App extends Component {
   }
 
   removeItem(cartId) {
-    console.log(cartId);
     if(this.state.cartItemList[cartId].amount === 1) {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
@@ -195,7 +193,6 @@ class App extends Component {
   }
 
   addItem(cartId) {
-    console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
@@ -244,8 +241,16 @@ class App extends Component {
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
-    })
+    if(!username) {
+      this.setState({signUpFail: true});
+    } else if(!password) {
+      this.setState({signUpFail: true});
+    } else {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+        console.log('signedup!', signedUp);
+        this.setState({signUpFail: false});
+      })
+    }
   }
 
   toastToggler() {
@@ -259,48 +264,57 @@ class App extends Component {
   logIn() {
     let username = this.state.username;
     let password = this.state.password;
-    this.setState({loggingIn: true}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
-        if(loggedIn.data === true) {
-          
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
-            let totalCartItem = 0;
-            let userCartItemList = [];
-            if(userCart.data) {
-              userCart.data.cartItemList.forEach((cartItem) => {
-                totalCartItem += cartItem.amount;
-              })
-              userCartItemList = userCart.data.cartItemList;
-            }
-            axios.get(`http://http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${username}` ,{withCredentials: true}).then((userFavorites) => {
-              let userFavorite = [];
-              for (const id in userFavorites.data.favorite) {
-                userFavorite.push(Number(id));
+    if(!username) {
+      this.setState({loginFail: 'username'});
+    } else if(!password) {
+      this.setState({loginFail: 'password'});
+    } else {
+      
+      this.setState({loggingIn: true}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+          if(loggedIn.data === true) {
+            
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
+              let totalCartItem = 0;
+              let userCartItemList = [];
+              if(userCart.data) {
+                userCart.data.cartItemList.forEach((cartItem) => {
+                  totalCartItem += cartItem.amount;
+                })
+                userCartItemList = userCart.data.cartItemList;
               }
-              window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
-              setTimeout(() => {
-                this.setState({
-                  loggedIn: loggedIn.data, 
-                  loginWindow: false, 
-                  usernameShow: username, 
-                  loggingIn: false , 
-                  username: '', 
-                  password: '', 
-                  cartItemList: userCartItemList, 
-                  logoutWindow: loggedIn.data,
-                  cartNumItemTotal: totalCartItem,
-                  favoriteList: userFavorites.data.favorite
-                  });
-              }, 1500);
+              axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${username}` ,{withCredentials: true}).then((userFavorites) => {
+                let userFavorite = [];
+                for (const id in userFavorites.data.favorite) {
+                  userFavorite.push(Number(id));
+                }
+                window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
+                setTimeout(() => {
+                  this.setState({
+                    loggedIn: loggedIn.data, 
+                    loginWindow: false, 
+                    usernameShow: username, 
+                    loggingIn: false , 
+                    username: '', 
+                    password: '', 
+                    cartItemList: userCartItemList, 
+                    logoutWindow: loggedIn.data,
+                    cartNumItemTotal: totalCartItem,
+                    favoriteList: userFavorites.data.favorite,
+                    loginFail: false
+                    });
+                }, 1500);
+              })
             })
-          })
-        } else {
-          setTimeout(() => {
-            this.setState({loggedIn: loggedIn.data, usernameShow: '', loggingIn: false , username: username, password: ''});
-          }, 1500);
-        }
-    })}
-    );
+          } else {
+            setTimeout(() => {
+              let loginFailMsg = loggedIn.data === false ? 'password' : 'username';
+              this.setState({loggedIn: false, usernameShow: false, loggingIn: false , username: username, password: '', loginFail: loginFailMsg});
+            }, 1500);
+          }
+      })}
+      );
+    }
   }
 
   logOut() {
@@ -370,6 +384,7 @@ class App extends Component {
           logIn={this.logIn}
           logOut={this.logOut}
           favoriteList={this.state.favoriteList}
+          loginFail={this.state.loginFail}
         />
         </div>
         <Navbar 

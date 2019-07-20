@@ -63,6 +63,17 @@ const LoginModal = (props) => {
       </Modal>
     )
   } else { 
+    let PW = "valid";
+    let Username = "valid";
+      
+    props.loginFail ? 
+      props.loginFail === 'password' ? 
+        PW = "invalid"
+        : 
+        Username = "invalid"
+      : 
+      null
+
     return ( 
       <Modal show={props.loginWindow} onHide={()=>props.loginWindowToggler()}>
         <Modal.Header closeButton >
@@ -72,9 +83,10 @@ const LoginModal = (props) => {
         <Modal.Body> 
           {props.signUpWindow ? 
            <Form>
-           <Form.Group controlId="formBasicEmail">
+           <Form.Group controlId="validationCustomUsername">
              <Form.Label>Username</Form.Label>
-             <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+             <Form.Control required placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+             <Form.Control.Feedback type="invalid">Username is Required</Form.Control.Feedback>
              <Form.Text className="text-muted">
                We'll never share your email with anyone else.
              </Form.Text>
@@ -97,9 +109,10 @@ const LoginModal = (props) => {
             <Spinner animation="border" variant="info" /> 
             : 
             <React.Fragment>
-              <Form.Group controlId="formBasicEmail">
+              <Form.Group controlId="validationCustomUsername">
                 <Form.Label>Username</Form.Label>
-                <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+                <Form.Control required placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+                <Form.Control.Feedback type="invalid">Username is Required</Form.Control.Feedback>
                 <Form.Text className="text-muted">
                   We'll never share your email with anyone else.
                 </Form.Text>
@@ -107,7 +120,8 @@ const LoginModal = (props) => {
             
               <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
+                <Form.Control required type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
+                <Form.Control.Feedback type="invalid">Password is Required</Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId="formBasicChecbox">
                 <Form.Check type="checkbox" label="Check me out" />

@@ -12,11 +12,12 @@ const round = 10;
 
 
 const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com', 'http://fec-lowes-proxy.us-east-2.elasticbeanstalk.com', 'http://lowesproductoverview-env.mk2qecy2ne.us-east-2.elasticbeanstalk.com']
+const whitelistRegex = /http:\/\/localhost.*/;
 const corsOptions = {
   credentials: true,
   origin: function (origin, callback) {
     // console.log('in corsoption origin is: ', origin);
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
+    if (whitelist.indexOf(origin) !== -1 || !origin || whitelistRegex.test(origin)) {
       // console.log('hi');
       callback(null, true)
     } else {
@@ -51,6 +52,8 @@ app.post('/savecart', (req, res) => {
   console.log('saving to cart cookie: ', req.signedCookies.user_id)
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
+  }).catch((savingErr) => {
+    console.log('saving error', error);
   })
 })
 
@@ -87,7 +90,8 @@ function cartshit(req, res, next) {
 app.get('/getcart', cartshit, (req, res) => {
   db.getCart(req.signedCookies.user_id).then((cart) => {
     res.send(cart);
-  }).catch(() => {
+  }).catch((err) => {
+    console.log('error in getting initial cart', cart);
     res.send({data:[]});
   })
 })
@@ -108,6 +112,9 @@ app.post('/signup', (req, res) => {
           db.signUp(req.signedCookies.user_id, req.body.username, hashedPW).then((signedup) => {
             console.log('signed up! got back: ', signedup); 
             res.send();
+          }).catch((usernameExist) => {
+            console.log('usernameexist:', usernameExist);
+            res.send({msg: 'usernameExsit'});
           })
         }
       })

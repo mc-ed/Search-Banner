@@ -155,5 +155,26 @@ app.get('/logout', (req, res) => {
   })
 })
 
+app.post('/savefavorite', (req, res) => {
+  console.log(req.body);
+  db.saveFavorite(req.body.username, req.body.favorite)
+  .then((result) => {
+    res.send();
+  }).catch((err) => {
+    console.log(err);
+    res.send();
+  })
+})
+
+app.post('/removefavorite', (req, res) => {
+  db.removeFavorite(req.body.username, req.body.favorite)
+  .then((result) => {
+    res.send();
+  }).catch((err) => {
+    console.log(err);
+    res.send();
+  })
+})
+
 
 app.listen(PORT, () => (console.log(`Listening for port: ${PORT}`)));

@@ -3,6 +3,7 @@ import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
 import adjust from '../style/adjust.less';
+import { Toast } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -31,7 +32,10 @@ class App extends Component {
       loggingIn: false,
       loggingOut: false,
       usernameShow: '',
-      signInPopover: false
+      signInPopover: false,
+      showToast: false,
+      favorite: {},
+      saved: false
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -49,6 +53,7 @@ class App extends Component {
     this.createAccount = this.createAccount.bind(this);
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.toastToggler = this.toastToggler.bind(this);
   }
 
   componentDidMount() {
@@ -80,12 +85,19 @@ class App extends Component {
       console.log(data.detail);
       let favorite = data.detail;
       if(this.state.loggedIn) {
-        axios.post('/favorite', { favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-        
-        })
+        let username = this.state.usernameShow
+        if(!favorite.saved) {
+          axios.post('/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved });
+          })
+        } else {
+          axios.post('/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved });
+          })
+        }
+      } else {
+        this.setState({loginWindow: true});
       }
-
-      
     })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
@@ -217,8 +229,12 @@ class App extends Component {
     })
   }
 
+  toastToggler() {
+    this.setState({showToast: false});
+  }
+
   signInPopoverToggler() {
-    
+
   }
 
   logIn() {
@@ -227,6 +243,7 @@ class App extends Component {
     this.setState({loggingIn: true}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
         if(loggedIn.data === true) {
+          window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true}}));
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
             let totalCartItem = 0;
             let userCartItemList = [];
@@ -265,6 +282,7 @@ class App extends Component {
     this.setState({loggingOut: true}, () => {
       axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
         console.log(result);
+        window.dispatchEvent(new CustomEvent('loggedOut', {detail: {loggedIn: false}}));
         this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
       })
     })
@@ -348,6 +366,44 @@ class App extends Component {
             :
             null
           }
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            style={{
+              position: 'relative',
+              minHeight: '200px',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: '100px',
+              }}
+            >
+            <Toast onClose={() => this.toastToggler()} show={this.state.showToast} delay={3000} autohide>
+              <Toast.Header>
+                <strong className="mr-auto">{this.state.saved ? 'Saved to ' : 'Removed from '} {this.state.usernameShow}'s favorite!</strong>
+                <small>Just Now</small>
+              </Toast.Header>
+              <Toast.Body>
+                <div className="row">
+                  <div className="col-4">
+                    {this.state.showToast ? 
+                      <img style={{width: '100px', height: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${this.state.favorite['product_id']}.jpg`}/>
+                    :
+                      null
+                    }
+                  </div>
+                  <div className="col-8">
+                    {this.state.favorite.name} 
+                  </div>
+                </div>
+              </Toast.Body>
+            </Toast>
+            
+          </div>
+        </div>
       </header>
      );
   }

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   cookie: String,
-  favorite: Array
+  favorite: Object
 })
 
 
@@ -203,8 +203,38 @@ const logOut = (username) => {
       })
     })
   )
-
-
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn, logOut, getUserCart, resetCookie };
+const saveFavorite = (username, favorite) => {
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({ username }, { $set: { [`favorite.${favorite['product_id']}`]: favorite } }, (err, result) => {
+        if(err) {
+          console.log('err happend saving favorite', err);
+          rej(err)
+        } else {
+          console.log('success in saving favorite', result);
+          res(result);
+        }
+      });
+    })
+  )
+}
+
+const removeFavorite = (username, favorite) => {
+  return (
+    new Promise((res, rej) => {
+      User.findOneAndUpdate({username}, {$unset : {[`favorite.${favorite.product_id}`]: 1}}, (err, removedFavorite) => {
+        if(err) {
+          console.log('err removing fave', err);
+          rej(err);
+        } else {
+          console.log('succeess in removing fave', removedFavorite);
+          res(removeFavorite);
+        }
+      })
+    })
+  )
+}
+
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn, logOut, getUserCart, resetCookie, saveFavorite, removeFavorite };

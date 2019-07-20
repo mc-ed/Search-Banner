@@ -3,9 +3,16 @@ import { Modal, Button, Form, Spinner } from 'react-bootstrap';
 import style from '../../style/main.less';
 
 const LoginModal = (props) => {
+  let favoriteArray =[]
+  if(props.favoriteList) {
+    for (const favoriteItemId in props.favoriteList) {
+      favoriteArray.push(props.favoriteList[favoriteItemId]);
+    }
+  }
+  console.log(favoriteArray);
   if(props.logoutWindow) {
     return (
-    <Modal show={props.loginWindow} onHide={()=>props.loginWindowToggler()}>
+    <Modal dialogClassName={style.modalWidth} show={props.loginWindow} onHide={()=>props.loginWindowToggler()}>
         <Modal.Header closeButton >
           <Modal.Title>{`${props.usernameShow}'s Saved Items`}</Modal.Title>
         </Modal.Header>
@@ -15,7 +22,30 @@ const LoginModal = (props) => {
           props.loggingOut ? 
             <Spinner animation="border" variant="info" /> 
             : 
-            'ARE YOU SURE?'
+            <div className="table-responsive" >
+              <table className="table table-hover">
+                <thead>
+                  <tr className="table-primary">
+                    <th scope="col">#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {favoriteArray.map((item, i) => {
+                    return (
+                      <tr key = {i}>
+                        <th scope="row">{i+1}</th>
+                        <td colSpan="1"><img style={{width: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${item.product_id}.jpg`}/></td>
+                        <td colSpan="2">{item.name}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+
+            </div>
+
         }
         </Modal.Body>
   

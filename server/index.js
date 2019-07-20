@@ -176,5 +176,14 @@ app.post('/removefavorite', (req, res) => {
   })
 })
 
+app.get('/getfavorite', (req, res) => {
+  db.getFavorite(req.query.username).then((favorite) => {
+    console.log('sending faborite: ', favorite);
+    res.send(favorite);
+  }).catch((none) => {
+    console.log('getfave error on server', none);
+    res.send({});
+  })
+})
 
 app.listen(PORT, () => (console.log(`Listening for port: ${PORT}`)));

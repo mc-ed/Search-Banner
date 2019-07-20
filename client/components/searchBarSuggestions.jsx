@@ -25,7 +25,6 @@ class SearchBarSuggestions extends Component {
 
   render() { 
     let stars;
-    console.log(this.props.reviewStat);
     if(this.props.suggestion) {
       stars = Number(this.props.reviewStat.reviewStats.averageStars)*10;
       stars = stars%5<3 ? (stars%5===0 ? stars : Math.floor(stars/5)*5) : Math.ceil(stars/5)*5;

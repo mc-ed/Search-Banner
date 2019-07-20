@@ -35,7 +35,8 @@ class App extends Component {
       signInPopover: false,
       showToast: false,
       favorite: {},
-      saved: false
+      saved: false,
+      favoriteList: {}
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -59,7 +60,6 @@ class App extends Component {
   componentDidMount() {
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
-      console.log('woo new item to cart!', data.detail);
       newCartItem.price = Number(data.detail.price);
       let exists = false;
       let existingIndex = -1;
@@ -77,22 +77,23 @@ class App extends Component {
       }
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
     })
     window.addEventListener('favorite', (data) => {
-      console.log(data.detail);
       let favorite = data.detail;
       if(this.state.loggedIn) {
         let username = this.state.usernameShow
         if(!favorite.saved) {
-          axios.post('/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-            this.setState({showToast: true, favorite: favorite, saved: favorite.saved });
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            let favoriteList = this.state.favoriteList;
+            delete favoriteList[favorite.product_id];
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
           })
         } else {
-          axios.post('/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-            this.setState({showToast: true, favorite: favorite, saved: favorite.saved });
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            this.toastToggler.state.favoriteList[favorite[product_id]] = favorite;
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
           })
         }
       } else {
@@ -145,6 +146,13 @@ class App extends Component {
           loggedIn: loggedIn,
           logoutWindow: loggedIn,
           usernameShow: username
+        }, () => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
+            console.log(favorite.data.favorite)
+            this.setState({
+              favoriteList: favorite.data.favorite
+            })
+          })
         });
       })
     })
@@ -157,9 +165,7 @@ class App extends Component {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
           axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}, {withCredentials: true}).then(() => {
-            console.log('delted 0 item from cart!');
           })
         })
       });
@@ -167,7 +173,6 @@ class App extends Component {
       this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
     }
@@ -178,7 +183,6 @@ class App extends Component {
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        console.log('saved!')
       })
     });
   }
@@ -225,7 +229,6 @@ class App extends Component {
     let username = this.state.username;
     let password = this.state.password;
     axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
-      console.log('signed up! got back: ', signedUp);
     })
   }
 
@@ -247,7 +250,6 @@ class App extends Component {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
             let totalCartItem = 0;
             let userCartItemList = [];
-            console.log('usercart', userCart);
             if(userCart.data) {
               userCart.data.cartItemList.forEach((cartItem) => {
                 totalCartItem += cartItem.amount;
@@ -281,7 +283,6 @@ class App extends Component {
     let username = this.state.usernameShow;
     this.setState({loggingOut: true}, () => {
       axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
-        console.log(result);
         window.dispatchEvent(new CustomEvent('loggedOut', {detail: {loggedIn: false}}));
         this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
       })
@@ -344,6 +345,7 @@ class App extends Component {
           loggingOut={this.state.loggingOut}
           logIn={this.logIn}
           logOut={this.logOut}
+          favoriteList={this.state.favoriteList}
         />
         </div>
         <Navbar 

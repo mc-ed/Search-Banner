@@ -237,4 +237,20 @@ const removeFavorite = (username, favorite) => {
   )
 }
 
-module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn, logOut, getUserCart, resetCookie, saveFavorite, removeFavorite };
+const getFavorite = (username) => {
+  return(
+    new Promise((res, rej) => {
+      User.findOne({username}, (err, favorite) => {
+        if(err) {
+          console.log('error getting favorite of user: ', username)
+          console.log('error = ', err);
+          rej(err);
+        } else {
+          res(favorite);
+        }
+      })
+    })
+  )
+}
+
+module.exports = { getAllItemList, get3Items, saveCart, getCart, deleteCartItem, signUp, logIn, logOut, getUserCart, resetCookie, saveFavorite, removeFavorite, getFavorite };

@@ -58,6 +58,14 @@ class App extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener('stars', e => {
+      const id = e.detail.product_id;
+      axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}).then((reviews) => {
+        this.setState({
+          reviewStat: reviews.data
+        })
+      })
+  });
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
       newCartItem.price = Number(data.detail.price);

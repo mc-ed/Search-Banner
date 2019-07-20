@@ -84,7 +84,7 @@ class App extends Component {
       let favorite = data.detail;
       if(this.state.loggedIn) {
         let username = this.state.usernameShow
-        if(!favorite.saved) {
+        if(!!favorite.saved === false) {
           axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
             let favoriteList = this.state.favoriteList;
             delete favoriteList[favorite.product_id];
@@ -92,8 +92,8 @@ class App extends Component {
           })
         } else {
           axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-            this.toastToggler.state.favoriteList[favorite[product_id]] = favorite;
-            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
+            this.state.favoriteList[favorite.product_id] = favorite;
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: this.state.favoriteList });
           })
         }
       } else {

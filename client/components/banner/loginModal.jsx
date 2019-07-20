@@ -9,7 +9,6 @@ const LoginModal = (props) => {
       favoriteArray.push(props.favoriteList[favoriteItemId]);
     }
   }
-  console.log(favoriteArray);
   if(props.logoutWindow) {
     return (
     <Modal dialogClassName={style.modalWidth} show={props.loginWindow} onHide={()=>props.loginWindowToggler()}>

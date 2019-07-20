@@ -17,35 +17,37 @@ const LoginModal = (props) => {
         </Modal.Header>
         
         <Modal.Body> 
-        {
-          props.loggingOut ? 
-            <Spinner animation="border" variant="info" /> 
-            : 
-            <div className="table-responsive" >
-              <table className="table table-hover">
-                <thead>
-                  <tr className="table-primary">
-                    <th scope="col">#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {favoriteArray.map((item, i) => {
-                    return (
-                      <tr key = {i}>
-                        <th scope="row">{i+1}</th>
-                        <td colSpan="1"><img style={{width: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${item.product_id}.jpg`}/></td>
-                        <td colSpan="2">{item.name}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+        <div className={style.modalWrapper}>
+          {
+            props.loggingOut ? 
+              <Spinner animation="border" variant="info" /> 
+              : 
+              <div className="table-responsive" >
+                <table className="table table-hover">
+                  <thead>
+                    <tr className="table-primary">
+                      <th scope="col">#</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {favoriteArray.map((item, i) => {
+                      return (
+                        <tr key = {i}>
+                          <th scope="row">{i+1}</th>
+                          <td colSpan="1"><img style={{width: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${item.product_id}.jpg`}/></td>
+                          <td colSpan="2">{item.name}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
 
-            </div>
+              </div>
 
-        }
+          }
+        </div>
         </Modal.Body>
   
         <Modal.Footer>

@@ -40,7 +40,9 @@ class App extends Component {
       loginFail: false,
       signUpFail: false,
       clearInput: '',
-      searching: ''
+      searching: '',
+      keywords: [],
+      keywordObj: {}
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -121,6 +123,17 @@ class App extends Component {
       let promises =[];
       promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      const keyWordsList = [];
+      const keywordObj = {}
+      let data = {};
+      itemlist.data.forEach((item) => {
+        data[item.category] = item;
+        let keywords = item.category.split(' ');
+        keywords.forEach((keyword) => {
+          keyWordsList.push(keyword);
+          keywordObj[keyword] = item.category;
+        })
+      })
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
@@ -133,14 +146,9 @@ class App extends Component {
             total += element;
           }
         } else {
-
           cartItemList = [];
-          
         }
-        let data = {};
-        itemlist.data.forEach((item) => {
-          data[item.category] = item;
-        });
+
         this.setState({
           dataList: data,
           deptList: [... new Set(itemlist.data.map((item) => {
@@ -159,7 +167,9 @@ class App extends Component {
           reviewStat: results[1].data,
           loggedIn: loggedIn,
           logoutWindow: loggedIn,
-          usernameShow: username
+          usernameShow: username,
+          keywords: keyWordsList,
+          keywordObj: keywordObj
         }, () => {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
             if(this.state.loggedIn) {
@@ -353,26 +363,27 @@ class App extends Component {
   }
 
   handleSearch(e, hovering) {
-    const { itemList } = this.state;
-    const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
-    
     let searching = e.target.value;
-    
-      if(!hovering) {
-        this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
+    this.setState({ searching }, () => {
+
+      const filteredDataList = this.state.keywords.filter(item => item.toLowerCase().startsWith(this.state.searching.toLowerCase()));
+      const idk = filteredDataList.map((item) => this.state.keywordObj[item]);
+        if(!hovering) {
+          this.setState({filteredList: [... new Set(idk)]}, () => {
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${idk[0]}`, {withCredentials: true}).then((result) => {
+              // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+              let suggestionList = result.data;
+              this.setState({ suggestionList});
+            })
+          });
+        } else {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${idk[0]}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList, searching });
-          })
-        });
-      } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
-          // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList, searching });
-          })
-      }
+              let suggestionList = result.data;
+              this.setState({ suggestionList });
+            })
+        }
+    })
     
   }
 

@@ -53,13 +53,16 @@ app.post('/savecart', (req, res) => {
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList).then((cart) => {
     res.send('successfully saved cart!');
   }).catch((savingErr) => {
-    console.log('saving error', error);
+    console.log('saving error', savingErr);
+    res.send({msg: 'saving cart err'})
   })
 })
 
 app.post('/deleteCartItem', (req, res) => {
   db.deleteCartItem(req.signedCookies.user_id).then((cart) => {
     res.send('deleted 0 item');
+  }).catch((err) => {
+    res.send({msg: 'deleting cart item err'})
   })
 })
 
@@ -78,7 +81,7 @@ function cartshit(req, res, next) {
       next();
     })
     .catch((err) => {
-      console.log('error in server saveCart', err);
+      console.log('error in server saveCart in cartshit', err);
       next();
     })
   
@@ -111,7 +114,7 @@ app.post('/signup', (req, res) => {
           console.log('cookies', req.signedCookies);
           db.signUp(req.signedCookies.user_id, req.body.username, hashedPW).then((signedup) => {
             console.log('signed up! got back: ', signedup); 
-            res.send();
+            res.send({msg: ""});
           }).catch((usernameExist) => {
             console.log('usernameexist:', usernameExist);
             res.send({msg: 'usernameExsit'});
@@ -129,7 +132,7 @@ app.post('/login', (req, res) => {
       if(result) {
         res.send(true);
       } else {
-        res.send(false);
+        res.send({msg: 'Password is incorrect'});
       }
     })
   }).catch((longinFail) => {

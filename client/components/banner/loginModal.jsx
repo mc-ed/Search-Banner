@@ -99,7 +99,7 @@ const LoginModal = (props) => {
            <Form.Group controlId="formBasicChecbox">
              <Form.Check type="checkbox" label="Check me out" />
            </Form.Group>
-           <Button variant="success" type="submit" onClick={() => props.createAccount()}>
+           <Button variant="success" onClick={() => props.createAccount()}>
              Create Account
            </Button>
          </Form>

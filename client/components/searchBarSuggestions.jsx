@@ -30,7 +30,10 @@ class SearchBarSuggestions extends Component {
       stars = stars%5<3 ? (stars%5===0 ? stars : Math.floor(stars/5)*5) : Math.ceil(stars/5)*5;
     }
     return ( 
-      <div className={`row ${style['row-suggestion']} ${style['row-hover']}`} onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}})))} >
+      <div className={`row ${style['row-suggestion']} ${style['row-hover']}`} onClick={() => {
+        window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}}));
+        this.props.clearSearch();
+      }} >
       <div className={`col-4 ${style.child}`} >
         {
           this.props.suggestion ? 

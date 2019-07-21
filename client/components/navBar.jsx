@@ -18,6 +18,8 @@ const Navbar = (props) => {
           showDept={props.showDept}
         />
         <SearchBar 
+          clearSearch={props.clearSearch}
+          searching={props.searching}
           reviewStat={props.reviewStat}
           handleSearch={props.handleSearch} 
           filteredList={props.filteredList} 

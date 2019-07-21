@@ -1,8 +1,11 @@
 
 .logo {
   padding: 7px;
+  min-width: 131px;
   @media(max-width: 767px) {
-    padding-top: 36px;
+  }
+  @media(max-width: 408px) {
+    padding-top: 0px;
   }
 }
 
@@ -17,5 +20,19 @@
   }
   @media(max-width: 767px) {
     font-size: 10px;
+  }
+  @media(max-width: 530px) {
+    top: 0;
+    padding-left: 10px !important;
+  }
+  @media(max-width: 482px) {
+    display: none;
+  }
+  
+}
+
+.temp {
+  @media(max-width: 557px) {
+    display: none;
   }
 }

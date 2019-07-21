@@ -5,15 +5,15 @@ import style from '../style/main.less';
 const SearchBar = (props) => {
   
   return ( 
-    <div className={`col-9 ${style['column-adjust']}`} >
+    <div className={`col-9 ${style.shrinkHeight} ${style['column-adjust']}`} >
       <div className={`${style['search-wrap']}`}>
         <form className={`form-group ${style['form-group-adjust']}`}>
           <div className={`row ${style['row-adjust']} d-flex dropdown`}>
-            <input className={`col-11 ${style['search-input']}`} autoComplete="rutjfkde" type="text" onClick={()=>{
+            <input className={`col-8 col-sm-10 ${style['search-input']}`} autoComplete="rutjfkde" type="text" onClick={()=>{
               props.handleSearch({target:{value: ''}})
               props.suggestionToggler();
           }} onChange={(e)=> (props.handleSearch(e))} data-toggle="dropdown" placeholder="What are you looking for today?" aria-label="Search" id="" aria-describedby="basic-addon1"></input>
-            <div className={`col-1 ${style['search-icon-wrapper']}`}>
+            <div className={`col-sm-2 ${style['search-icon-wrapper']}`}>
               <div className={`${style['search-icon']} ${style['lowes-icon']}`}>{"\uEB30"}</div>
             </div>
 

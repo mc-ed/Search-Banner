@@ -3,6 +3,9 @@
   height: 66px;
   padding-top: 20px;
   // padding-bottom: 25%;
+  @media(max-width: 575px) {
+    padding-top: 13px;
+  }
 }
 
 .deptDropDownWrapper {
@@ -23,6 +26,12 @@
     font-size: 16px;
     white-space: pre;
   }
+  @media(max-width: 767px) {
+    font-size: 14px;
+  }
+  @media(max-width:482px) {
+    display: none;
+  }
 }
 
 .flyouts {
@@ -35,6 +44,16 @@
   height: 100%;
   padding-top: 15px;
   text-align: center;
+  @media(max-width: 767px) {
+    display: none;
+  }
+  @media(max-width: 482px) {
+    display: block;
+    width: 50px;
+  }
+  @media(max-width: 411px) {
+    text-align: left;
+  }
 }
 
 .hamburger {
@@ -43,8 +62,16 @@
   @media(max-width: 991px) {
     font-size: 20px;
   }
+  @media(max-width: 482px) {
+    font-size: 15px;
+  }
 }
 
+.dropArrow {
+  @media(max-width: 767px) {
+    padding: 0 !important;
+  }
+}
 
 .row-adjust .drop-down-arrow-icon {
   text-align: right;
@@ -104,6 +131,10 @@
 
 .dropDownIconWrapper {
   padding-top: 23px;
+
+  @media(max-width: 575px) {
+    padding-top: 15px;
+  }
 }
 
 .dropdown-submenu {

@@ -11,18 +11,18 @@ const SearchBar = props => {
             <input
               className={`col-8 col-sm-10 col-lg-11 ${style['search-input']}`}
               value={props.searching}
-              autoComplete='rutjfkde'
-              type='text'
+              autoComplete="rutjfkde"
+              type="text"
               onClick={() => {
                 props.handleSearch({ target: { value: '' } });
                 props.suggestionToggler();
               }}
               onChange={e => props.handleSearch(e)}
-              data-toggle='dropdown'
-              placeholder='What are you looking for today?'
-              aria-label='Search'
-              id=''
-              aria-describedby='basic-addon1'
+              data-toggle="dropdown"
+              placeholder="What are you looking for today?"
+              aria-label="Search"
+              id=""
+              aria-describedby="basic-addon1"
             ></input>
             <div
               className={`col-sm-2 col-lg-1 ${style['search-icon-wrapper']}`}
@@ -34,8 +34,8 @@ const SearchBar = props => {
 
             <div
               className={`container dropdown-menu ${style.liner}`}
-              role='menu'
-              aria-labelledby='menu1'
+              role="menu"
+              aria-labelledby="menu1"
             >
               <div className={`row ${style['row-adjust']}`}>
                 <div
@@ -91,7 +91,7 @@ const SearchBar = props => {
                         key={suggestion.id}
                         id={suggestion.id.toString() + i}
                         suggestion={suggestion}
-                        reviewStat={props.reviewStat[suggestion.id - 1]}
+                        // reviewStat={props.reviewStat[suggestion.id - 1]}
                         clearSearch={props.clearSearch}
                         setFirstSuggestionId={props.setFirstSuggestionId}
                       />

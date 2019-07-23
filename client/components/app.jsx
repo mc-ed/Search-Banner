@@ -44,7 +44,7 @@ class App extends Component {
       keywords: [],
       keywordObj: {},
       firstSuggestionId: null
-    }
+    };
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
     this.suggestionToggler = this.suggestionToggler.bind(this);
@@ -54,7 +54,7 @@ class App extends Component {
     this.removeItem = this.removeItem.bind(this);
     this.addItem = this.addItem.bind(this);
     this.loginWindowToggler = this.loginWindowToggler.bind(this);
-    this.logoutWindowToggler =this.logoutWindowToggler.bind(this);
+    this.logoutWindowToggler = this.logoutWindowToggler.bind(this);
     this.signUpWindowToggler = this.signUpWindowToggler.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
     this.handleUsername = this.handleUsername.bind(this);
@@ -62,7 +62,7 @@ class App extends Component {
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
     this.toastToggler = this.toastToggler.bind(this);
-    this.clearSearch =this.clearSearch.bind(this);
+    this.clearSearch = this.clearSearch.bind(this);
     this.setFirstSuggestionId = this.setFirstSuggestionId.bind(this);
   }
 
@@ -75,7 +75,7 @@ class App extends Component {
     //     this.setState({reviewStat: this.state.reviewStat})
     //   })
     // });
-    window.addEventListener('cart', (data) => {
+    window.addEventListener('cart', data => {
       let newCartItem = data.detail;
       newCartItem.price = Number(data.detail.price);
       let exists = false;
@@ -92,136 +92,239 @@ class App extends Component {
       } else {
         this.state.cartItemList.push(newCartItem);
       }
-      this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
-        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        })
-      })
-    })
-    window.addEventListener('favorite', (data) => {
+      this.setState(
+        {
+          cartNumItemTotal: this.state.cartNumItemTotal + newCartItem.amount,
+          cartItemList: this.state.cartItemList
+        },
+        () => {
+          axios
+            .post(
+              '/savecart',
+              { cartItemList: this.state.cartItemList },
+              { withCredentials: true }
+            )
+            .then(() => {});
+        }
+      );
+    });
+    window.addEventListener('favorite', data => {
       let favorite = data.detail;
       console.log('favorite', favorite);
-      if(this.state.loggedIn) {
-        let username = this.state.usernameShow
-        if(!!favorite.saved === false) {
+      if (this.state.loggedIn) {
+        let username = this.state.usernameShow;
+        if (!!favorite.saved === false) {
           console.log('triggered');
-          axios.post('/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-            let favoriteList = this.state.favoriteList;
-            delete favoriteList[favorite.product_id];
-            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
-          })
+          axios
+            .post(
+              '/removefavorite',
+              { username, favorite },
+              { withCredentials: true }
+            )
+            .then(favoriteItemSaved => {
+              let favoriteList = this.state.favoriteList;
+              delete favoriteList[favorite.product_id];
+              this.setState({
+                showToast: true,
+                favorite: favorite,
+                saved: favorite.saved,
+                favoriteList: favoriteList
+              });
+            });
         } else {
-          axios.post('/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
-            this.state.favoriteList[favorite.product_id] = favorite;
-            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: this.state.favoriteList });
-          })
+          axios
+            .post(
+              '/savefavorite',
+              { username, favorite },
+              { withCredentials: true }
+            )
+            .then(favoriteItemSaved => {
+              this.state.favoriteList[favorite.product_id] = favorite;
+              this.setState({
+                showToast: true,
+                favorite: favorite,
+                saved: favorite.saved,
+                favoriteList: this.state.favoriteList
+              });
+            });
         }
       } else {
-        this.setState({loginWindow: true});
+        this.setState({ loginWindow: true });
       }
-    })
-    axios.get( '/itemlist', {withCredentials: true})
-    // axios.get('/itemlist')
-    .then((itemlist) => {
-      // console.log('got response from itemlist: ', itemlist)
-      let promises =[];
-      promises.push(axios.get( `/getcart`, {withCredentials: true}))
-      promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
-      const keyWordsList = [];
-      const keywordObj = {}
-      let data = {};
-      itemlist.data.forEach((item) => {
-        data[item.category] = item;
-        let keywords = item.category.split(' ');
-        keywords.forEach((keyword) => {
-          keyWordsList.push(keyword);
-          keywordObj[keyword] = item.category;
-        })
-      })
-      Promise.all(promises).then((results) => {
-        let total = 0;
-        let cartItemList = results[0].data.cartItemList;
-        let username = results[0].data.username;
-        console.log('username:', username);
-        let loggedIn = (username === undefined || username === 'Anonymous') ? false : true;
-        if(cartItemList && cartItemList.length > 0) {
-          for (let index = 0; index < cartItemList.length; index++) {
-            const element = cartItemList[index].amount;
-            total += element;
-          }
-        } else {
-          cartItemList = [];
-        }
-
-        this.setState({
-          dataList: data,
-          deptList: [... new Set(itemlist.data.map((item) => {
-            let dept = item.department;
-            return dept;
-          }).sort())],
-          itemList: itemlist.data.map((item) => {
-            let category = item.category;
-            return category;
-          }),
-          sortedCategorySet: [... new Set(itemlist.data.map((item, i) => {
-            return item.category;
-          }))],
-          cartItemList: cartItemList,
-          cartNumItemTotal: total,
-          reviewStat: results[1].data,
-          loggedIn: loggedIn,
-          logoutWindow: loggedIn,
-          usernameShow: username,
-          keywords: keyWordsList,
-          keywordObj: keywordObj
-        }, () => {
-          axios.get(`/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
-            if(this.state.loggedIn) {
-              let userFavorite = [];
-              if(favorite.data.favorite) {
-                for (const id in favorite.data.favorite) {
-                  userFavorite.push(Number(id));
-                }
-              }
-              window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
-            }
-            let favoriteList = {}
-            if(favorite.data.favorite) {
-              favoriteList = favorite.data.favorite;
-            }
-            this.setState({
-              favoriteList: favoriteList
-            })
-          })
+    });
+    axios
+      .get('/itemlist', { withCredentials: true })
+      // axios.get('/itemlist')
+      .then(itemlist => {
+        console.log('got response from itemlist: ', itemlist);
+        let promises = [];
+        promises.push(axios.get(`/getcart`, { withCredentials: true }));
+        // Reviews stat from other component
+        // promises.push(
+        //   axios.get(
+        //     'http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all',
+        //     { withCredentials: true }
+        //   )
+        // );
+        const keyWordsList = [];
+        const keywordObj = {};
+        let data = {};
+        itemlist.data.forEach(item => {
+          console.log('itemlist.data', item);
+          data[item.category] = item;
+          let keywords = item.category.split(' ');
+          keywords.forEach(keyword => {
+            keyWordsList.push(keyword);
+            keywordObj[keyword] = item.category;
+          });
         });
-      })
-    })
+        Promise.all(promises).then(results => {
+          let total = 0;
+          let cartItemList = results[0].data.cartItemList || [];
+          let username = results[0].data.username || 'A';
+          console.log('username:', username);
+          let loggedIn =
+            username === undefined || username === 'Anonymous' ? false : true;
+          if (cartItemList && cartItemList.length > 0) {
+            for (let index = 0; index < cartItemList.length; index++) {
+              const element = cartItemList[index].amount;
+              total += element;
+            }
+          } else {
+            cartItemList = [];
+          }
 
+          this.setState(
+            {
+              dataList: data,
+              deptList: [
+                ...new Set(
+                  itemlist.data
+                    .map(item => {
+                      let dept = item.department;
+                      return dept;
+                    })
+                    .sort()
+                )
+              ],
+              itemList: itemlist.data.map(item => {
+                let category = item.category;
+                return category;
+              }),
+              sortedCategorySet: [
+                ...new Set(
+                  itemlist.data.map((item, i) => {
+                    return item.category;
+                  })
+                )
+              ],
+              cartItemList: cartItemList,
+              cartNumItemTotal: total,
+              reviewStat: [],
+              loggedIn: loggedIn,
+              logoutWindow: loggedIn,
+              usernameShow: username,
+              keywords: keyWordsList,
+              keywordObj: keywordObj
+            },
+            () => {
+              axios
+                .get(`/getfavorite?username=${this.state.usernameShow}`, {
+                  withCredentials: true
+                })
+                .then(favorite => {
+                  if (this.state.loggedIn) {
+                    let userFavorite = [];
+                    if (favorite.data.favorite) {
+                      for (const id in favorite.data.favorite) {
+                        userFavorite.push(Number(id));
+                      }
+                    }
+                    window.dispatchEvent(
+                      new CustomEvent('loggedIn', {
+                        detail: {
+                          loggedIn: true,
+                          favoriteList: userFavorite,
+                          username: this.state.usernameShow
+                        }
+                      })
+                    );
+                  }
+                  let favoriteList = {};
+                  if (favorite.data.favorite) {
+                    favoriteList = favorite.data.favorite;
+                  }
+                  this.setState({
+                    favoriteList: favoriteList
+                  });
+                });
+            }
+          );
+        });
+      });
   }
 
   removeItem(cartId) {
-    if(this.state.cartItemList[cartId].amount === 1) {
+    if (this.state.cartItemList[cartId].amount === 1) {
       this.state.cartItemList.splice(cartId, 1);
-      this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          axios.post('/deleteCartItem', {}, {withCredentials: true}).then(() => {
-          })
-        })
-      });
+      this.setState(
+        {
+          cartNumItemTotal: this.state.cartNumItemTotal - 1,
+          cartItemList: this.state.cartItemList
+        },
+        () => {
+          axios
+            .post(
+              '/savecart',
+              { cartItemList: this.state.cartItemList },
+              { withCredentials: true }
+            )
+            .then(() => {
+              axios
+                .post('/deleteCartItem', {}, { withCredentials: true })
+                .then(() => {});
+            });
+        }
+      );
     } else {
-      this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
-      this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        })
-      })
+      this.state.cartItemList[cartId].amount =
+        this.state.cartItemList[cartId].amount - 1;
+      this.setState(
+        {
+          cartNumItemTotal: this.state.cartNumItemTotal - 1,
+          cartItemList: this.state.cartItemList
+        },
+        () => {
+          axios
+            .post(
+              '/savecart',
+              { cartItemList: this.state.cartItemList },
+              { withCredentials: true }
+            )
+            .then(() => {});
+        }
+      );
     }
   }
 
   addItem(cartId) {
-    this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
-    this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
-      axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-      })
-    });
+    this.state.cartItemList[cartId].amount =
+      this.state.cartItemList[cartId].amount + 1;
+    this.setState(
+      {
+        cartNumItemTotal: this.state.cartNumItemTotal + 1,
+        cartItemList: this.state.cartItemList
+      },
+      () => {
+        axios
+          .post(
+            '/savecart',
+            { cartItemList: this.state.cartItemList },
+            { withCredentials: true }
+          )
+          .then(() => {});
+      }
+    );
   }
 
   deptToggler() {
@@ -233,18 +336,17 @@ class App extends Component {
   }
 
   cartModalToggler(checkOut) {
-
-    this.setState({showCart: !this.state.showCart}, () => {
-      if(checkOut) {
-        window.open('https://www.paypal.me/dongjaepark', "_blank");
+    this.setState({ showCart: !this.state.showCart }, () => {
+      if (checkOut) {
+        window.open('https://www.paypal.me/dongjaepark', '_blank');
       }
     });
   }
 
   loginWindowToggler() {
-    this.setState({loginWindow: !this.state.loginWindow}, () => {
+    this.setState({ loginWindow: !this.state.loginWindow }, () => {
       setTimeout(() => {
-        this.setState({signUpWindow: false})
+        this.setState({ signUpWindow: false });
       }, 100);
     });
   }
@@ -254,7 +356,11 @@ class App extends Component {
   }
 
   signUpWindowToggler() {
-    this.setState({signUpWindow: !this.state.signUpWindow, username: '', password: ''});
+    this.setState({
+      signUpWindow: !this.state.signUpWindow,
+      username: '',
+      password: ''
+    });
   }
 
   handleUsername(e) {
@@ -270,100 +376,139 @@ class App extends Component {
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    if(!username) {
+    if (!username) {
       alert('Username is Required');
-    } else if(!password) {
+    } else if (!password) {
       alert('Password is Required');
-      this.setState({password: ''});
+      this.setState({ password: '' });
     } else {
-      axios.post('/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
-        if(signedUp.data.msg !== '') {
-          alert(signedUp.data.msg);
-        } else {
-          alert('Sign up Success!');
-          window.location.reload();
-        }
-      })
+      axios
+        .post('/signup', { username, password }, { withCredentials: true })
+        .then(signedUp => {
+          if (signedUp.data.msg !== '') {
+            alert(signedUp.data.msg);
+          } else {
+            alert('Sign up Success!');
+            window.location.reload();
+          }
+        });
     }
   }
 
   toastToggler() {
-    this.setState({showToast: false});
+    this.setState({ showToast: false });
   }
 
   logIn() {
     let username = this.state.username;
     let password = this.state.password;
-    if(!username) {
+    if (!username) {
       alert('Username is Required');
-    } else if(!password) {
+    } else if (!password) {
       alert('Password is Required');
-      this.setState({password: ''});
+      this.setState({ password: '' });
     } else {
-      
-      this.setState({loggingIn: true}, () => {
-        axios.post('/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
-          if(loggedIn.data === true) {
-            
-            axios.get(`/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
-              let totalCartItem = 0;
-              let userCartItemList = [];
-              if(userCart.data) {
-                userCart.data.cartItemList.forEach((cartItem) => {
-                  totalCartItem += cartItem.amount;
+      this.setState({ loggingIn: true }, () => {
+        axios
+          .post('/login', { username, password }, { withCredentials: true })
+          .then(loggedIn => {
+            if (loggedIn.data === true) {
+              axios
+                .get(`/getusercart?username=${username}`, {
+                  withCredentials: true
                 })
-                userCartItemList = userCart.data.cartItemList;
-              }
-              axios.get(`/getfavorite?username=${username}` ,{withCredentials: true}).then((userFavorites) => {
-                let userFavorite = [];
-                for (const id in userFavorites.data.favorite) {
-                  userFavorite.push(Number(id));
-                }
-                window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
-                let favoriteList = {}
-                if(userFavorites.data.favorite) {
-                  favoriteList = userFavorites.data.favorite;
-                }
-                setTimeout(() => {
-                  this.setState({
-                    loggedIn: loggedIn.data, 
-                    loginWindow: false, 
-                    usernameShow: username, 
-                    loggingIn: false , 
-                    username: '', 
-                    password: '', 
-                    cartItemList: userCartItemList, 
-                    logoutWindow: loggedIn.data,
-                    cartNumItemTotal: totalCartItem,
-                    favoriteList: favoriteList,
-                    loginFail: false
+                .then(userCart => {
+                  let totalCartItem = 0;
+                  let userCartItemList = [];
+                  if (userCart.data) {
+                    userCart.data.cartItemList.forEach(cartItem => {
+                      totalCartItem += cartItem.amount;
                     });
-                }, 1500);
-              })
-            })
-          } else {
-            let loginFailMsg = loggedIn.data === false ? 'password' : 'username';
-            console.log('login fail', loggedIn.data);
-            setTimeout(() => {
-              this.setState({loggedIn: false, usernameShow: false, loggingIn: false , username: username, password: '', loginFail: loginFailMsg}, () => {
-                alert(loggedIn.data.msg);
-              });
-            }, 1500);
-          }
-      })}
-      );
+                    userCartItemList = userCart.data.cartItemList;
+                  }
+                  axios
+                    .get(`/getfavorite?username=${username}`, {
+                      withCredentials: true
+                    })
+                    .then(userFavorites => {
+                      let userFavorite = [];
+                      for (const id in userFavorites.data.favorite) {
+                        userFavorite.push(Number(id));
+                      }
+                      window.dispatchEvent(
+                        new CustomEvent('loggedIn', {
+                          detail: {
+                            loggedIn: true,
+                            favoriteList: userFavorite,
+                            username: this.state.usernameShow
+                          }
+                        })
+                      );
+                      let favoriteList = {};
+                      if (userFavorites.data.favorite) {
+                        favoriteList = userFavorites.data.favorite;
+                      }
+                      setTimeout(() => {
+                        this.setState({
+                          loggedIn: loggedIn.data,
+                          loginWindow: false,
+                          usernameShow: username,
+                          loggingIn: false,
+                          username: '',
+                          password: '',
+                          cartItemList: userCartItemList,
+                          logoutWindow: loggedIn.data,
+                          cartNumItemTotal: totalCartItem,
+                          favoriteList: favoriteList,
+                          loginFail: false
+                        });
+                      }, 1500);
+                    });
+                });
+            } else {
+              let loginFailMsg =
+                loggedIn.data === false ? 'password' : 'username';
+              console.log('login fail', loggedIn.data);
+              setTimeout(() => {
+                this.setState(
+                  {
+                    loggedIn: false,
+                    usernameShow: false,
+                    loggingIn: false,
+                    username: username,
+                    password: '',
+                    loginFail: loginFailMsg
+                  },
+                  () => {
+                    alert(loggedIn.data.msg);
+                  }
+                );
+              }, 1500);
+            }
+          });
+      });
     }
   }
 
   logOut() {
     let username = this.state.usernameShow;
-    this.setState({loggingOut: true}, () => {
-      axios.get(`/logout?username=${username}`, { withCredentials: true }).then((result) => {
-        window.dispatchEvent(new CustomEvent('loggedOut', {detail: {loggedIn: false}}));
-        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
-      })
-    })
-    
+    this.setState({ loggingOut: true }, () => {
+      axios
+        .get(`/logout?username=${username}`, { withCredentials: true })
+        .then(result => {
+          window.dispatchEvent(
+            new CustomEvent('loggedOut', { detail: { loggedIn: false } })
+          );
+          this.setState({
+            loggedIn: false,
+            usernameShow: '',
+            logoutWindow: false,
+            loggingOut: false,
+            cartItemList: [],
+            cartNumItemTotal: 0
+          });
+        });
+    });
   }
 
   handleBrowsing() {
@@ -373,69 +518,75 @@ class App extends Component {
   handleSearch(e, hovering) {
     let searching = e.target.value;
     this.setState({ searching }, () => {
-
-      const filteredDataList = this.state.keywords.filter(item => item.toLowerCase().startsWith(this.state.searching.toLowerCase()));
-      const idk = filteredDataList.map((item) => this.state.keywordObj[item]);
-        if(!hovering) {
-          this.setState({filteredList: [... new Set(idk)]}, () => {
-            axios.get(`/item?category=${this.state.filteredList[0]}`, {withCredentials: true}).then((result) => {
+      const filteredDataList = this.state.keywords.filter(item =>
+        item.toLowerCase().startsWith(this.state.searching.toLowerCase())
+      );
+      const idk = filteredDataList.map(item => this.state.keywordObj[item]);
+      if (!hovering) {
+        this.setState({ filteredList: [...new Set(idk)] }, () => {
+          axios
+            .get(`/item?category=${this.state.filteredList[0]}`, {
+              withCredentials: true
+            })
+            .then(result => {
               // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
               let suggestionList = result.data;
-              this.setState({ suggestionList});
-            })
-          });
-        } else {
-          axios.get(`/item?category=${e.target.value}`, {withCredentials: true}).then((result) => {
-            // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-              let suggestionList = result.data;
               this.setState({ suggestionList });
-            })
-        }
-    })
-    
+            });
+        });
+      } else {
+        axios
+          .get(`/item?category=${e.target.value}`, { withCredentials: true })
+          .then(result => {
+            // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+            let suggestionList = result.data;
+            this.setState({ suggestionList });
+          });
+      }
+    });
   }
 
   clearSearch() {
-    this.setState({searching: ''});
+    this.setState({ searching: '' });
   }
 
   setFirstSuggestionId(id) {
-    this.setState({firstSuggestionId: id});
+    this.setState({ firstSuggestionId: id });
   }
 
-  render() { 
-    return ( 
+  render() {
+    return (
       <header>
         <div className="container">
-        <Banner 
-          cartNumItemTotal={this.state.cartNumItemTotal} 
-          showCart={this.state.showCart} 
-          addItem={this.addItem}
-          cartItemList={this.state.cartItemList}
-          removeItem={this.removeItem}
-          cartModalToggler={this.cartModalToggler}
-          loggedIn={this.state.loggedIn}
-          loginWindow={this.state.loginWindow}
-          logoutWindow={this.state.logoutWindow}
-          loginWindowToggler={this.loginWindowToggler}
-          logoutWindowToggler={this.logoutWindowToggler}
-          username={this.state.username}
-          usernameShow={this.state.usernameShow}
-          password={this.state.password}
-          signUpWindow={this.state.signUpWindow}
-          signUpWindowToggler={this.signUpWindowToggler}
-          handlePassword={this.handlePassword}
-          handleUsername={this.handleUsername}
-          createAccount={this.createAccount}
-          loggingIn={this.state.loggingIn}
-          loggingOut={this.state.loggingOut}
-          logIn={this.logIn}
-          logOut={this.logOut}
-          favoriteList={this.state.favoriteList}
-          loginFail={this.state.loginFail}
-        />
+          <Banner
+            cartNumItemTotal={this.state.cartNumItemTotal}
+            showCart={this.state.showCart}
+            addItem={this.addItem}
+            cartItemList={this.state.cartItemList}
+            removeItem={this.removeItem}
+            cartModalToggler={this.cartModalToggler}
+            loggedIn={this.state.loggedIn}
+            loginWindow={this.state.loginWindow}
+            logoutWindow={this.state.logoutWindow}
+            loginWindowToggler={this.loginWindowToggler}
+            logoutWindowToggler={this.logoutWindowToggler}
+            username={this.state.username}
+            usernameShow={this.state.usernameShow}
+            password={this.state.password}
+            signUpWindow={this.state.signUpWindow}
+            signUpWindowToggler={this.signUpWindowToggler}
+            handlePassword={this.handlePassword}
+            handleUsername={this.handleUsername}
+            createAccount={this.createAccount}
+            loggingIn={this.state.loggingIn}
+            loggingOut={this.state.loggingOut}
+            logIn={this.logIn}
+            logOut={this.logOut}
+            favoriteList={this.state.favoriteList}
+            loginFail={this.state.loginFail}
+          />
         </div>
-        <Navbar 
+        <Navbar
           setFirstSuggestionId={this.setFirstSuggestionId}
           firstSuggestionId={this.state.firstSuggestionId}
           clearSearch={this.clearSearch}
@@ -454,47 +605,53 @@ class App extends Component {
           sortedCategorySet={this.state.sortedCategorySet}
           reviewStat={this.state.reviewStat}
         />
-        {this.state.showDept ? 
-            <div className={`${adjust.greyOut}`}></div>
-            :
-            null
-          }
+        {this.state.showDept ? (
+          <div className={`${adjust.greyOut}`}></div>
+        ) : null}
+        <div
+          aria-live="polite"
+          aria-atomic="true"
+          style={{
+            position: 'relative'
+          }}
+        >
           <div
-            aria-live="polite"
-            aria-atomic="true"
             style={{
-              position: 'relative',
+              position: 'absolute',
+              top: 0,
+              right: '50px',
+              zIndex: '10'
             }}
           >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: '50px',
-                zIndex: '10'
-              }}
+            <Toast
+              onClose={() => this.toastToggler()}
+              show={this.state.showToast}
+              delay={3000}
+              autohide
             >
-            <Toast onClose={() => this.toastToggler()} show={this.state.showToast} delay={3000} autohide>
               <Toast.Header>
-                <strong className="mr-auto">{this.state.saved ? 'Saved to ' : 'Removed from '} {this.state.usernameShow}'s favorite!</strong>
+                <strong className="mr-auto">
+                  {this.state.saved ? 'Saved to ' : 'Removed from '}{' '}
+                  {this.state.usernameShow}'s favorite!
+                </strong>
                 <small>Just Now</small>
               </Toast.Header>
               <Toast.Body>
                 <div className="row">
                   <div className="col-4">
-                    {this.state.showToast ? 
-                      <img style={{width: '100px', height: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${this.state.favorite['product_id']}.jpg`}/>
-                    :
-                      null
-                    }
+                    {this.state.showToast ? (
+                      <img
+                        style={{ width: '100px', height: '100px' }}
+                        src={`https://fecdj.s3.amazonaws.com/photo/${
+                          this.state.favorite['product_id']
+                        }.jpg`}
+                      />
+                    ) : null}
                   </div>
-                  <div className="col-8">
-                    {this.state.favorite.name} 
-                  </div>
+                  <div className="col-8">{this.state.favorite.name}</div>
                 </div>
               </Toast.Body>
             </Toast>
-            
           </div>
         </div>
       </header>

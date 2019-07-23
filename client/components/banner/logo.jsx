@@ -6,7 +6,7 @@ const Logo = () => {
   return ( 
 
     <div className={`col-5 ${style.logo}`}>
-        <ReactSVG src="http://search-banner.us-east-1.elasticbeanstalk.com/fonts/logo.svg"></ReactSVG>
+        <ReactSVG src="/fonts/logo.svg"></ReactSVG>
     </div>
 
    );

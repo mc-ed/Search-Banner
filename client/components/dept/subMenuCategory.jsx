@@ -14,7 +14,7 @@ class SubMenuCategory extends Component {
 
   componentDidMount() {
     if(!this.state.mounted) {
-      axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.props.category}`, {withCredentials: true}).then((items) => {
+      axios.get(`/item?category=${this.props.category}`, {withCredentials: true}).then((items) => {
       // axios.get(`/item?category=${this.props.category}`).then((items) => {
         this.setState({ items: items.data, mounted: true })
       })

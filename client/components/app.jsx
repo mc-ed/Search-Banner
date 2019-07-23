@@ -28,7 +28,7 @@ class App extends Component {
       username: ''
     }
     this.deployed = true;
-    this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
+    this.ip = this.deployed ? '' : '';
     this.handleSearch = this.handleSearch.bind(this);
     this.suggestionToggler = this.suggestionToggler.bind(this);
     this.cartModalToggler = this.cartModalToggler.bind(this);
@@ -60,17 +60,17 @@ class App extends Component {
         this.state.cartItemList.push(newCartItem);
       }
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
-        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
           console.log('saved!')
         })
       })
     })
-    axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
+    axios.get( '/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {
       // console.log('got response from itemlist: ', itemlist)
       let promises =[];
-      promises.push(axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true}))
+      promises.push(axios.get( '/getcart', {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
       Promise.all(promises).then((results) => {
         let total = 0;
@@ -114,9 +114,9 @@ class App extends Component {
     if(this.state.cartItemList[cartId].amount === 1) {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
           console.log('saved!')
-          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}).then(() => {
+          axios.post('/deleteCartItem', {}).then(() => {
             console.log('delted 0 item from cart!');
           })
         })
@@ -124,7 +124,7 @@ class App extends Component {
     } else {
       this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
-        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+        axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
           console.log('saved!')
         })
       })
@@ -135,7 +135,7 @@ class App extends Component {
     console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
+      axios.post('/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
         console.log('saved!')
       })
     });
@@ -172,14 +172,14 @@ class App extends Component {
     
       if(!hovering) {
         this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
+          axios.get(`/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });
           })
         });
       } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
+        axios.get(`/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
           // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });

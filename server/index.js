@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
 
 const whitelist = [
-  'http://localhost:3000',
+  'http://127.0.0.1:3000',
   'http://fec-proxy.us-east-1.elasticbeanstalk.com',
   'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com',
   ''

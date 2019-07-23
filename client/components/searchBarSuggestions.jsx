@@ -25,13 +25,15 @@ class SearchBarSuggestions extends Component {
 
   render() { 
     let stars;
-    console.log(this.props.reviewStat);
     if(this.props.suggestion) {
       stars = Number(this.props.reviewStat.reviewStats.averageStars)*10;
       stars = stars%5<3 ? (stars%5===0 ? stars : Math.floor(stars/5)*5) : Math.ceil(stars/5)*5;
     }
     return ( 
-      <div className={`row ${style['row-suggestion']} ${style['row-hover']}`} onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}})))} >
+      <div className={`row ${style['row-suggestion']} ${style['row-hover']}`} onClick={() => {
+        window.dispatchEvent(new CustomEvent('product',{detail: {product_id: this.props.suggestion.id}}));
+        this.props.clearSearch();
+      }} >
       <div className={`col-4 ${style.child}`} >
         {
           this.props.suggestion ? 
@@ -45,7 +47,7 @@ class SearchBarSuggestions extends Component {
           {this.props.suggestion ? this.props.suggestion.itemName : null}
         </div>
         <div className={`${style.child}`}>
-          {this.props.suggestion ? <a className={`${style[`star-${stars}`]}`}></a> : null}
+          {this.props.suggestion ? <a className={`${style[`star-${stars}`]} ${style.child}`}></a> : null}
           {this.props.suggestion ? ' (' + this.props.reviewStat.reviewStats.reviewCount + ') ' : null}
         </div>
       </div>

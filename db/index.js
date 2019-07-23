@@ -20,7 +20,7 @@ const cartSchema = new mongoose.Schema({
 })
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: { type: String, unique: true},
   password: String,
   cookie: String,
   favorite: Object
@@ -142,7 +142,7 @@ const get3Items = (category) => {
 const signUp = (cookie, username, password) => {
   let promises = [];
   promises.push(new Promise((res, rej) => {
-    Cart.findOneAndUpdate({cookie: cookie}, { username }, (err, cart) => {
+    Cart.findOneAndUpdate({cookie: cookie}, { username }, {upsert: true}, (err, cart) => {
       if(err) {
         console.log('signing into cart error: ', err);
         rej(err);

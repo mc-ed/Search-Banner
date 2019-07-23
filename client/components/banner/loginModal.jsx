@@ -17,35 +17,37 @@ const LoginModal = (props) => {
         </Modal.Header>
         
         <Modal.Body> 
-        {
-          props.loggingOut ? 
-            <Spinner animation="border" variant="info" /> 
-            : 
-            <div className="table-responsive" >
-              <table className="table table-hover">
-                <thead>
-                  <tr className="table-primary">
-                    <th scope="col">#</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {favoriteArray.map((item, i) => {
-                    return (
-                      <tr key = {i}>
-                        <th scope="row">{i+1}</th>
-                        <td colSpan="1"><img style={{width: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${item.product_id}.jpg`}/></td>
-                        <td colSpan="2">{item.name}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+        <div className={style.modalWrapper}>
+          {
+            props.loggingOut ? 
+              <Spinner animation="border" variant="info" /> 
+              : 
+              <div className="table-responsive" >
+                <table className="table table-hover">
+                  <thead>
+                    <tr className="table-primary">
+                      <th scope="col">#</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {favoriteArray.map((item, i) => {
+                      return (
+                        <tr key = {i}>
+                          <th scope="row">{i+1}</th>
+                          <td colSpan="1"><img style={{width: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${item.product_id}.jpg`}/></td>
+                          <td colSpan="2">{item.name}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
 
-            </div>
+              </div>
 
-        }
+          }
+        </div>
         </Modal.Body>
   
         <Modal.Footer>
@@ -61,6 +63,17 @@ const LoginModal = (props) => {
       </Modal>
     )
   } else { 
+    let PW = "valid";
+    let Username = "valid";
+      
+    props.loginFail ? 
+      props.loginFail === 'password' ? 
+        PW = "invalid"
+        : 
+        Username = "invalid"
+      : 
+      null
+
     return ( 
       <Modal show={props.loginWindow} onHide={()=>props.loginWindowToggler()}>
         <Modal.Header closeButton >
@@ -70,9 +83,10 @@ const LoginModal = (props) => {
         <Modal.Body> 
           {props.signUpWindow ? 
            <Form>
-           <Form.Group controlId="formBasicEmail">
+           <Form.Group controlId="validationCustomUsername">
              <Form.Label>Username</Form.Label>
-             <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+             <Form.Control required placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+             <Form.Control.Feedback type="invalid">Username is Required</Form.Control.Feedback>
              <Form.Text className="text-muted">
                We'll never share your email with anyone else.
              </Form.Text>
@@ -85,7 +99,7 @@ const LoginModal = (props) => {
            <Form.Group controlId="formBasicChecbox">
              <Form.Check type="checkbox" label="Check me out" />
            </Form.Group>
-           <Button variant="success" type="submit" onClick={() => props.createAccount()}>
+           <Button variant="success" onClick={() => props.createAccount()}>
              Create Account
            </Button>
          </Form>
@@ -95,9 +109,10 @@ const LoginModal = (props) => {
             <Spinner animation="border" variant="info" /> 
             : 
             <React.Fragment>
-              <Form.Group controlId="formBasicEmail">
+              <Form.Group controlId="validationCustomUsername">
                 <Form.Label>Username</Form.Label>
-                <Form.Control placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+                <Form.Control required placeholder="Enter Username" value={props.username} onChange={(e) => props.handleUsername(e)}/>
+                <Form.Control.Feedback type="invalid">Username is Required</Form.Control.Feedback>
                 <Form.Text className="text-muted">
                   We'll never share your email with anyone else.
                 </Form.Text>
@@ -105,7 +120,8 @@ const LoginModal = (props) => {
             
               <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
+                <Form.Control required type="password" placeholder="Password" value={props.password} onChange={(e) => props.handlePassword(e)}/>
+                <Form.Control.Feedback type="invalid">Password is Required</Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId="formBasicChecbox">
                 <Form.Check type="checkbox" label="Check me out" />

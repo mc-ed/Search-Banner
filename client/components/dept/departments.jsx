@@ -47,20 +47,20 @@ class Departments extends Component {
     if(this.state.updated) {
       return ( 
         <React.Fragment>
-          <div className={`col-3 ${style['column-adjust']}`} style={{backgroundColor: browsingColor}}  onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
+          <div className={`col-3 ${style.shrinkHeight} ${style['column-adjust']}`} style={{backgroundColor: browsingColor}}  onMouseEnter={()=> this.props.deptToggler()} onMouseLeave={()=> this.props.deptToggler()}>
             <div className={`${style.deptDropDownWrapper}`}>
           <div className={`row ${style['row-adjust']}`} >  
-            <div className={`col-2 ${style['column-adjust']} ${style['destroy-padding-right']}`} >
+            <div className={`col-md-2 ${style['column-adjust']} ${style['destroy-padding-right']}`} >
               <div className={`${style['hamburger-wrapper']}`} >
                 <div className={`${style['lowes-icon']} ${style.hamburger}`}>{'\uEC6E'}</div>
               </div>
             </div>
-            <div className={`col-7 ${style['column-adjust']} ${style.popper}`} >
+            <div className={`col-10 col-md-7 ${style['column-adjust']} ${style.popper}`} >
               <div id="dept-wrapper" className={`${style['department-wrapper']}`} >
                 <a className={`${style.department}`} >Departments</a>
               </div>
             </div>
-            <div className={`col-3`}>
+            <div className={`col-1 col-md-3 ${style['dropArrow']}`}>
               <div className={`${style.dropDownIconWrapper}`} >
                 <div className={`${style['drop-down-icon']}`}></div>
               </div>

@@ -36,7 +36,14 @@ class App extends Component {
       showToast: false,
       favorite: {},
       saved: false,
-      favoriteList: {}
+      favoriteList: {},
+      loginFail: false,
+      signUpFail: false,
+      clearInput: '',
+      searching: '',
+      keywords: [],
+      keywordObj: {},
+      firstSuggestionId: null
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -55,9 +62,18 @@ class App extends Component {
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
     this.toastToggler = this.toastToggler.bind(this);
+    this.clearSearch =this.clearSearch.bind(this);
+    this.setFirstSuggestionId = this.setFirstSuggestionId.bind(this);
   }
 
   componentDidMount() {
+    window.addEventListener('stars', e => {
+      const id = e.detail.id;
+      axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/${id}`, {withCredentials: true}).then((reviews) => {
+        this.state.reviewStat[id-1] = reviews.data;
+        this.setState({reviewStat: this.state.reviewStat})
+      })
+    });
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
       newCartItem.price = Number(data.detail.price);
@@ -82,9 +98,11 @@ class App extends Component {
     })
     window.addEventListener('favorite', (data) => {
       let favorite = data.detail;
+      console.log('favorite', favorite);
       if(this.state.loggedIn) {
         let username = this.state.usernameShow
         if(!!favorite.saved === false) {
+          console.log('triggered');
           axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
             let favoriteList = this.state.favoriteList;
             delete favoriteList[favorite.product_id];
@@ -107,6 +125,17 @@ class App extends Component {
       let promises =[];
       promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      const keyWordsList = [];
+      const keywordObj = {}
+      let data = {};
+      itemlist.data.forEach((item) => {
+        data[item.category] = item;
+        let keywords = item.category.split(' ');
+        keywords.forEach((keyword) => {
+          keyWordsList.push(keyword);
+          keywordObj[keyword] = item.category;
+        })
+      })
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
@@ -119,14 +148,9 @@ class App extends Component {
             total += element;
           }
         } else {
-
           cartItemList = [];
-          
         }
-        let data = {};
-        itemlist.data.forEach((item) => {
-          data[item.category] = item;
-        });
+
         this.setState({
           dataList: data,
           deptList: [... new Set(itemlist.data.map((item) => {
@@ -145,12 +169,26 @@ class App extends Component {
           reviewStat: results[1].data,
           loggedIn: loggedIn,
           logoutWindow: loggedIn,
-          usernameShow: username
+          usernameShow: username,
+          keywords: keyWordsList,
+          keywordObj: keywordObj
         }, () => {
           axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
-            console.log(favorite.data.favorite)
+            if(this.state.loggedIn) {
+              let userFavorite = [];
+              if(favorite.data.favorite) {
+                for (const id in favorite.data.favorite) {
+                  userFavorite.push(Number(id));
+                }
+              }
+              window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
+            }
+            let favoriteList = {}
+            if(favorite.data.favorite) {
+              favoriteList = favorite.data.favorite;
+            }
             this.setState({
-              favoriteList: favorite.data.favorite
+              favoriteList: favoriteList
             })
           })
         });
@@ -160,7 +198,6 @@ class App extends Component {
   }
 
   removeItem(cartId) {
-    console.log(cartId);
     if(this.state.cartItemList[cartId].amount === 1) {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
@@ -179,7 +216,6 @@ class App extends Component {
   }
 
   addItem(cartId) {
-    console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
@@ -195,8 +231,13 @@ class App extends Component {
     this.setState({toggleSuggestion: !this.state.toggleSuggestion});
   }
 
-  cartModalToggler() {
-    this.setState({showCart: !this.state.showCart});
+  cartModalToggler(checkOut) {
+
+    this.setState({showCart: !this.state.showCart}, () => {
+      if(checkOut) {
+        window.open('https://www.paypal.me/dongjaepark', "_blank");
+      }
+    });
   }
 
   loginWindowToggler() {
@@ -228,55 +269,89 @@ class App extends Component {
   createAccount() {
     let username = this.state.username;
     let password = this.state.password;
-    axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
-    })
+    if(!username) {
+      alert('Username is Required');
+    } else if(!password) {
+      alert('Password is Required');
+      this.setState({password: ''});
+    } else {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+        if(signedUp.data.msg !== '') {
+          alert(signedUp.data.msg);
+        } else {
+          alert('Sign up Success!');
+          window.location.reload();
+        }
+      })
+    }
   }
 
   toastToggler() {
     this.setState({showToast: false});
   }
 
-  signInPopoverToggler() {
-
-  }
-
   logIn() {
     let username = this.state.username;
     let password = this.state.password;
-    this.setState({loggingIn: true}, () => {
-      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
-        if(loggedIn.data === true) {
-          window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true}}));
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
-            let totalCartItem = 0;
-            let userCartItemList = [];
-            if(userCart.data) {
-              userCart.data.cartItemList.forEach((cartItem) => {
-                totalCartItem += cartItem.amount;
+    if(!username) {
+      alert('Username is Required');
+    } else if(!password) {
+      alert('Password is Required');
+      this.setState({password: ''});
+    } else {
+      
+      this.setState({loggingIn: true}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+          if(loggedIn.data === true) {
+            
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
+              let totalCartItem = 0;
+              let userCartItemList = [];
+              if(userCart.data) {
+                userCart.data.cartItemList.forEach((cartItem) => {
+                  totalCartItem += cartItem.amount;
+                })
+                userCartItemList = userCart.data.cartItemList;
+              }
+              axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${username}` ,{withCredentials: true}).then((userFavorites) => {
+                let userFavorite = [];
+                for (const id in userFavorites.data.favorite) {
+                  userFavorite.push(Number(id));
+                }
+                window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
+                let favoriteList = {}
+                if(userFavorites.data.favorite) {
+                  favoriteList = userFavorites.data.favorite;
+                }
+                setTimeout(() => {
+                  this.setState({
+                    loggedIn: loggedIn.data, 
+                    loginWindow: false, 
+                    usernameShow: username, 
+                    loggingIn: false , 
+                    username: '', 
+                    password: '', 
+                    cartItemList: userCartItemList, 
+                    logoutWindow: loggedIn.data,
+                    cartNumItemTotal: totalCartItem,
+                    favoriteList: favoriteList,
+                    loginFail: false
+                    });
+                }, 1500);
               })
-              userCartItemList = userCart.data.cartItemList;
-            }
+            })
+          } else {
+            let loginFailMsg = loggedIn.data === false ? 'password' : 'username';
+            console.log('login fail', loggedIn.data);
             setTimeout(() => {
-              this.setState({
-                loggedIn: loggedIn.data, 
-                loginWindow: false, 
-                usernameShow: username, 
-                loggingIn: false , 
-                username: '', 
-                password: '', 
-                cartItemList: userCartItemList, 
-                logoutWindow: loggedIn.data,
-                cartNumItemTotal: totalCartItem
-                });
+              this.setState({loggedIn: false, usernameShow: false, loggingIn: false , username: username, password: '', loginFail: loginFailMsg}, () => {
+                alert(loggedIn.data.msg);
+              });
             }, 1500);
-          })
-        } else {
-          setTimeout(() => {
-            this.setState({loggedIn: loggedIn.data, usernameShow: '', loggingIn: false , username: username, password: ''});
-          }, 1500);
-        }
-    })}
-    );
+          }
+      })}
+      );
+    }
   }
 
   logOut() {
@@ -295,26 +370,36 @@ class App extends Component {
   }
 
   handleSearch(e, hovering) {
-    const { itemList } = this.state;
-    const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
-    
-    
-      if(!hovering) {
-        this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
+    let searching = e.target.value;
+    this.setState({ searching }, () => {
+
+      const filteredDataList = this.state.keywords.filter(item => item.toLowerCase().startsWith(this.state.searching.toLowerCase()));
+      const idk = filteredDataList.map((item) => this.state.keywordObj[item]);
+        if(!hovering) {
+          this.setState({filteredList: [... new Set(idk)]}, () => {
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.state.filteredList[0]}`, {withCredentials: true}).then((result) => {
+              // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+              let suggestionList = result.data;
+              this.setState({ suggestionList});
+            })
+          });
+        } else {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${e.target.value}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList });
-          })
-        });
-      } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
-          // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList });
-          })
-      }
+              let suggestionList = result.data;
+              this.setState({ suggestionList });
+            })
+        }
+    })
     
+  }
+
+  clearSearch() {
+    this.setState({searching: ''});
+  }
+
+  setFirstSuggestionId(id) {
+    this.setState({firstSuggestionId: id});
   }
 
   render() { 
@@ -346,9 +431,14 @@ class App extends Component {
           logIn={this.logIn}
           logOut={this.logOut}
           favoriteList={this.state.favoriteList}
+          loginFail={this.state.loginFail}
         />
         </div>
         <Navbar 
+          setFirstSuggestionId={this.setFirstSuggestionId}
+          firstSuggestionId={this.state.firstSuggestionId}
+          clearSearch={this.clearSearch}
+          searching={this.state.searching}
           browsing={this.state.browsing}
           handleBrowsing={this.handleBrowsing}
           handleSearch={this.handleSearch} 

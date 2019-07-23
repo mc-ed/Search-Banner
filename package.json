@@ -8,7 +8,7 @@
     "start": "node ./server/index.js",
     "react-dev": "webpack -d --watch",
     "build": "webpack --mode production",
-    "server-dev": "nodemon",
+    "server-dev": "nodemon -r dotenv/config",
     "restart": "pm2 startOrRestart ecosystem.config.js",
     "deploy": "pm2 deploy ecosystem.config.js production"
   },
@@ -49,7 +49,8 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "bable-loader": "0.0.1-security",
-    "eslint": "^5.3.0",
+    "dotenv": "^8.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",

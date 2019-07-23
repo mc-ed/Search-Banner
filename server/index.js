@@ -1,13 +1,14 @@
 const express = require('express');
-const app = express();
+const bcrypt = require('bcrypt');
 const bodyparser = require('body-parser');
 const path = require('path');
-const PORT = 3000;
+const { HOST, PORT } = require('../config');
 const db = require('../db/index.js');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
-const bcrypt = require('bcrypt');
+
+const app = express();
 const round = 10;
 
 const whitelist = [
@@ -19,22 +20,24 @@ const whitelist = [
   'http://lowesproductoverview-env.mk2qecy2ne.us-east-2.elasticbeanstalk.com'
 ];
 const whitelistRegex = /http:\/\/localhost.*/;
-const corsOptions = {
-  credentials: true,
-  origin: function(origin, callback) {
-    // console.log('in corsoption origin is: ', origin);
-    if (
-      whitelist.indexOf(origin) !== -1 ||
-      !origin ||
-      whitelistRegex.test(origin)
-    ) {
-      // console.log('hi');
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-};
+
+// const corsOptions = {
+//   credentials: true,
+//   origin: function(origin, callback) {
+//     // console.log('in corsoption origin is: ', origin);
+//     if (
+//       whitelist.indexOf(origin) !== -1 ||
+//       !origin ||
+//       whitelistRegex.test(origin)
+//     ) {
+//       // console.log('hi');
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// };
+
 app.use(cors());
 app.use((req, res, next) => {
   console.log(`Accepting ${req.method} method from ${req.ip} to ${req.url}`);
@@ -222,4 +225,6 @@ app.get('/getfavorite', (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`Listening for port: ${PORT}`));
+app.listen(PORT, HOST, () => {
+  console.log(`Running on http://${HOST}:${PORT}`);
+});

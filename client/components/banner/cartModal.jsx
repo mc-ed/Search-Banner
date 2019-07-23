@@ -63,7 +63,7 @@ const CartModal = (props) => {
         <Button variant="secondary" onClick={()=>props.cartModalToggler()}>
           Close
         </Button>
-        <Button variant="primary" onClick={()=>props.cartModalToggler()}>
+        <Button variant="primary" onClick={()=>props.cartModalToggler('checkOut')}>
           Check Out
         </Button>
       </Modal.Footer>

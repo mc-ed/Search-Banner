@@ -18,6 +18,10 @@ const Navbar = (props) => {
           showDept={props.showDept}
         />
         <SearchBar 
+          setFirstSuggestionId={props.setFirstSuggestionId}
+          firstSuggestionId={props.firstSuggestionId}
+          clearSearch={props.clearSearch}
+          searching={props.searching}
           reviewStat={props.reviewStat}
           handleSearch={props.handleSearch} 
           filteredList={props.filteredList} 

@@ -3,6 +3,7 @@ import Banner from './banner/banner.jsx';
 import Navbar from './navBar.jsx';
 import axios from 'axios';
 import adjust from '../style/adjust.less';
+import { Toast } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -25,10 +26,26 @@ class App extends Component {
       loginWindow: false,
       logoutWindow: false,
       loggedIn: false,
-      username: ''
+      signUpWindow: false,
+      username: '',
+      password: '',
+      loggingIn: false,
+      loggingOut: false,
+      usernameShow: '',
+      signInPopover: false,
+      showToast: false,
+      favorite: {},
+      saved: false,
+      favoriteList: {},
+      loginFail: false,
+      signUpFail: false,
+      clearInput: '',
+      searching: '',
+      keywords: [],
+      keywordObj: {},
+      firstSuggestionId: null
     }
     this.deployed = true;
-    this.ip = this.deployed ? 'http://search-banner.us-east-1.elasticbeanstalk.com' : '';
     this.handleSearch = this.handleSearch.bind(this);
     this.suggestionToggler = this.suggestionToggler.bind(this);
     this.cartModalToggler = this.cartModalToggler.bind(this);
@@ -38,12 +55,27 @@ class App extends Component {
     this.addItem = this.addItem.bind(this);
     this.loginWindowToggler = this.loginWindowToggler.bind(this);
     this.logoutWindowToggler =this.logoutWindowToggler.bind(this);
+    this.signUpWindowToggler = this.signUpWindowToggler.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
+    this.handleUsername = this.handleUsername.bind(this);
+    this.createAccount = this.createAccount.bind(this);
+    this.logIn = this.logIn.bind(this);
+    this.logOut = this.logOut.bind(this);
+    this.toastToggler = this.toastToggler.bind(this);
+    this.clearSearch =this.clearSearch.bind(this);
+    this.setFirstSuggestionId = this.setFirstSuggestionId.bind(this);
   }
 
   componentDidMount() {
+    window.addEventListener('stars', e => {
+      const id = e.detail.id;
+      axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/${id}`, {withCredentials: true}).then((reviews) => {
+        this.state.reviewStat[id-1] = reviews.data;
+        this.setState({reviewStat: this.state.reviewStat})
+      })
+    });
     window.addEventListener('cart', (data) => {
       let newCartItem = data.detail;
-      console.log('woo new item to cart!', data.detail);
       newCartItem.price = Number(data.detail.price);
       let exists = false;
       let existingIndex = -1;
@@ -61,20 +93,55 @@ class App extends Component {
       }
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal+newCartItem.amount, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
+    })
+    window.addEventListener('favorite', (data) => {
+      let favorite = data.detail;
+      console.log('favorite', favorite);
+      if(this.state.loggedIn) {
+        let username = this.state.usernameShow
+        if(!!favorite.saved === false) {
+          console.log('triggered');
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/removefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            let favoriteList = this.state.favoriteList;
+            delete favoriteList[favorite.product_id];
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: favoriteList });
+          })
+        } else {
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savefavorite', { username, favorite }, {withCredentials: true}).then((favoriteItemSaved)=> {
+            this.state.favoriteList[favorite.product_id] = favorite;
+            this.setState({showToast: true, favorite: favorite, saved: favorite.saved, favoriteList: this.state.favoriteList });
+          })
+        }
+      } else {
+        this.setState({loginWindow: true});
+      }
     })
     axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/itemlist', {withCredentials: true})
     // axios.get('/itemlist')
     .then((itemlist) => {
       // console.log('got response from itemlist: ', itemlist)
       let promises =[];
-      promises.push(axios.get( 'http://search-banner.us-east-1.elasticbeanstalk.com/getcart', {withCredentials: true}))
+      promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
       promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      const keyWordsList = [];
+      const keywordObj = {}
+      let data = {};
+      itemlist.data.forEach((item) => {
+        data[item.category] = item;
+        let keywords = item.category.split(' ');
+        keywords.forEach((keyword) => {
+          keyWordsList.push(keyword);
+          keywordObj[keyword] = item.category;
+        })
+      })
       Promise.all(promises).then((results) => {
         let total = 0;
         let cartItemList = results[0].data.cartItemList;
+        let username = results[0].data.username;
+        console.log('username:', username);
+        let loggedIn = (username === undefined || username === 'Anonymous') ? false : true;
         if(cartItemList && cartItemList.length > 0) {
           for (let index = 0; index < cartItemList.length; index++) {
             const element = cartItemList[index].amount;
@@ -83,10 +150,7 @@ class App extends Component {
         } else {
           cartItemList = [];
         }
-        let data = {};
-        itemlist.data.forEach((item) => {
-          data[item.category] = item;
-        });
+
         this.setState({
           dataList: data,
           deptList: [... new Set(itemlist.data.map((item) => {
@@ -102,7 +166,31 @@ class App extends Component {
           }))],
           cartItemList: cartItemList,
           cartNumItemTotal: total,
-          reviewStat: results[1].data
+          reviewStat: results[1].data,
+          loggedIn: loggedIn,
+          logoutWindow: loggedIn,
+          usernameShow: username,
+          keywords: keyWordsList,
+          keywordObj: keywordObj
+        }, () => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${this.state.usernameShow}`, {withCredentials: true}).then((favorite) => {
+            if(this.state.loggedIn) {
+              let userFavorite = [];
+              if(favorite.data.favorite) {
+                for (const id in favorite.data.favorite) {
+                  userFavorite.push(Number(id));
+                }
+              }
+              window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
+            }
+            let favoriteList = {}
+            if(favorite.data.favorite) {
+              favoriteList = favorite.data.favorite;
+            }
+            this.setState({
+              favoriteList: favoriteList
+            })
+          })
         });
       })
     })
@@ -110,14 +198,11 @@ class App extends Component {
   }
 
   removeItem(cartId) {
-    console.log(cartId);
     if(this.state.cartItemList[cartId].amount === 1) {
       this.state.cartItemList.splice(cartId, 1);
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
-          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}).then(() => {
-            console.log('delted 0 item from cart!');
+          axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/deleteCartItem', {}, {withCredentials: true}).then(() => {
           })
         })
       });
@@ -125,18 +210,15 @@ class App extends Component {
       this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount - 1;
       this.setState({cartNumItemTotal: this.state.cartNumItemTotal-1, cartItemList: this.state.cartItemList}, () => {
         axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-          console.log('saved!')
         })
       })
     }
   }
 
   addItem(cartId) {
-    console.log(cartId);
     this.state.cartItemList[cartId].amount = this.state.cartItemList[cartId].amount + 1;
     this.setState({cartNumItemTotal: this.state.cartNumItemTotal+1, cartItemList: this.state.cartItemList}, () => {
       axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/savecart', { cartItemList: this.state.cartItemList} , {withCredentials: true}).then(() => {
-        console.log('saved!')
       })
     });
   }
@@ -149,16 +231,138 @@ class App extends Component {
     this.setState({toggleSuggestion: !this.state.toggleSuggestion});
   }
 
-  cartModalToggler() {
-    this.setState({showCart: !this.state.showCart});
+  cartModalToggler(checkOut) {
+
+    this.setState({showCart: !this.state.showCart}, () => {
+      if(checkOut) {
+        window.open('https://www.paypal.me/dongjaepark', "_blank");
+      }
+    });
   }
 
   loginWindowToggler() {
-    this.setState({loginWindow: !this.state.loginWindow});
+    this.setState({loginWindow: !this.state.loginWindow}, () => {
+      setTimeout(() => {
+        this.setState({signUpWindow: false})
+      }, 100);
+    });
   }
 
   logoutWindowToggler() {
     this.setState({logoutWindow: !this.state.logoutWindow});
+  }
+
+  signUpWindowToggler() {
+    this.setState({signUpWindow: !this.state.signUpWindow, username: '', password: ''});
+  }
+
+  handleUsername(e) {
+    let username = e.target.value;
+    this.setState({ username: username });
+  }
+
+  handlePassword(e) {
+    let password = e.target.value;
+    this.setState({ password: password });
+  }
+
+  createAccount() {
+    let username = this.state.username;
+    let password = this.state.password;
+    if(!username) {
+      alert('Username is Required');
+    } else if(!password) {
+      alert('Password is Required');
+      this.setState({password: ''});
+    } else {
+      axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/signup', { username, password }, {withCredentials: true}).then((signedUp) => {
+        if(signedUp.data.msg !== '') {
+          alert(signedUp.data.msg);
+        } else {
+          alert('Sign up Success!');
+          window.location.reload();
+        }
+      })
+    }
+  }
+
+  toastToggler() {
+    this.setState({showToast: false});
+  }
+
+  logIn() {
+    let username = this.state.username;
+    let password = this.state.password;
+    if(!username) {
+      alert('Username is Required');
+    } else if(!password) {
+      alert('Password is Required');
+      this.setState({password: ''});
+    } else {
+      
+      this.setState({loggingIn: true}, () => {
+        axios.post('http://search-banner.us-east-1.elasticbeanstalk.com/login', { username, password }, { withCredentials: true }).then((loggedIn) => {
+          if(loggedIn.data === true) {
+            
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getusercart?username=${username}`, {withCredentials: true}).then((userCart) => {
+              let totalCartItem = 0;
+              let userCartItemList = [];
+              if(userCart.data) {
+                userCart.data.cartItemList.forEach((cartItem) => {
+                  totalCartItem += cartItem.amount;
+                })
+                userCartItemList = userCart.data.cartItemList;
+              }
+              axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/getfavorite?username=${username}` ,{withCredentials: true}).then((userFavorites) => {
+                let userFavorite = [];
+                for (const id in userFavorites.data.favorite) {
+                  userFavorite.push(Number(id));
+                }
+                window.dispatchEvent(new CustomEvent('loggedIn', {detail: {loggedIn: true, favoriteList: userFavorite, username: this.state.usernameShow}}));
+                let favoriteList = {}
+                if(userFavorites.data.favorite) {
+                  favoriteList = userFavorites.data.favorite;
+                }
+                setTimeout(() => {
+                  this.setState({
+                    loggedIn: loggedIn.data, 
+                    loginWindow: false, 
+                    usernameShow: username, 
+                    loggingIn: false , 
+                    username: '', 
+                    password: '', 
+                    cartItemList: userCartItemList, 
+                    logoutWindow: loggedIn.data,
+                    cartNumItemTotal: totalCartItem,
+                    favoriteList: favoriteList,
+                    loginFail: false
+                    });
+                }, 1500);
+              })
+            })
+          } else {
+            let loginFailMsg = loggedIn.data === false ? 'password' : 'username';
+            console.log('login fail', loggedIn.data);
+            setTimeout(() => {
+              this.setState({loggedIn: false, usernameShow: false, loggingIn: false , username: username, password: '', loginFail: loginFailMsg}, () => {
+                alert(loggedIn.data.msg);
+              });
+            }, 1500);
+          }
+      })}
+      );
+    }
+  }
+
+  logOut() {
+    let username = this.state.usernameShow;
+    this.setState({loggingOut: true}, () => {
+      axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/logout?username=${username}`, { withCredentials: true }).then((result) => {
+        window.dispatchEvent(new CustomEvent('loggedOut', {detail: {loggedIn: false}}));
+        this.setState({loggedIn: false, usernameShow: '', logoutWindow: false, loggingOut: false, cartItemList: [], cartNumItemTotal: 0});
+      })
+    })
+    
   }
 
   handleBrowsing() {
@@ -166,26 +370,36 @@ class App extends Component {
   }
 
   handleSearch(e, hovering) {
-    const { itemList } = this.state;
-    const filteredDataList = itemList.filter(item => item.toLowerCase().startsWith(e.target.value.toLowerCase()));
-    
-    
-      if(!hovering) {
-        this.setState({filteredList: [... new Set(filteredDataList)]}, () => {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
+    let searching = e.target.value;
+    this.setState({ searching }, () => {
+
+      const filteredDataList = this.state.keywords.filter(item => item.toLowerCase().startsWith(this.state.searching.toLowerCase()));
+      const idk = filteredDataList.map((item) => this.state.keywordObj[item]);
+        if(!hovering) {
+          this.setState({filteredList: [... new Set(idk)]}, () => {
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.state.filteredList[0]}`, {withCredentials: true}).then((result) => {
+              // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+              let suggestionList = result.data;
+              this.setState({ suggestionList});
+            })
+          });
+        } else {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${e.target.value}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList });
-          })
-        });
-      } else {
-        axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${filteredDataList[0]}`, {withCredentials: true}).then((result) => {
-          // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
-            let suggestionList = result.data;
-            this.setState({ suggestionList });
-          })
-      }
+              let suggestionList = result.data;
+              this.setState({ suggestionList });
+            })
+        }
+    })
     
+  }
+
+  clearSearch() {
+    this.setState({searching: ''});
+  }
+
+  setFirstSuggestionId(id) {
+    this.setState({firstSuggestionId: id});
   }
 
   render() { 
@@ -205,9 +419,26 @@ class App extends Component {
           loginWindowToggler={this.loginWindowToggler}
           logoutWindowToggler={this.logoutWindowToggler}
           username={this.state.username}
+          usernameShow={this.state.usernameShow}
+          password={this.state.password}
+          signUpWindow={this.state.signUpWindow}
+          signUpWindowToggler={this.signUpWindowToggler}
+          handlePassword={this.handlePassword}
+          handleUsername={this.handleUsername}
+          createAccount={this.createAccount}
+          loggingIn={this.state.loggingIn}
+          loggingOut={this.state.loggingOut}
+          logIn={this.logIn}
+          logOut={this.logOut}
+          favoriteList={this.state.favoriteList}
+          loginFail={this.state.loginFail}
         />
         </div>
         <Navbar 
+          setFirstSuggestionId={this.setFirstSuggestionId}
+          firstSuggestionId={this.state.firstSuggestionId}
+          clearSearch={this.clearSearch}
+          searching={this.state.searching}
           browsing={this.state.browsing}
           handleBrowsing={this.handleBrowsing}
           handleSearch={this.handleSearch} 
@@ -227,6 +458,44 @@ class App extends Component {
             :
             null
           }
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            style={{
+              position: 'relative',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: '50px',
+                zIndex: '10'
+              }}
+            >
+            <Toast onClose={() => this.toastToggler()} show={this.state.showToast} delay={3000} autohide>
+              <Toast.Header>
+                <strong className="mr-auto">{this.state.saved ? 'Saved to ' : 'Removed from '} {this.state.usernameShow}'s favorite!</strong>
+                <small>Just Now</small>
+              </Toast.Header>
+              <Toast.Body>
+                <div className="row">
+                  <div className="col-4">
+                    {this.state.showToast ? 
+                      <img style={{width: '100px', height: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${this.state.favorite['product_id']}.jpg`}/>
+                    :
+                      null
+                    }
+                  </div>
+                  <div className="col-8">
+                    {this.state.favorite.name} 
+                  </div>
+                </div>
+              </Toast.Body>
+            </Toast>
+            
+          </div>
+        </div>
       </header>
      );
   }

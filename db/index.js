@@ -1,11 +1,11 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 mongoose.connect(
   'mongodb+srv://dongjae93:qkrehdwo7@connect4-xkfvh.mongodb.net/FEC?retryWrites=true&w=majority',
   { useNewUrlParser: true }
 );
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 const itemSchema = new mongoose.Schema({

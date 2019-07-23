@@ -9,11 +9,11 @@ const SearchBar = (props) => {
       <div className={`${style['search-wrap']}`}>
         <form className={`form-group ${style['form-group-adjust']}`}>
           <div className={`row ${style['row-adjust']} d-flex dropdown`}>
-            <input className={`col-8 col-sm-10 ${style['search-input']}`} value={props.searching} autoComplete="rutjfkde" type="text" onClick={()=>{
+            <input className={`col-8 col-sm-10 col-lg-11 ${style['search-input']}`} value={props.searching} autoComplete="rutjfkde" type="text" onClick={()=>{
               props.handleSearch({target:{value: ''}})
               props.suggestionToggler();
           }} onChange={(e)=> (props.handleSearch(e))} data-toggle="dropdown" placeholder="What are you looking for today?" aria-label="Search" id="" aria-describedby="basic-addon1"></input>
-            <div className={`col-sm-2 ${style['search-icon-wrapper']}`}>
+            <div className={`col-sm-2 col-lg-1 ${style['search-icon-wrapper']}`}>
               <div className={`${style['search-icon']} ${style['lowes-icon']}`}>{"\uEB30"}</div>
             </div>
 
@@ -22,7 +22,14 @@ const SearchBar = (props) => {
                   <div className={`col-3 ${style['search-item']} ${style.scrollbar} ${style['destroy-padding-left']} ${style['destroy-adding-right']}`}>
                     {props.filteredList !== null ? 
                       props.filteredList.map((entry, i) => {
-                        return <li className={`${style['search-item']} ${style.category}`} onMouseOver={()=>props.handleSearch({target:{value: entry}}, true)} key={`${i}`} ><a href="#">{entry}</a></li>
+                        return (
+                          <li className={`${style['search-item']} ${style.category}`} onClick={() => {
+                            // console.log(props.suggestionList[0].id);
+                            window.dispatchEvent(new CustomEvent('product',{detail: {product_id: props.suggestionList[0].id}}));
+                            props.clearSearch();
+                          }} onMouseOver={()=>props.handleSearch({target:{value: entry}}, true)} key={`${i}`} >
+                            <a>{entry}</a>
+                          </li>)
                       })
                       : 
                       null
@@ -31,7 +38,7 @@ const SearchBar = (props) => {
                   <div className={`col-md-12 col-lg-9 ${style['padding-adjust']} ${style.scrollbar}`}>
                     <div className={`${style['product-suggestion']}`}>Product Suggestions</div>
                     {props.suggestionList.map((suggestion, i) => {
-                      return <Suggestion key={i} suggestion={suggestion} reviewStat={props.reviewStat[suggestion.id-1]} clearSearch={props.clearSearch}/>
+                      return <Suggestion key={suggestion.id} id={suggestion.id.toString()+i} suggestion={suggestion} reviewStat={props.reviewStat[suggestion.id-1]} clearSearch={props.clearSearch} setFirstSuggestionId={props.setFirstSuggestionId}/>
                     })}
                   </div>
                 </div>

@@ -42,7 +42,8 @@ class App extends Component {
       clearInput: '',
       searching: '',
       keywords: [],
-      keywordObj: {}
+      keywordObj: {},
+      firstSuggestionId: null
     }
     this.deployed = true;
     this.handleSearch = this.handleSearch.bind(this);
@@ -62,6 +63,7 @@ class App extends Component {
     this.logOut = this.logOut.bind(this);
     this.toastToggler = this.toastToggler.bind(this);
     this.clearSearch =this.clearSearch.bind(this);
+    this.setFirstSuggestionId = this.setFirstSuggestionId.bind(this);
   }
 
   componentDidMount() {
@@ -229,8 +231,13 @@ class App extends Component {
     this.setState({toggleSuggestion: !this.state.toggleSuggestion});
   }
 
-  cartModalToggler() {
-    this.setState({showCart: !this.state.showCart});
+  cartModalToggler(checkOut) {
+
+    this.setState({showCart: !this.state.showCart}, () => {
+      if(checkOut) {
+        window.open('https://www.paypal.me/dongjaepark', "_blank");
+      }
+    });
   }
 
   loginWindowToggler() {
@@ -370,14 +377,14 @@ class App extends Component {
       const idk = filteredDataList.map((item) => this.state.keywordObj[item]);
         if(!hovering) {
           this.setState({filteredList: [... new Set(idk)]}, () => {
-            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${idk[0]}`, {withCredentials: true}).then((result) => {
+            axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${this.state.filteredList[0]}`, {withCredentials: true}).then((result) => {
               // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
               let suggestionList = result.data;
               this.setState({ suggestionList});
             })
           });
         } else {
-          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${idk[0]}`, {withCredentials: true}).then((result) => {
+          axios.get(`http://search-banner.us-east-1.elasticbeanstalk.com/item?category=${e.target.value}`, {withCredentials: true}).then((result) => {
             // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
               let suggestionList = result.data;
               this.setState({ suggestionList });
@@ -389,6 +396,10 @@ class App extends Component {
 
   clearSearch() {
     this.setState({searching: ''});
+  }
+
+  setFirstSuggestionId(id) {
+    this.setState({firstSuggestionId: id});
   }
 
   render() { 
@@ -424,6 +435,8 @@ class App extends Component {
         />
         </div>
         <Navbar 
+          setFirstSuggestionId={this.setFirstSuggestionId}
+          firstSuggestionId={this.state.firstSuggestionId}
           clearSearch={this.clearSearch}
           searching={this.state.searching}
           browsing={this.state.browsing}

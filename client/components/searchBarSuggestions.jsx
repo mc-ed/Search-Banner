@@ -47,7 +47,7 @@ class SearchBarSuggestions extends Component {
           {this.props.suggestion ? this.props.suggestion.itemName : null}
         </div>
         <div className={`${style.child}`}>
-          {this.props.suggestion ? <a className={`${style[`star-${stars}`]}`}></a> : null}
+          {this.props.suggestion ? <a className={`${style[`star-${stars}`]} ${style.child}`}></a> : null}
           {this.props.suggestion ? ' (' + this.props.reviewStat.reviewStats.reviewCount + ') ' : null}
         </div>
       </div>

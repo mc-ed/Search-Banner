@@ -1,6 +1,15 @@
 
 .logo {
   padding: 7px;
+  min-width: 131px;
+  @media(max-width: 767px) {
+  }
+  @media(max-width: 408px) {
+    padding-top: 0px;
+  }
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .open-until {
@@ -9,5 +18,24 @@
   top:43%;
   padding: 0px !important;
   font-size: 14px;
+  @media(max-width: 991px) {
+    font-size: 12px;
+  }
+  @media(max-width: 767px) {
+    font-size: 10px;
+  }
+  @media(max-width: 530px) {
+    top: 0;
+    padding-left: 10px !important;
+  }
+  @media(max-width: 482px) {
+    display: none;
+  }
+  
+}
 
+.temp {
+  @media(max-width: 557px) {
+    display: none;
+  }
 }

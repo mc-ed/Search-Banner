@@ -50,6 +50,7 @@
     "babel-loader": "^8.0.6",
     "bable-loader": "0.0.1-security",
     "file-loader": "^4.0.0",
+    "jsdoc": "^3.6.3",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "react-svg-loader": "^3.0.3",

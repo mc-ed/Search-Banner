@@ -1,13 +1,45 @@
 const mongoose = require('mongoose');
-const itemSchema = new mongoose.Schema({
-  id: Number,
-  itemName: String,
-  rating: Number,
-  numRating: Number,
-  category: String
-});
+const { makeFakeItem } = require('./faker');
+
+const db = mongoose.connection;
+const itemSchema = new mongoose.Schema(
+  {
+    id: { type: Number, unique: true },
+    itemName: { type: String, unique: true },
+    rating: Number,
+    numRating: Number,
+    category: String,
+    views: Number
+  },
+  { timestamps: { updatedAt: 'last_accessed' } }
+);
 
 const Item = mongoose.model('Item', itemSchema);
+
+/**
+ * Saves one item to the database from an item object
+ * @param {object} itemObject a item object following the item schema
+ */
+const saveOneItem = itemObject => {
+  console.log('Attempting to insert', itemObject);
+  new Item(itemObject).save((err, newItem) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(`${newItem.id} Added to db!`);
+      db.close();
+    }
+  });
+};
+
+/**
+ * Saves n number of fakeItems to the database
+ * @param {number} n fakeItems to be added
+ */
+
+const addManyFakeItems = n => {
+  console.log(`Attempting to insert ${n} fakeItems`);
+};
 
 /**
  * This function gets all items from MongoDB items collection
@@ -49,5 +81,7 @@ const get3Items = category => {
 
 module.exports = {
   getAllItemList,
-  get3Items
+  get3Items,
+  saveOneItem,
+  addManyFakeItems
 };

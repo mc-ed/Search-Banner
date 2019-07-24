@@ -24,21 +24,6 @@ const userSchema = new mongoose.Schema({
 
 const Cart = mongoose.model('Cart', cartSchema);
 const User = mongoose.model('User', userSchema);
-// new Item({
-//   id: 43,
-//   itemName:
-//     'John-Deere-Z335E-20-HP-V-twin-Dual-Hydrostatic-42-in-Zero-turn-Lawn-Mower-with-Mulching-Capability-(Kit-Sold-Separately)',
-//   rating: 4.5,
-//   numRating: 155,
-//   category: 'Lawn Mower'
-// }).save((err, newItem) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(`${newItem.id} Added to db!`);
-//     db.close();
-//   }
-// });
 
 const deleteCartItem = id => {
   // console.log('deleting cart of: ', id);

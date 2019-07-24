@@ -5,10 +5,10 @@
   "main": "./server/index.js",
   "scripts": {
     "test": "jest",
-    "start": "node ./server/index.js",
+    "start": "node ./server/server.js",
     "react-dev": "webpack -d --watch",
     "build": "webpack --mode production",
-    "server-dev": "nodemon -r dotenv/config",
+    "server-dev": "nodemon -r dotenv/config ./server/server.js",
     "restart": "pm2 startOrRestart ecosystem.config.js",
     "deploy": "pm2 deploy ecosystem.config.js production"
   },
@@ -33,6 +33,7 @@
     "cors": "^2.8.5",
     "css-loader": "^3.1.0",
     "express": "^4.17.1",
+    "mongodb": "^3.3.0-beta2",
     "mongoose": "^5.6.6",
     "morgan": "^1.9.1",
     "pg": "^7.11.0",

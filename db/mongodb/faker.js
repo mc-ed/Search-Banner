@@ -12,7 +12,7 @@ const faker = require('faker');
  * @returns {promise} resolves to item object matching Item schema
  */
 async function makeFakeItem() {
-  const randomID = faker.random.number();
+  const randomID = faker.finance.amount(0, 1000000000);
   const randomItemName = faker.commerce.productName();
   const randomRating = faker.finance.amount(0, 5, 3);
   const randomCategory = faker.commerce.department();

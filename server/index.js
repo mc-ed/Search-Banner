@@ -225,6 +225,19 @@ app.get('/getfavorite', (req, res) => {
     });
 });
 
+app.get('/items/list', (req, res) => {
+  db.getAllItemList().then(items => {
+    res.send(items);
+  });
+});
+
+app.get('/items', (req, res) => {
+  db.get3Items(req.query.category).then(result => {
+    // console.log(result);
+    res.send(result);
+  });
+});
+
 app.listen(PORT, HOST, () => {
   console.log(`Running on http://${HOST}:${PORT}`);
 });

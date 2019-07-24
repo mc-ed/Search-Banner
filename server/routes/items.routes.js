@@ -9,17 +9,4 @@ const {
 
 const itemsRouter = express.Router();
 
-itemsRouter.get('/list', (req, res) => {
-  getAllItemList().then(items => {
-    res.send(items);
-  });
-});
-
-itemsRouter.get('/', (req, res) => {
-  get3Items(req.query.category).then(result => {
-    // console.log(result);
-    res.send(result);
-  });
-});
-
 module.exports = itemsRouter;

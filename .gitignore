@@ -1,8 +1,9 @@
 node_modules
 .DS_Store
 FEC.zip
-
+.env
 ./public/bundle.js
 public/bundle.js
 public/evelynbundle.js
 public/chrisbundle.js
+package-lock.json

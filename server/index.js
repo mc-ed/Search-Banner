@@ -3,10 +3,10 @@ const bcrypt = require('bcrypt');
 const bodyparser = require('body-parser');
 const path = require('path');
 const { HOST, PORT } = require('../config');
-const db = require('../db/index.js');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
+const db = require('../db/mongodb/index.js');
 
 const app = express();
 const round = 10;

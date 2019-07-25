@@ -2,6 +2,19 @@ const { getItemsCollection } = require('./mongodb');
 const { makeFakeItem } = require('./faker');
 
 /**
+ * Finds one item from database items collection
+ * Updates the last accessed and views to keep track of priority
+ * @returns {promise} a promise that resolves to one item
+ */
+function findOneItem() {
+  const searchParams = {
+    id: { $gt: 1 }
+  };
+
+  return result;
+}
+
+/**
  * Inserts one automatically generated fake item to the database
  *
  * @returns {promise} a promise that resolves to the inserted fake item
@@ -28,7 +41,7 @@ async function insertOneFakeItem() {
  */
 async function insertManyFakeItems() {
   const items = [];
-  for (let i = 0; i < 99000; i++) {
+  for (let i = 0; i < 50000; i++) {
     items.push(makeFakeItem());
   }
 
@@ -44,7 +57,34 @@ async function insertManyFakeItems() {
     });
 }
 
+/**
+ * Inserts many automatically generated fake item to the database
+ *
+ * @returns {promise} a promise that resolves to the number of fake items inserted
+ */
+async function insertOneMillionFakeItems() {
+  const successfulInserts = [];
+
+  for (let i = 0; i < 10; i += 1) {
+    const insertPromises = [];
+
+    for (let j = 0; j < 2; j += 1) {
+      insertPromises.push(insertManyFakeItems());
+    }
+    // eslint-disable-next-line no-await-in-loop
+    // actually want to wait until resolved to avoid heap overflow
+    const insertions = await Promise.all(insertPromises);
+    successfulInserts.push(insertions);
+
+    console.log(`Has inserted ${100 + 100 * i}k items as of`, new Date());
+  }
+
+  return successfulInserts;
+}
+
 module.exports = {
   insertOneFakeItem,
-  insertManyFakeItems
+  insertManyFakeItems,
+  insertOneMillionFakeItems,
+  findOneItem
 };

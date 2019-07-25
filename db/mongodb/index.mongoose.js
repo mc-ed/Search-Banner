@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { MONGO_CONNECTION_STRING } = require('../config');
+const { MONGO_CONNECTION_STRING } = require('../../config');
+const { getAllItemList, get3Items } = require('./items');
 
 mongoose.connect(MONGO_CONNECTION_STRING, { useNewUrlParser: true });
 mongoose.set('useFindAndModify', false);
@@ -7,14 +8,6 @@ mongoose.set('useCreateIndex', true);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-
-const itemSchema = new mongoose.Schema({
-  id: Number,
-  itemName: String,
-  rating: Number,
-  numRating: Number,
-  category: String
-});
 
 const cartSchema = new mongoose.Schema({
   cookie: String,
@@ -29,24 +22,8 @@ const userSchema = new mongoose.Schema({
   favorite: Object
 });
 
-const Item = mongoose.model('Item', itemSchema);
 const Cart = mongoose.model('Cart', cartSchema);
 const User = mongoose.model('User', userSchema);
-// new Item({
-//   id: 43,
-//   itemName:
-//     'John-Deere-Z335E-20-HP-V-twin-Dual-Hydrostatic-42-in-Zero-turn-Lawn-Mower-with-Mulching-Capability-(Kit-Sold-Separately)',
-//   rating: 4.5,
-//   numRating: 155,
-//   category: 'Lawn Mower'
-// }).save((err, newItem) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(`${newItem.id} Added to db!`);
-//     db.close();
-//   }
-// });
 
 const deleteCartItem = id => {
   // console.log('deleting cart of: ', id);
@@ -117,37 +94,6 @@ const getUserCart = (username, cookie) => {
         });
       }
     });
-  });
-};
-
-/**
- * This function gets all items from MongoDB items collection
- * @returns {promise} that evaluates to an array of objects
- */
-
-const getAllItemList = () => {
-  return new Promise((res, rej) => {
-    Item.find((err, items) => {
-      if (err) {
-        rej(err);
-      } else {
-        res(items);
-      }
-    }).sort({ category: 1 });
-  });
-};
-
-const get3Items = category => {
-  return new Promise((res, rej) => {
-    Item.find({ category: category }, (err, items) => {
-      if (err) {
-        rej(err);
-      } else {
-        res(items);
-      }
-    })
-      .sort({ rating: -1 })
-      .sort({ numRating: -1 });
   });
 };
 

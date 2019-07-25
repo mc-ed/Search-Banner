@@ -153,8 +153,8 @@ class App extends Component {
       }
     });
     axios
-      .get('/itemlist', { withCredentials: true })
-      // axios.get('/itemlist')
+      .get('/items/list', { withCredentials: true })
+      // axios.get('/itemslist')
       .then(itemlist => {
         console.log('got response from itemlist: ', itemlist);
         let promises = [];
@@ -525,20 +525,20 @@ class App extends Component {
       if (!hovering) {
         this.setState({ filteredList: [...new Set(idk)] }, () => {
           axios
-            .get(`/item?category=${this.state.filteredList[0]}`, {
+            .get(`/items?category=${this.state.filteredList[0]}`, {
               withCredentials: true
             })
             .then(result => {
-              // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+              // axios.get(`/items?category=${filteredDataList[0]}`).then((result) => {
               let suggestionList = result.data;
               this.setState({ suggestionList });
             });
         });
       } else {
         axios
-          .get(`/item?category=${e.target.value}`, { withCredentials: true })
+          .get(`/items?category=${e.target.value}`, { withCredentials: true })
           .then(result => {
-            // axios.get(`/item?category=${filteredDataList[0]}`).then((result) => {
+            // axios.get(`/items?category=${filteredDataList[0]}`).then((result) => {
             let suggestionList = result.data;
             this.setState({ suggestionList });
           });

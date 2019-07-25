@@ -1,6 +1,11 @@
 {
-  "plugins": ["prettier", "jest"],
-  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "plugins": ["prettier", "jest", "jsdoc"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier/react",
+    "plugin:jsdoc/recommended"
+  ],
   "env": {
     "browser": true,
     "commonjs": true,

@@ -1,14 +1,12 @@
 const express = require('express');
+const legacyRouter = express.Router();
 const bcrypt = require('bcrypt');
-const bodyparser = require('body-parser');
 const path = require('path');
-const { HOST, PORT } = require('../config');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
-const db = require('../db/mongodb/index.js');
+const db = require('../../db/mongodb/index.js');
 
-const app = express();
 const round = 10;
 
 const whitelist = [
@@ -21,47 +19,32 @@ const whitelist = [
 ];
 const whitelistRegex = /http:\/\/localhost.*/;
 
-// const corsOptions = {
-//   credentials: true,
-//   origin: function(origin, callback) {
-//     // console.log('in corsoption origin is: ', origin);
-//     if (
-//       whitelist.indexOf(origin) !== -1 ||
-//       !origin ||
-//       whitelistRegex.test(origin)
-//     ) {
-//       // console.log('hi');
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   }
-// };
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+    // console.log('in corsoption origin is: ', origin);
+    if (
+      whitelist.indexOf(origin) !== -1 ||
+      !origin ||
+      whitelistRegex.test(origin)
+    ) {
+      // console.log('hi');
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
 
-app.use(cors());
-app.use((req, res, next) => {
-  console.log(`Accepting ${req.method} method from ${req.ip} to ${req.url}`);
-  next();
-});
+legacyRouter.use(cors());
+// legacyRouter.use((req, res, next) => {
+//   console.log(`Accepting ${req.method} method from ${req.ip} to ${req.url}`);
+//   next();
+// });
 
-app.use(cookieParser('DJDJ'));
-app.use(bodyparser.json());
-app.use(express.static(path.join(__dirname, '../public')));
+legacyRouter.use(cookieParser('DJDJ'));
 
-app.get('/itemlist', (req, res) => {
-  db.getAllItemList().then(items => {
-    res.send(items);
-  });
-});
-
-app.get('/item', (req, res) => {
-  db.get3Items(req.query.category).then(result => {
-    // console.log(result);
-    res.send(result);
-  });
-});
-
-app.post('/savecart', (req, res) => {
+legacyRouter.post('/savecart', (req, res) => {
   console.log('saving to cart cookie: ', req.signedCookies.user_id);
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList)
     .then(cart => {
@@ -73,7 +56,7 @@ app.post('/savecart', (req, res) => {
     });
 });
 
-app.post('/deleteCartItem', (req, res) => {
+legacyRouter.post('/deleteCartItem', (req, res) => {
   db.deleteCartItem(req.signedCookies.user_id)
     .then(cart => {
       res.send('deleted 0 item');
@@ -105,7 +88,7 @@ function cartLogic(req, res, next) {
   }
 }
 
-app.get('/getcart', cartLogic, (req, res) => {
+legacyRouter.get('/getcart', cartLogic, (req, res) => {
   db.getCart(req.signedCookies.user_id)
     .then(cart => {
       res.send(cart);
@@ -116,7 +99,7 @@ app.get('/getcart', cartLogic, (req, res) => {
     });
 });
 
-app.post('/signup', (req, res) => {
+legacyRouter.post('/signup', (req, res) => {
   console.log(req.body);
   bcrypt.genSalt(round, (err, salt) => {
     if (err) {
@@ -144,7 +127,7 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
+legacyRouter.post('/login', (req, res) => {
   db.logIn(req.body.username)
     .then(hashedPW => {
       bcrypt.compare(req.body.password, hashedPW).then(result => {
@@ -162,7 +145,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.get('/getusercart', (req, res) => {
+legacyRouter.get('/getusercart', (req, res) => {
   // console.log(req.query.username)
   db.getUserCart(req.query.username, req.signedCookies.user_id)
     .then(userCart => {
@@ -175,7 +158,7 @@ app.get('/getusercart', (req, res) => {
     });
 });
 
-app.get('/logout', (req, res) => {
+legacyRouter.get('/logout', (req, res) => {
   db.logOut(req.query.username)
     .then(loggedOut => {
       console.log('logoutted', loggedOut);
@@ -190,7 +173,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.post('/savefavorite', (req, res) => {
+legacyRouter.post('/savefavorite', (req, res) => {
   console.log(req.body);
   db.saveFavorite(req.body.username, req.body.favorite)
     .then(result => {
@@ -202,7 +185,7 @@ app.post('/savefavorite', (req, res) => {
     });
 });
 
-app.post('/removefavorite', (req, res) => {
+legacyRouter.post('/removefavorite', (req, res) => {
   db.removeFavorite(req.body.username, req.body.favorite)
     .then(result => {
       res.send();
@@ -213,7 +196,7 @@ app.post('/removefavorite', (req, res) => {
     });
 });
 
-app.get('/getfavorite', (req, res) => {
+legacyRouter.get('/getfavorite', (req, res) => {
   db.getFavorite(req.query.username)
     .then(favorite => {
       console.log('sending faborite: ', favorite);
@@ -225,19 +208,4 @@ app.get('/getfavorite', (req, res) => {
     });
 });
 
-app.get('/items/list', (req, res) => {
-  db.getAllItemList().then(items => {
-    res.send(items);
-  });
-});
-
-app.get('/items', (req, res) => {
-  db.get3Items(req.query.category).then(result => {
-    // console.log(result);
-    res.send(result);
-  });
-});
-
-app.listen(PORT, HOST, () => {
-  console.log(`Running on http://${HOST}:${PORT}`);
-});
+module.exports = legacyRouter;

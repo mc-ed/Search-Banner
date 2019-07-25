@@ -65,7 +65,7 @@ async function insertManyFakeItems() {
 async function insertOneMillionFakeItems() {
   const successfulInserts = [];
 
-  for (let i = 0; i < 10; i += 1) {
+  for (let i = 0; i < 5; i += 1) {
     const insertPromises = [];
 
     for (let j = 0; j < 2; j += 1) {

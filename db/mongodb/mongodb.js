@@ -1,5 +1,5 @@
 const { MongoClient } = require('mongodb');
-const { MONGO_CONNECTION_STRING } = require('../../config');
+const { MONGO_DOCKER_CONNECTION_STRING } = require('../../config');
 
 const options = {
   useNewUrlParser: true
@@ -29,7 +29,7 @@ function connect(url, database) {
 async function initializeDatabases() {
   // const databases = await Promise.all([connect(uri)]);
   const searchbar = await connect(
-    MONGO_CONNECTION_STRING,
+    MONGO_DOCKER_CONNECTION_STRING,
     'searchbar'
   );
   databases.searchbar = searchbar;

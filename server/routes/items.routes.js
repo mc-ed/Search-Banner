@@ -4,6 +4,7 @@ const {
   insertManyFakeItems,
   insertOneMillionFakeItems
 } = require('../../db/mongodb/items.js');
+const { initalizePG } = require('../../db/postgres/items.js');
 
 const itemsRouter = express.Router();
 

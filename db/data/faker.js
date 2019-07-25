@@ -1,4 +1,5 @@
 const faker = require('faker');
+const fs = require('fs');
 
 // id: { type: Number, unique: true },
 // itemName: { type: String, unique: true },
@@ -21,16 +22,25 @@ async function makeFakeItem() {
   const randomViews = faker.random.number();
   const randomTimestamp = faker.date.recent();
 
-  const fakeItem = {
-    id: await randomID,
-    itemName: await randomItemName,
-    views: await randomViews,
-    category: await randomCategory,
-    lastAccessed: await randomTimestamp
-  };
+  const fakeItem = `${await randomID},${await randomItemName},${await randomViews},${await randomCategory},${await randomTimestamp}\n`;
 
   return fakeItem;
 }
+
+let longStr = '';
+console.time('timer');
+for (let i = 0; i < 1; i += 1) {
+  longStr += makeFakeItem();
+}
+
+(async () => {
+  await fs.appendFile('../seeding.csv', longStr, err => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  console.timeEnd('timer');
+})();
 
 module.exports = {
   makeFakeItem

@@ -5,10 +5,7 @@ async function intializePG() {
   await client.connect();
   const res = await client.query('SELECT NOW()');
   await client.end();
-  console.log(res);
 }
-
-intializePG();
 
 module.exports = {
   intializePG

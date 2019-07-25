@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { makeFakeItem } = require('./faker');
+const { makeFakeItem } = require('../data/faker');
 
 const db = mongoose.connection;
 const itemSchema = new mongoose.Schema(

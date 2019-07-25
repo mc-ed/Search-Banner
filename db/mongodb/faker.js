@@ -13,7 +13,9 @@ const faker = require('faker');
  */
 async function makeFakeItem() {
   const randomID = faker.finance.amount(0, 1000000000, 0);
-  const randomItemName = faker.commerce.productName();
+  const randomItemName = faker.fake(
+    '{{commerce.productAdjective}} {{commerce.productAdjective}} {{commerce.productMaterial}} {{commerce.product}}, {{commerce.color}}'
+  );
   const randomRating = faker.finance.amount(0, 5, 3);
   const randomCategory = faker.commerce.department();
   const randomViews = faker.random.number();

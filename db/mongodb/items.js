@@ -4,7 +4,6 @@ const { makeFakeItem } = require('./faker');
 /**
  * Inserts one automatically generated fake item to the database
  *
- * @param {object} itemObject a item object following the item schema
  * @returns {promise} a promise that resolves to the inserted fake item
  */
 async function insertOneFakeItem() {
@@ -22,6 +21,30 @@ async function insertOneFakeItem() {
     });
 }
 
+/**
+ * Inserts many automatically generated fake item to the database
+ *
+ * @returns {promise} a promise that resolves to the number of fake items inserted
+ */
+async function insertManyFakeItems() {
+  const items = [];
+  for (let i = 0; i < 99000; i++) {
+    items.push(makeFakeItem());
+  }
+
+  const resolvedItems = await Promise.all(items);
+
+  return getItemsCollection()
+    .insertMany(resolvedItems, { ordered: false })
+    .then(success => {
+      return success.result.nInserted.toString();
+    })
+    .catch(err => {
+      return err.result.nInserted.toString();
+    });
+}
+
 module.exports = {
-  insertOneFakeItem
+  insertOneFakeItem,
+  insertManyFakeItems
 };

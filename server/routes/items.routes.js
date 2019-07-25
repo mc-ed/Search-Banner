@@ -1,5 +1,8 @@
 const express = require('express');
-const { insertOneFakeItem } = require('../../db/mongodb/items.js');
+const {
+  insertOneFakeItem,
+  insertManyFakeItems
+} = require('../../db/mongodb/items.js');
 
 const itemsRouter = express.Router();
 
@@ -13,6 +16,17 @@ itemsRouter.get('/all', (req, res) => {
   getAllItems().then(items => {
     res.send(items);
   });
+});
+
+itemsRouter.get('/fakeMany', (req, res) => {
+  insertManyFakeItems()
+    .then(success => {
+      res.send(success);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
 });
 
 itemsRouter.get('/fakeOne', (req, res) => {

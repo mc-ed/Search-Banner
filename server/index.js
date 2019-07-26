@@ -6,7 +6,7 @@ const { HOST, PORT } = require('../config');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
-const db = require('../db/mongodb/index.js');
+const db = require('../db/mongodb/index.mongoose.js');
 
 const app = express();
 const round = 10;
@@ -48,11 +48,6 @@ app.use(cookieParser('DJDJ'));
 app.use(bodyparser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('/itemlist', (req, res) => {
-  db.getAllItemList().then(items => {
-    res.send(items);
-  });
-});
 
 app.get('/item', (req, res) => {
   db.get3Items(req.query.category).then(result => {
@@ -61,6 +56,11 @@ app.get('/item', (req, res) => {
   });
 });
 
+app.get('/itemlist', (req, res) => {
+  db.getAllItemList().then(items => {
+    res.send(items);
+  });
+});
 app.post('/savecart', (req, res) => {
   console.log('saving to cart cookie: ', req.signedCookies.user_id);
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList)

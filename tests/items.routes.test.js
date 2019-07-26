@@ -26,3 +26,18 @@ describe('When the /items path --->', () => {
       });
   });
 });
+
+/**
+ * LEGACY TESTS
+ */
+
+describe('When the /items/list path --->', () => {
+  test('receives a GET request, it should respond', done => {
+    request(app)
+      .get('/items/list')
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        done();
+      });
+  });
+});

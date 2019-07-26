@@ -4,6 +4,10 @@ module.exports = {
   MONGO_USER: process.env.MONGO_USER,
   MONGO_PASS: process.env.MONGO_PASS,
   MONGO_CONNECTION_STRING: process.env.MONGO_CONNECTION_STRING,
-  PG_USER: process.env.PG_USER,
-  PG_PASS: process.env.PG_PASS
+  MONGO_DOCKER_CONNECTION_STRING: process.env.MONGO_DOCKER_CONNECTION_STRING,
+  PGUSER: process.env.PGUSER,
+  PGPASSWORD: process.env.PGPASSWORD,
+  PGDATABASE: process.env.PGDATABASE,
+  PGHOST: process.env.PGHOST,
+  PGPORT: process.env.PGPORT
 };

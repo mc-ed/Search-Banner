@@ -6,11 +6,15 @@
   "scripts": {
     "test": "jest",
     "start": "node ./server/server.js",
+    "server-legacy": "nodemon -r dotenv/config ./server/index.js",
     "react-dev": "webpack -d --watch",
     "build": "webpack --mode production",
     "server-dev": "nodemon -r dotenv/config ./server/server.js",
     "restart": "pm2 startOrRestart ecosystem.config.js",
-    "deploy": "pm2 deploy ecosystem.config.js production"
+    "deploy": "pm2 deploy ecosystem.config.js production",
+    "pg-dev-start": "docker run --rm   --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres",
+    "mongo-docker-start": "docker run --rm --name mongo-docker -p 27017:27017 -v $HOME/docker/volumes/mongodb:/data/db -d mongo",
+    "mongo-bulk-import": "mongoimport -d searchbar -c items --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/db/data/seedData.csv --headerline"
   },
   "repository": {
     "type": "git",
@@ -33,10 +37,11 @@
     "cors": "^2.8.5",
     "css-loader": "^3.1.0",
     "express": "^4.17.1",
+    "knex": "^0.19.1",
     "mongodb": "^3.3.0-beta2",
     "mongoose": "^5.6.6",
     "morgan": "^1.9.1",
-    "pg": "^7.11.0",
+    "pg": "^7.12.0",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.9",
     "react-dom": "^16.8.6",

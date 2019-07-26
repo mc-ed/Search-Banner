@@ -30,24 +30,23 @@ function makeFakeItem() {
 
 /* FAKE DATA GENERATOR */
 
-let longStr = '';
-
-function makeFakeItems() {
-  for (let i = 0; i < 1000000; i += 1) {
+function makeFakeItems(n) {
+  let longStr = '';
+  console.time(`Generating ${n} items`);
+  for (let i = 0; i < n; i += 1) {
     longStr += makeFakeItem();
   }
+  console.timeEnd(`Generating ${n} items`);
+  return longStr;
 }
 
 async function writeToCSV() {
-  console.time('OneMillion');
-  makeFakeItems();
-  await fs.appendFile(path.resolve(__dirname, 'seedData.csv'), longStr, err => {
+  const data = makeFakeItems(500000);
+  await fs.appendFile(path.resolve(__dirname, 'seedData.csv'), data, err => {
     if (err) {
       console.log(err);
     }
   });
-  longStr = '';
-  console.timeEnd('OneMillion');
 }
 
 async function writeTenMillion() {

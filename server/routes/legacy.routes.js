@@ -44,6 +44,12 @@ legacyRouter.use(cors());
 
 legacyRouter.use(cookieParser('DJDJ'));
 
+app.get('/itemlist', (req, res) => {
+  db.getAllItemList().then(items => {
+    res.send(items);
+  });
+});
+
 legacyRouter.post('/savecart', (req, res) => {
   console.log('saving to cart cookie: ', req.signedCookies.user_id);
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList)

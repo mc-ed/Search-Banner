@@ -1,16 +1,11 @@
 const express = require('express');
-const {
-  insertOneFakeItem,
-  insertManyFakeItems,
-  insertOneMillionFakeItems
-} = require('../../db/mongodb/items.js');
 const { initalizePG } = require('../../db/postgres/items.js');
 
 const itemsRouter = express.Router();
 
 itemsRouter.get('/', (req, res) => {
   get10Items().then(items => {
-    res.send(items);
+    res.send();
   });
 });
 
@@ -20,11 +15,15 @@ itemsRouter.get('/all', (req, res) => {
   });
 });
 
-/**
+/* *
  *
  * LEGACY ROUTES
  *
- **/
+ * */
+
+itemsRouter.get('/list', (req, res) => {
+  res.send();
+});
 
 /*
  *

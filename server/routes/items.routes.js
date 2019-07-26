@@ -20,37 +20,49 @@ itemsRouter.get('/all', (req, res) => {
   });
 });
 
-itemsRouter.get('/fakeMany', (req, res) => {
-  insertManyFakeItems()
-    .then(success => {
-      res.send(success);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
-});
+/**
+ *
+ * LEGACY ROUTES
+ *
+ **/
 
-itemsRouter.get('/fakeMillion', (req, res) => {
-  insertOneMillionFakeItems()
-    .then(success => {
-      res.send(success);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
-});
+/*
+ *
+ * ROUTES FOR INSERTING FAKES
+ *
+ */
 
-itemsRouter.get('/fakeOne', (req, res) => {
-  insertOneFakeItem()
-    .then(item => {
-      res.send(item);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
-});
+// itemsRouter.get('/fakeMany', (req, res) => {
+//   insertManyFakeItems()
+//     .then(success => {
+//       res.send(success);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       res.send();
+//     });
+// });
+
+// itemsRouter.get('/fakeMillion', (req, res) => {
+//   insertOneMillionFakeItems()
+//     .then(success => {
+//       res.send(success);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       res.send();
+//     });
+// });
+
+// itemsRouter.get('/fakeOne', (req, res) => {
+//   insertOneFakeItem()
+//     .then(item => {
+//       res.send(item);
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       res.send();
+//     });
+// });
 
 module.exports = itemsRouter;

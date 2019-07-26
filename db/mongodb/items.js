@@ -1,5 +1,4 @@
 const { getItemsCollection } = require('./mongodb');
-const { makeFakeItem } = require('../data/faker');
 
 /**
  * Finds one item from database items collection

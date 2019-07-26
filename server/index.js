@@ -6,7 +6,7 @@ const { HOST, PORT } = require('../config');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuidv4 = require('uuid/v4');
-const db = require('../db/mongodb/index.js');
+const db = require('../db/mongodb/index.mongoose.js');
 
 const app = express();
 const round = 10;

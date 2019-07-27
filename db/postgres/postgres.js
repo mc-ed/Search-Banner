@@ -1,12 +1,9 @@
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
-async function intializePG() {
-  const client = new Client();
-  await client.connect();
-  const res = await client.query('SELECT NOW()');
-  await client.end();
-}
+const pool = new Pool();
 
 module.exports = {
-  intializePG
+  query: (text, params, callback) => {
+    return pool.query(text, params, callback);
+  }
 };

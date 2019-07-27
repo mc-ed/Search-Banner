@@ -55,7 +55,6 @@ function getSearchBarDatabase() {
  *
  * @returns {object} 'items' collection of 'searchbar' database.
  */
-
 function getItemsCollection() {
   return databases.searchbar.collection('items');
 }

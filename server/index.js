@@ -48,7 +48,6 @@ app.use(cookieParser('DJDJ'));
 app.use(bodyparser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
-
 app.get('/item', (req, res) => {
   db.get3Items(req.query.category).then(result => {
     // console.log(result);
@@ -61,6 +60,7 @@ app.get('/itemlist', (req, res) => {
     res.send(items);
   });
 });
+
 app.post('/savecart', (req, res) => {
   console.log('saving to cart cookie: ', req.signedCookies.user_id);
   db.saveCart(req.signedCookies.user_id, req.body.cartItemList)

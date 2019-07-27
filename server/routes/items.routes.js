@@ -1,10 +1,13 @@
 const express = require('express');
-const { initalizePG } = require('../../db/postgres/items.js');
-const { findTenItems } = require('../../db/mongodb/items.js');
+const mongo = require('../../db/mongodb/items.js');
+
 const itemsRouter = express.Router();
 
+itemsRouter.use('/psql', require('./psql.routes'));
+
 itemsRouter.get('/', (req, res) => {
-  findTenItems()
+  mongo
+    .findTenItems()
     .then(items => {
       res.send(items);
     })
@@ -19,6 +22,12 @@ itemsRouter.get('/next', (req, res) => {
     res.send(items);
   });
 });
+
+/* *
+ *
+ * LEGACY ROUTES
+ *
+ * */
 
 /* *
  *

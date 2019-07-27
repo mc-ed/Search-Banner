@@ -63,7 +63,7 @@ async function writeToCSV(n) {
  * May time out/heap overflow
  */
 async function writeTenMillion() {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     await writeToCSV(200000);
   }
 }

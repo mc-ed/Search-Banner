@@ -8,3 +8,8 @@ public/evelynbundle.js
 public/chrisbundle.js
 package-lock.json
 db/data/seedData.csv
+db/data/seedData_001.csv
+db/data/mongoSeed.csv
+db/data/pgSeed.csv
+db/data/seedData_002.csv
+db/data/seedData_003.csv

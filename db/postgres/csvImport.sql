@@ -1,0 +1,1 @@
+COPY items FROM '/Users/owner/Desktop/HRATX/Search-Banner/db/data/oneItem.csv' DELIMITERS ',' CSV;

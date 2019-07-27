@@ -23,13 +23,18 @@ function makeFakeItem() {
   const randomViews = faker.random.number();
   const randomTimestamp = faker.date.recent();
 
-  const fakeItem = `${randomID},${randomItemName},${randomViews},${randomCategory},${randomTimestamp}\n`;
+  const fakeItem = `${randomID},${randomItemName},${randomViews},${randomCategory}\n`;
 
   return fakeItem;
 }
 
 /* FAKE DATA GENERATOR */
 
+/**
+ * Generates fake items and returns a string formatted for CSVs
+ * @param {number} n number of fake items to be generated
+ * @returns {string} a string of n fake items
+ */
 function makeFakeItems(n) {
   let longStr = '';
   console.time(`Generating ${n} items`);
@@ -40,23 +45,27 @@ function makeFakeItems(n) {
   return longStr;
 }
 
-async function writeToCSV() {
-  const data = makeFakeItems(500000);
-  await fs.appendFile(path.resolve(__dirname, 'seedData.csv'), data, err => {
+/**
+ * Writes a specific number of fake items to a CSV
+ * @param {number} n items
+ */
+async function writeToCSV(n) {
+  const data = makeFakeItems(n);
+  await fs.appendFile(path.resolve(__dirname, 'mongoSeed.csv'), data, err => {
     if (err) {
       console.log(err);
     }
   });
 }
 
+/**
+ * Writes 10M items to a CSV specified by interal variables
+ * May time out/heap overflow
+ */
 async function writeTenMillion() {
-  for (i = 0; i < 1; i++) {
-    await writeToCSV();
+  for (let i = 0; i < 20; i++) {
+    await writeToCSV(200000);
   }
 }
 
 writeTenMillion();
-
-module.exports = {
-  makeFakeItem
-};

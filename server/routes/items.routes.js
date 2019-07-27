@@ -1,16 +1,21 @@
 const express = require('express');
 const { initalizePG } = require('../../db/postgres/items.js');
-
+const { findTenItems } = require('../../db/mongodb/items.js');
 const itemsRouter = express.Router();
 
 itemsRouter.get('/', (req, res) => {
-  get10Items().then(items => {
-    res.send();
-  });
+  findTenItems()
+    .then(items => {
+      res.send(items);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
 });
 
-itemsRouter.get('/all', (req, res) => {
-  getAllItems().then(items => {
+itemsRouter.get('/next', (req, res) => {
+  getNextItems().then(items => {
     res.send(items);
   });
 });

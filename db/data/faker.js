@@ -51,11 +51,15 @@ function makeFakeItems(n) {
  */
 async function writeToCSV(n) {
   const data = makeFakeItems(n);
-  await fs.appendFile(path.resolve(__dirname, 'mongoSeed.csv'), data, err => {
-    if (err) {
-      console.log(err);
+  await fs.appendFile(
+    path.resolve(__dirname, 'mongoSeed_200k.csv'),
+    data,
+    err => {
+      if (err) {
+        console.log(err);
+      }
     }
-  });
+  );
 }
 
 /**
@@ -63,8 +67,8 @@ async function writeToCSV(n) {
  * May time out/heap overflow
  */
 async function writeTenMillion() {
-  for (let i = 0; i < 10; i++) {
-    await writeToCSV(200000);
+  for (let i = 0; i < 1; i++) {
+    await writeToCSV(229000);
   }
 }
 

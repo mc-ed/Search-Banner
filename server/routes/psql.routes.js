@@ -16,10 +16,12 @@ psqlItemsRouter.get('/', (req, res) => {
 });
 
 psqlItemsRouter.get('/:itemid', (req, res) => {
+  const { itemid } = req.params;
+
   psql
-    .findAItem()
-    .then(items => {
-      res.send(items);
+    .findOneById(itemid)
+    .then(item => {
+      res.send(item);
     })
     .catch(err => {
       console.error(err);

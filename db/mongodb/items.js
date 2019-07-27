@@ -1,7 +1,7 @@
 const { getItemsCollection } = require('./mongodb');
 
 /**
- * Finds one item from database items collection
+ * Finds one item from Mongo database items collection
  * Updates the last accessed and views to keep track of priority
  * @returns {promise} a promise that resolves to one item
  */
@@ -22,7 +22,7 @@ function findOneItem() {
 }
 
 /**
- * Finds ten item from database items collection
+ * Finds ten item from Mongo database items collection
  * Updates the last accessed and views to keep track of priority
  * @returns {promise} a promise that resolves to one item
  */

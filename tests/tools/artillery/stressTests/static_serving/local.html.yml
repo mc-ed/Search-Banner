@@ -1,0 +1,18 @@
+config:
+  target: 'http://0.0.0.0:3000'
+  http:
+    pool: 20
+  phases:
+    - duration: 30
+      arrivalRate: 1000
+      name: 'Warm up server'
+    # - duration: 60
+    #   arrivalRate: 10000
+    #   name: 'Target Load'
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+      - get:
+          url: '/'

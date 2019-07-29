@@ -7,13 +7,32 @@ const { getItemsCollection } = require('./mongodb');
  */
 function findOneItem() {
   const searchParams = {
-    id: { $gt: 1 }
+    itemId: { $gt: 1 }
   };
 
   return getItemsCollection()
     .findOne(searchParams)
     .then(item => {
       console.log(item);
+      return item;
+    })
+    .catch(err => {
+      throw err;
+    });
+}
+
+/**
+ * Finds one item from Mongo database items collection
+ * Updates the last accessed and views to keep track of priority
+ * @param {number} itemId a itemId
+ * @returns {promise} a promise that resolves to one item
+ */
+function findOneById(itemId) {
+  const searchParams = { itemId: { $eq: itemId } };
+
+  return getItemsCollection()
+    .findOne(searchParams)
+    .then(item => {
       return item;
     })
     .catch(err => {
@@ -34,7 +53,6 @@ function findTenItems() {
     .find(searchParams, options)
     .toArray()
     .then(items => {
-      console.log(items);
       return items;
     })
     .catch(err => {
@@ -44,5 +62,6 @@ function findTenItems() {
 
 module.exports = {
   findOneItem,
+  findOneById,
   findTenItems
 };

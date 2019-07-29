@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const { HOST, PORT } = require('../config');
 
 const app = express();
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(cors());
 app.use(
   bodyParser.json({

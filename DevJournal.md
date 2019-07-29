@@ -88,11 +88,12 @@ Working with no documentation or tests and code with a lot of side effects is no
 
 1. Indexing in both PSQL and Mongo appear to be O(log n) or greater time complexity. Type checking is also expensive.
 2. Routes / methods for testing are a bit complicated.
+3. How to performance test PSQL & Mongo easily/effectively?
 
 ### Action taken:
 
 1. Imported PSQL data as a TEXT field and then ran a TABLE UPDATE after. Let Mongo run full import.
-2. Added sub-router for PSQL and started importing the model/database functions via an object to make it explicit vs destructuring. Example below.
+2. Added sub-router for PSQL and started importing the model/data access methods via an object to make it explicit vs destructuring. Example below.
 
 ```javascript
 itemsRouter.get('/', (req, res) => {
@@ -103,6 +104,79 @@ itemsRouter.get('/', (req, res) => {
     })
 ```
 
+3. Implementing Artillery.io for testing.
+
 ### Results/Takeaways:
 
 1. PSQL seed, update, and index is very rapid like ~10-12 minutes locally. Mongo import looks like it'll take ~3 hours. Will make indexes in the background after upload in deployment.
+2. Sometimes destructuring is actually less explicit
+3. It'd be nice to do a side-by-side test just within the server but a backend test is more practical and more realistic about what matters given the task and time constraint.
+
+## Date: July 29, 2019
+
+### Challenges faced:
+
+1. Artillary is single threaded, my local CPU core caps out ~550 RPS. Need another way to test more requests.
+2. Tested DB Queries with and without indexes.
+
+### Action taken:
+
+1.
+
+### Results/Takeaways:
+
+1. Stress
+2. Indexing **really** matters. This was told to me a lot at Mongo but I took it for granted until doing testing. Results below, full tests in `tests\tools\artillery\indexTests`:
+
+### Index Testing:
+
+#### Without Indexes:
+
+##### Mongo:
+
+```
+A findOne for strict equality takes ~23 seconds without an index. Couldn't even stress test it since the connection timed.
+```
+
+##### PSQL:
+
+```
+More performant than Mongo unindexed, was actually able to return 40 / 6000 requests without request time outs.
+```
+
+#### With Indexes:
+
+##### Mongo:
+
+```javascript
+"scenariosCreated": 6000
+"scenariosCompleted": 6000
+    "latency": {
+      "min": 2.3,
+      "max": 163.4,
+      "median": 3.5,
+      "p95": 13.6,
+      "p99": 34.5
+    },
+    "rps": {
+      "count": 6000,
+      "mean": 99.11
+    }
+```
+
+##### PSQL:
+
+```javascript
+"scenariosCreated": 6000,
+"scenariosCompleted": 6000,
+    "latency": {
+      "min": 5,
+      "max": 1068.1,
+      "median": 7.6,
+      "p95": 101.9,
+      "p99": 824.6
+    },
+    "rps": {
+      "count": 6000,
+      "mean": 99.22
+```

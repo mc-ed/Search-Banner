@@ -17,17 +17,21 @@ itemsRouter.get('/', (req, res) => {
     });
 });
 
-itemsRouter.get('/next', (req, res) => {
-  getNextItems().then(items => {
-    res.send(items);
-  });
-});
+itemsRouter.get('/:itemid', (req, res) => {
+  const { itemid } = req.params;
 
-/* *
- *
- * LEGACY ROUTES
- *
- * */
+  const ID = parseInt(itemid, 10);
+
+  mongo
+    .findOneById(ID)
+    .then(item => {
+      res.send(item);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
+});
 
 /* *
  *

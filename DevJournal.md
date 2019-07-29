@@ -125,9 +125,8 @@ itemsRouter.get('/', (req, res) => {
 
 ### Results/Takeaways:
 
-1.
-
-2. Indexing **really** matters. This was told to me a lot at Mongo but I took it for granted until doing testing. Results below:
+1. Stress
+2. Indexing **really** matters. This was told to me a lot at Mongo but I took it for granted until doing testing. Results below, full tests in `tests\tools\artillery\indexTests`:
 
 ### Index Testing:
 

@@ -37,7 +37,7 @@ describe('When the /items/psql path --->', () => {
   });
 });
 
-describe('When the /items/psql/:id path --->', () => {
+xdescribe('When the /items/psql/:id path --->', () => {
   test('receives a GET request, it should respond successfully --->', () => {
     return request(app)
       .get('/items/psql/10')

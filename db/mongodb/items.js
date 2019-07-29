@@ -22,6 +22,27 @@ function findOneItem() {
 }
 
 /**
+ * Finds one item from Mongo database items collection
+ * Updates the last accessed and views to keep track of priority
+ * @returns {promise} a promise that resolves to one item
+ */
+function findOneById(itemid) {
+  const searchParams = {
+    itemid: { $eq: itemid }
+  };
+
+  return getItemsCollection()
+    .findOne(searchParams)
+    .then(item => {
+      console.log(item);
+      return item;
+    })
+    .catch(err => {
+      throw err;
+    });
+}
+
+/**
  * Finds ten item from Mongo database items collection
  * Updates the last accessed and views to keep track of priority
  * @returns {promise} a promise that resolves to one item

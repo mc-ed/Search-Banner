@@ -29,12 +29,6 @@ itemsRouter.get('/next', (req, res) => {
  *
  * */
 
-/* *
- *
- * LEGACY ROUTES
- *
- * */
-
 itemsRouter.get('/list', (req, res) => {
   res.send();
 });

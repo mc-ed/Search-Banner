@@ -33,6 +33,22 @@ itemsRouter.get('/:itemid', (req, res) => {
     });
 });
 
+itemsRouter.get('/', (req, res) => {
+  const { search } = req.query.search;
+
+  console.log(search);
+
+  mongo
+    .fullTextSearch(search)
+    .then(item => {
+      res.send(item);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
+});
+
 /* *
  *
  * LEGACY ROUTES

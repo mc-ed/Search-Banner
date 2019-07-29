@@ -56,8 +56,28 @@ function findOneById(id) {
     });
 }
 
+/**
+ * Finds 10 (or fewer) relevent items based on the search term from PSQL database
+ * @param {string} term a search term
+ * @returns {promise} a promise that resolves to 10 or fewer item or null if none found
+ */
+function searchByName(term) {
+  const text = 'SELECT * FROM items WHERE itemName=($1) LIMIT 10';
+  const values = [term];
+
+  return psql
+    .query(text, values)
+    .then(res => {
+      return res.rows[0];
+    })
+    .catch(err => {
+      throw err.stack;
+    });
+}
+
 module.exports = {
   findAItem,
   findOneById,
+  searchByName,
   findTenItems
 };

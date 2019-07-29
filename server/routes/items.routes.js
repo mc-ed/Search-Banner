@@ -1,10 +1,13 @@
 const express = require('express');
-const { initalizePG } = require('../../db/postgres/items.js');
-const { findTenItems } = require('../../db/mongodb/items.js');
+const mongo = require('../../db/mongodb/items.js');
+
 const itemsRouter = express.Router();
 
+itemsRouter.use('/psql', require('./psql.routes'));
+
 itemsRouter.get('/', (req, res) => {
-  findTenItems()
+  mongo
+    .findTenItems()
     .then(items => {
       res.send(items);
     })
@@ -14,10 +17,20 @@ itemsRouter.get('/', (req, res) => {
     });
 });
 
-itemsRouter.get('/next', (req, res) => {
-  getNextItems().then(items => {
-    res.send(items);
-  });
+itemsRouter.get('/:itemid', (req, res) => {
+  const { itemid } = req.params;
+
+  const ID = parseInt(itemid, 10);
+
+  mongo
+    .findOneById(ID)
+    .then(item => {
+      res.send(item);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
 });
 
 /* *

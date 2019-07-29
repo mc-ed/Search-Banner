@@ -1,0 +1,7 @@
+\c searchbar;
+
+ALTER TABLE items
+ALTER COLUMN itemname TYPE VARCHAR,
+ALTER COLUMN category TYPE VARCHAR,
+ALTER COLUMN views TYPE INTEGER USING views::integer,
+ALTER COLUMN itemid TYPE INTEGER USING itemid::integer;

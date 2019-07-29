@@ -16,7 +16,7 @@
     "pg-dev-start": "docker run --rm   --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres",
     "psql-cli": "psql -h localhost -U postgres -d postgres",
     "mongo-docker-start": "docker run --rm --name mongo-docker -p 27017:27017 -v $HOME/docker/volumes/mongodb:/data/db -d mongo",
-    "mongo-bulk-import": "mongoimport -d searchbar -c items --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/db/data/mongoSeed.csv --headerline"
+    "mongo-bulk-import": "mongoimport -d searchbar -c items --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/db/data/mongoSeed_200k.csv --headerline"
   },
   "repository": {
     "type": "git",

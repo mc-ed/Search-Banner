@@ -5,11 +5,10 @@ CREATE DATABASE searchbar;
 
 CREATE TABLE items (
   ID SERIAL PRIMARY KEY,
-  itemID INTEGER,
-  itemName VARCHAR,
-  views INTEGER,
-  category VARCHAR, 
-  UNIQUE(itemID, itemName)
+  itemID TEXT,
+  itemName TEXT,
+  views TEXT,
+  category TEXT
 );
 
 INSERT INTO items (itemID, itemName, views, category)

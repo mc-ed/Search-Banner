@@ -17,12 +17,12 @@ describe('When the /items path --->', () => {
       });
   });
 
-  test('receives a GET request, it should respond with an array of 1000 items -->', () => {
+  test('receives a GET request, it should respond with an array of 10 items -->', () => {
     return request(app)
       .get('/items')
       .expect(200)
       .then(response => {
-        expect(response).toBeArrayOfSize(1000);
+        expect(response).toBeArrayOfSize(10);
       });
   });
 });

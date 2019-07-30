@@ -12,4 +12,8 @@ CREATE INDEX idx_fts_doc_vec ON items USING gin(document_vectors);
 UPDATE 
     items 
 SET 
-    document_vectors = (to_tsvector(itemname));
+    document_vectors = (to_tsvector(itemname))
+WHERE
+_id
+BETWEEN
+1 AND 10000;

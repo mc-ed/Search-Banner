@@ -24,7 +24,7 @@ function findAItem() {
  * @returns {promise} a promise that resolves to ten items
  */
 function findTenItems() {
-  let text = 'SELECT * FROM items OFFSET floor(random() * 10000000) LIMIT 10';
+  let text = 'SELECT * FROM items OFFSET floor(random() * 1000000) LIMIT 10';
   let values = [];
 
   return psql
@@ -61,8 +61,9 @@ function findOneById(id) {
  * @param {string} term a search term
  * @returns {promise} a promise that resolves to 10 or fewer item or null if none found
  */
-function searchByName(term) {
-  const text = 'SELECT * FROM items WHERE itemName=($1) LIMIT 10';
+function fullTextSearch(term) {
+  const text =
+    'SELECT * FROM items WHERE document_vectors @@ to_tsquery($1) LIMIT 10;';
   const values = [term];
 
   return psql
@@ -78,6 +79,6 @@ function searchByName(term) {
 module.exports = {
   findAItem,
   findOneById,
-  searchByName,
+  fullTextSearch,
   findTenItems
 };

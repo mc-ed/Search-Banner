@@ -1,10 +1,11 @@
 config:
   target: 'http://0.0.0.0:3000'
   http:
-    pool: 20
+    pool: 10
   phases:
     - duration: 30
-      arrivalRate: 1000
+      arrivalRate: 50
+      rampTo: 400
       name: 'Warm up server'
     # - duration: 60
     #   arrivalRate: 10000

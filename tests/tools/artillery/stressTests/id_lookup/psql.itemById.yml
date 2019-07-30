@@ -1,21 +1,21 @@
 config:
   target: 'http://0.0.0.0:3000'
+  payload:
+    # path is relative to the location of the test script
+    path: '../../dbSample.csv'
+    fields:
+      - 'itemId'
+      - 'itemName'
+  http:
+    pool: 10
   phases:
     - duration: 60
-      arrivalRate: 20
-      rampTo: 2500
-      name: 'Warm up server'
-    - duration: 60
-      arrivalRate: 2500
-      rampTo: 7500
-      name: 'Ramp'
-    - duration: 60
-      arrivalRate: 10000
-      name: 'Target Load'
+      arrivalRate: 50
+      rampTo: 450
   defaults:
     headers:
       x-my-service-auth: '987401838271002188298567'
 scenarios:
   - flow:
       - get:
-          url: '/items/psql/{{$randomNumber(0,100000000)}}'
+          url: '/items/psql/{{itemId}}'

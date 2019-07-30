@@ -6,15 +6,43 @@ const itemsRouter = express.Router();
 itemsRouter.use('/psql', require('./psql.routes'));
 
 itemsRouter.get('/', (req, res) => {
-  mongo
-    .findTenItems()
-    .then(items => {
-      res.send(items);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
+  if (req.query.id) {
+    const itemid = req.query.id;
+
+    const ID = parseInt(itemid, 10);
+
+    mongo
+      .findOneById(ID)
+      .then(item => {
+        res.send(item);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  } else if (req.query.search) {
+    const { search } = req.query;
+
+    mongo
+      .fullTextSearch(search)
+      .then(item => {
+        res.send(item);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  } else {
+    mongo
+      .findTenItems()
+      .then(items => {
+        res.send(items);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  }
 });
 
 itemsRouter.get('/:itemid', (req, res) => {
@@ -24,22 +52,6 @@ itemsRouter.get('/:itemid', (req, res) => {
 
   mongo
     .findOneById(ID)
-    .then(item => {
-      res.send(item);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
-});
-
-itemsRouter.get('/', (req, res) => {
-  const { search } = req.query.search;
-
-  console.log(search);
-
-  mongo
-    .fullTextSearch(search)
     .then(item => {
       res.send(item);
     })

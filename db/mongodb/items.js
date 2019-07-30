@@ -44,7 +44,7 @@ function findOneById(itemId) {
  * @returns {promise} a promise that resolves to one item
  */
 function fullTextSearch(term) {
-  const searchParams = { $text: { $search: term } };
+  const searchParams = { $text: { $search: `${term}` } };
 
   return getItemsCollection()
     .find(searchParams)

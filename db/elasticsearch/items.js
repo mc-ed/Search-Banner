@@ -7,7 +7,7 @@ const es = require('./utilities');
  * @returns {object} a promise object that resolves to the search results
  */
 function typeAsYouGo(term) {
-  const index = 'items-test2';
+  const index = 'items';
   const query = {
     query: {
       multi_match: {

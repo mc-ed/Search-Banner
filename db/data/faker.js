@@ -51,7 +51,7 @@ function makeFakeItems(n) {
  */
 async function writeToCSV(n) {
   const data = makeFakeItems(n);
-  await fs.appendFile(path.resolve(__dirname, 'Seed_1M.csv'), data, err => {
+  await fs.appendFile(path.resolve(__dirname, 'Seed_1M_1.csv'), data, err => {
     if (err) {
       console.log(err);
     }

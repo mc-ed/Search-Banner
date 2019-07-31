@@ -117,16 +117,20 @@ itemsRouter.get('/', (req, res) => {
 ### Challenges faced:
 
 1. Artillary is single threaded, my local CPU core caps out ~550 RPS. Need another way to test more requests.
-2. Tested DB Queries with and without indexes.
+2. Limitations of PSQL UPDATE / ts_vector. Turns out an UPDATE rewrites the whole row which means updating a table with 10M records take over 24 hours with UPDATE.
+3. Tested DB Queries with and without indexes.
 
 ### Action taken:
 
-1.
+1. No good solution here for testing on localhost that doesn't require extensive research or paid. The closest fit I could find was to use Apache ab but it's basically a DDOS attack against yourself.
+2. Doing a bunch of research on PSQL updates with large tables. It looks like I can create another table and update it with the ts_vector. Otherwise I could make a script that reads the database and makes a ts_vector and saves it to a CSV and then update from that CSV.
+3. Used Artillary for lowish RPS (100) and got good results.
 
 ### Results/Takeaways:
 
-1. Stress
-2. Indexing **really** matters. This was told to me a lot at Mongo but I took it for granted until doing testing. Results below, full tests in `tests\tools\artillery\indexTests`:
+1. Will test in deployed version since there's better tooling.
+2. Databases are very different when you're in the 10MM records realm.
+3. Indexing **really** matters. This was told to me a lot at Mongo but I took it for granted until doing testing. Results below, full tests in `tests\tools\artillery\indexTests`:
 
 ### Index Testing:
 

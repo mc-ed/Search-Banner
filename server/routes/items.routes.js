@@ -1,5 +1,6 @@
 const express = require('express');
 const mongo = require('../../db/mongodb/items.js');
+const elasticsearch = require('../../db/elasticsearch/items.js');
 
 const itemsRouter = express.Router();
 
@@ -23,8 +24,8 @@ itemsRouter.get('/', (req, res) => {
   } else if (req.query.search) {
     const { search } = req.query;
 
-    mongo
-      .fullTextSearch(search)
+    elasticsearch
+      .typeAsYouGo(search)
       .then(item => {
         res.send(item);
       })

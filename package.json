@@ -16,9 +16,11 @@
     "pg-connect": "psql -h localhost -U postgres -d postgres",
     "pg-dev-start": "docker run --rm  --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres",
     "psql-cli": "psql -h localhost -U postgres -d postgres",
-    "docker-local": "docker run --rm -p 3002:3002 --net search-net --name search-banner-web -d bleafman/searchbar",
-    "mongo-docker-start": "docker run  --rm --name  mongo-docker --net search-net -p 27017:27017 -v $HOME/docker/volumes/mongodb:/data/db -d mongo",
-    "mongo-bulk-import": "mongoimport -d searchbar -c items --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/db/data/mongoSeed_200k.csv --headerline"
+    "docker-local": "docker run --rm --name search-banner-web -p 3002:3002 --net search-net -d bleafman/searchbar",
+    "es-local": "docker run --rm --name es -p 9200:9200 -p 9300:9300 --net search-net -e 'discovery.type=single-node' -v sdc-esdata:/usr/share/elasticsearch/data -d docker.elastic.co/elasticsearch/elasticsearch:7.3.0",
+    "kibana": "docker run --rm --name kibana --link es:elasticsearch --net search-net -p 5601:5601 -d docker.elastic.co/kibana/kibana:7.3.0",
+    "mongo-docker-start": "docker run  --rm --name mongo-docker --net search-net -p 27017:27017 -v $HOME/docker/volumes/mongodb:/data/db -d mongo",
+    "mongo-bulk-import": "mongoimport -d searchbar -c test --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/tests/tools/artillery/dbSample.csv --headerline"
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,7 @@
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "css-loader": "^3.1.0",
+    "elasticsearch": "^16.3.0",
     "express": "^4.17.1",
     "mongodb": "^3.3.0-beta2",
     "mongoose": "^5.6.7",

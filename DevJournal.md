@@ -184,3 +184,23 @@ More performant than Mongo unindexed, was actually able to return 40 / 6000 requ
       "count": 6000,
       "mean": 99.22
 ```
+
+## Date: July 30, 2019
+
+### Challenges faced:
+
+1. Mongo full text search works very very poorly at scale. On search, Mongo gives each record a score and then returns the relevant records but it's insanely expensive. I wasn't able to successfully complete a single search even using limits. Using exact matching is also very slow. Rough word matching is the best I can get.
+2. Accessing Mongo container from other container.
+3. Researching GCP Kubernetes Engine for deploying and managing multiple coordinated containers.
+
+### Action taken:
+
+1. So, I have two paths forward, one is to forge ahead and implement ElasticSearch. This would get me the gold standard of search but there's no guarentee I'd be able to implement it in time. The alternative is to implement an anchored key word search. This would require regenerating all of the data but it's a "solved" problem in the sense that I know the problem space and can map a direct course that will get there in time. It's a significant improvement over the old search but not "best in class"
+2. The enviromental variables get challenging when you move from deployment across containers that need to be coordinated. Added a NODE_ENV and logic to conditionally changes the host, port, db url, etc. based on the enviroment.
+3. Will work through a tutorial tomorrow and then implement.
+
+### Results/Takeaways:
+
+1. Incremental improvements are superior to step function improvements when you're not familiar with the problem space. Making the poorly designed keyword search better and also scale would have been a much better idea since I was both uncertain of the limitations of PSQL and MDB at scale and had not implemented ES before either. Improved keyword search was a known path.
+2. If you know you're going to deploy an app, putting in logic ahead to handle enviornment switching as you go is a lot nicer than trying to figure it out when heading to deployment. I was already doing this with the config/env set up but that wasn't going to be effective when connecting to multiple services.
+3. GKE seems to make private docker registeries very, very easy.

@@ -26,8 +26,8 @@ itemsRouter.get('/', (req, res) => {
 
     elasticsearch
       .typeAsYouGo(search)
-      .then(item => {
-        res.send(item);
+      .then(items => {
+        res.send(items.hits.hits);
       })
       .catch(err => {
         console.error(err);

@@ -17,7 +17,7 @@ async function createIndex(indexName) {
  * Docs can be found here: https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html
  * @param {string} indexName the index to add mapping
  * @param {object} mapping ES mapping object definition
- * @returns {object} promise that resolves to an affirmative if mapping is successful
+ * @returns {promise} that resolves to an affirmative object if mapping is successful
  */
 async function addMappingToIndex(indexName, mapping) {
   return esClient.indices.putMapping({

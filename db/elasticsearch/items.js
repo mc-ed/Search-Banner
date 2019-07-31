@@ -7,15 +7,24 @@ const es = require('./utilities');
  * @returns {object} a promise object that resolves to the search results
  */
 function typeAsYouGo(term) {
-  const index = 'items-2';
+  const index = 'items-test2';
   const query = {
     query: {
       multi_match: {
         query: term,
         type: 'bool_prefix',
-        fields: ['itemName', 'itemName._2gram', 'itemName._3gram']
+        fields: ['itemName', 'itemName._2gram', 'itemName._3gram'],
+        fuzziness: 'AUTO'
       }
     }
+    // suggest: {
+    //   suggestion: {
+    //     text: term,
+    //     term: {
+    //       field: 'itemName'
+    //     }
+    //   }
+    // }
   };
 
   return es.search(index, query);

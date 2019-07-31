@@ -29,4 +29,18 @@ psqlItemsRouter.get('/:itemid', (req, res) => {
     });
 });
 
+psqlItemsRouter.get('/', (req, res) => {
+  const { search } = req.query.search;
+
+  psql
+    .fullTextSearch(search)
+    .then(items => {
+      res.send(items);
+    })
+    .catch(err => {
+      console.error(err);
+      res.send();
+    });
+});
+
 module.exports = psqlItemsRouter;

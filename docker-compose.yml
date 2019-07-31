@@ -1,0 +1,23 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  search-server:
+    image: bleafman/searchbar
+    command: npm run start
+    depends_on:
+      - mongo
+    ports:
+      - 3002:3002
+    environment:
+      MONGO_USER: root
+      MONGO_PASS: example
+    volumes:
+      - ./search-banner:/opt/search-banner
+  mongo:
+    image: mongo
+    container_name: mongo-docker
+    ports:
+      - 27017:27017
+    volumes:
+      - $HOME/docker/volumes/mongodb:/data/db

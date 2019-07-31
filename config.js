@@ -1,6 +1,7 @@
 module.exports = {
   HOST: process.env.HOST,
   PORT: process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
   MONGO_USER: process.env.MONGO_USER,
   MONGO_PASS: process.env.MONGO_PASS,
   MONGO_CONNECTION_STRING: process.env.MONGO_CONNECTION_STRING,

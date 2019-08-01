@@ -204,3 +204,23 @@ More performant than Mongo unindexed, was actually able to return 40 / 6000 requ
 1. Incremental improvements are superior to step function improvements when you're not familiar with the problem space. Making the poorly designed keyword search better and also scale would have been a much better idea since I was both uncertain of the limitations of PSQL and MDB at scale and had not implemented ES before either. Improved keyword search was a known path.
 2. If you know you're going to deploy an app, putting in logic ahead to handle enviornment switching as you go is a lot nicer than trying to figure it out when heading to deployment. I was already doing this with the config/env set up but that wasn't going to be effective when connecting to multiple services.
 3. GKE seems to make private docker registeries very, very easy.
+
+## Date: July 31, 2019
+
+### Challenges faced:
+
+1. After doing more research about left anchor search, implemented ElasticSearch
+2. Uploading Data to ElasticSearch
+
+### Action taken:
+
+1. Spent a fair amount of time doing a tutorial and looking at the docs. Spun up ES locally and then in Docker successfully. Connected it to my web server and wrote functions to use ES.
+2. Turns out that getting data into ElasticSearch the "right way" requires a lot of set up. I looked over a bunch of tools and docs, attempted to implement mongo-connector but it only supports ES 5.x and I wanted to use functionality in 7.x.
+
+Kibana has an experimental tool for uploading a CSV as the intial seed(can't add more or update that way) which I used to get 1M items into ElasticSearch which is close to the max document size. I have a clear path to getting everything into ES but it would probably take another day since I have to write something custom to upload or figure out how to use Filebeat/Logstash which is kind of a work around.
+
+### Results/Takeaways:
+
+1. It was worth investigating how left anchor search would work at scale. Turns out not very well without a limiting factor like views, it also wouldn't be fuzzy.
+
+2. Succesfully got enough data into Elastic to decide it would be a good way to go. The setup costs for an actual syncing system are pretty high for a sprint though.

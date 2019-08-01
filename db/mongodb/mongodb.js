@@ -2,9 +2,9 @@ const { MongoClient } = require('mongodb');
 const { MONGO_DOCKER_CONNECTION_STRING, NODE_ENV } = require('../../config');
 
 const connectionString =
-  NODE_ENV === 'development'
-    ? MONGO_DOCKER_CONNECTION_STRING
-    : `mongodb://mongo-docker:27017`;
+  NODE_ENV === 'production'
+    ? `mongodb://mongo:27017`
+    : MONGO_DOCKER_CONNECTION_STRING;
 
 // MONGO_DOCKER_CONNECTION_STRING ||
 // `mongodb://${MONGO_USER}:${MONGO_PASS}:27017/testdb?retryWrites=true&w=majority`;

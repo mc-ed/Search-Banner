@@ -8,3 +8,5 @@ coverage
 .prettierrc
 .eslintrc.json
 DevJournal.md
+#seed data
+db/data/seedData.csv

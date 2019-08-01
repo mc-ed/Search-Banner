@@ -4,9 +4,20 @@ version: '3.1'
 services:
   search-server:
     image: bleafman/searchbar
-    command: npm run start
+    container_name: search-server
+    command:
+      [
+        './wait-for-it.sh',
+        'mongo:27017',
+        '--timeout=120',
+        '--',
+        'npm',
+        'run',
+        'start',
+      ]
     depends_on:
       - mongo
+      - es
     ports:
       - 3002:3002
     environment:
@@ -16,8 +27,27 @@ services:
       - ./search-banner:/opt/search-banner
   mongo:
     image: mongo
-    container_name: mongo-docker
+    container_name: mongo
     ports:
       - 27017:27017
     volumes:
       - $HOME/docker/volumes/mongodb:/data/db
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: es
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - sdc-esdata:/usr/share/elasticsearch/data
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:7.3.0
+#     container_name: kibana
+#     depends_on:
+#       - es
+#     ports:
+#       - 5601:5601
+volumes:
+  sdc-esdata:
+    external: true

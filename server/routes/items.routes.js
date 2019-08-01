@@ -1,20 +1,49 @@
 const express = require('express');
 const mongo = require('../../db/mongodb/items.js');
+const elasticsearch = require('../../db/elasticsearch/items.js');
 
 const itemsRouter = express.Router();
 
 itemsRouter.use('/psql', require('./psql.routes'));
 
 itemsRouter.get('/', (req, res) => {
-  mongo
-    .findTenItems()
-    .then(items => {
-      res.send(items);
-    })
-    .catch(err => {
-      console.error(err);
-      res.send();
-    });
+  if (req.query.id) {
+    const itemid = req.query.id;
+
+    const ID = parseInt(itemid, 10);
+
+    mongo
+      .findOneById(ID)
+      .then(item => {
+        res.send(item);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  } else if (req.query.search) {
+    const { search } = req.query;
+
+    elasticsearch
+      .typeAsYouGo(search)
+      .then(items => {
+        res.send(items.hits.hits);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  } else {
+    mongo
+      .findTenItems()
+      .then(items => {
+        res.send(items);
+      })
+      .catch(err => {
+        console.error(err);
+        res.send();
+      });
+  }
 });
 
 itemsRouter.get('/:itemid', (req, res) => {

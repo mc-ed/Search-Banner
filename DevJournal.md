@@ -184,3 +184,43 @@ More performant than Mongo unindexed, was actually able to return 40 / 6000 requ
       "count": 6000,
       "mean": 99.22
 ```
+
+## Date: July 30, 2019
+
+### Challenges faced:
+
+1. Mongo full text search works very very poorly at scale. On search, Mongo gives each record a score and then returns the relevant records but it's insanely expensive. I wasn't able to successfully complete a single search even using limits. Using exact matching is also very slow. Rough word matching is the best I can get.
+2. Accessing Mongo container from other container.
+3. Researching GCP Kubernetes Engine for deploying and managing multiple coordinated containers.
+
+### Action taken:
+
+1. So, I have two paths forward, one is to forge ahead and implement ElasticSearch. This would get me the gold standard of search but there's no guarentee I'd be able to implement it in time. The alternative is to implement an anchored key word search. This would require regenerating all of the data but it's a "solved" problem in the sense that I know the problem space and can map a direct course that will get there in time. It's a significant improvement over the old search but not "best in class"
+2. The enviromental variables get challenging when you move from deployment across containers that need to be coordinated. Added a NODE_ENV and logic to conditionally changes the host, port, db url, etc. based on the enviroment.
+3. Will work through a tutorial tomorrow and then implement.
+
+### Results/Takeaways:
+
+1. Incremental improvements are superior to step function improvements when you're not familiar with the problem space. Making the poorly designed keyword search better and also scale would have been a much better idea since I was both uncertain of the limitations of PSQL and MDB at scale and had not implemented ES before either. Improved keyword search was a known path.
+2. If you know you're going to deploy an app, putting in logic ahead to handle enviornment switching as you go is a lot nicer than trying to figure it out when heading to deployment. I was already doing this with the config/env set up but that wasn't going to be effective when connecting to multiple services.
+3. GKE seems to make private docker registeries very, very easy.
+
+## Date: July 31, 2019
+
+### Challenges faced:
+
+1. After doing more research about left anchor search, implemented ElasticSearch
+2. Uploading Data to ElasticSearch
+
+### Action taken:
+
+1. Spent a fair amount of time doing a tutorial and looking at the docs. Spun up ES locally and then in Docker successfully. Connected it to my web server and wrote functions to use ES.
+2. Turns out that getting data into ElasticSearch the "right way" requires a lot of set up. I looked over a bunch of tools and docs, attempted to implement mongo-connector but it only supports ES 5.x and I wanted to use functionality in 7.x.
+
+Kibana has an experimental tool for uploading a CSV as the intial seed(can't add more or update that way) which I used to get 1M items into ElasticSearch which is close to the max document size. I have a clear path to getting everything into ES but it would probably take another day since I have to write something custom to upload or figure out how to use Filebeat/Logstash which is kind of a work around.
+
+### Results/Takeaways:
+
+1. It was worth investigating how left anchor search would work at scale. Turns out not very well without a limiting factor like views, it also wouldn't be fuzzy.
+
+2. Succesfully got enough data into Elastic to decide it would be a good way to go. The setup costs for an actual syncing system are pretty high for a sprint though.

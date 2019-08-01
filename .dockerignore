@@ -1,2 +1,10 @@
+#must ignore
 node_modules
-public/evelynbundle.js
+package-lock.json
+.env
+#testing and development
+tests
+coverage
+.prettierrc
+.eslintrc.json
+DevJournal.md

@@ -1,5 +1,5 @@
 config:
-  target: 'http://0.0.0.0:3000'
+  target: 'http://0.0.0.0:3002'
   payload:
     # path is relative to the location of the test script
     path: '../../dbSample.csv'
@@ -18,4 +18,4 @@ config:
 scenarios:
   - flow:
       - get:
-          url: '/items/?search={{itemName}}'
+          url: '/items/?search={{itemName.slice(0, 10)}}'

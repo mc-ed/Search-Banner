@@ -16,3 +16,8 @@ db/data/seedData_003.csv
 db/data/dbSeed.csv
 db/data/mongoSeed_200k.csv
 db/data/Seed_1M_1.csv
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

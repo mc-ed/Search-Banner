@@ -21,11 +21,11 @@ services:
     env_file:
       - .env
     deploy:
-      replicas: 5
+      replicas: 6
       resources:
         limits:
-          cpus: '0.2'
-          memory: 100M
+          cpus: '0.5'
+          memory: 250M
       restart_policy:
         condition: on-failure
     volumes:
@@ -38,7 +38,10 @@ services:
     ports:
       - 9200:9200
     volumes:
-      - sdc-esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [node.role == manager]
   kibana:
     image: docker.elastic.co/kibana/kibana:7.3.0
     container_name: kibana
@@ -48,15 +51,19 @@ services:
       - es
     ports:
       - 5601:5601
-  # mongo:
-  #   image: mongo
-  #   container_name: mongo
-  #   ports:
-  #     - 27017:27017
-  #   volumes:
-  #     - $HOME/docker/volumes/mongodb:/data/db
-volumes:
-  sdc-esdata:
-    external: true
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - '8080:8080'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 networks:
   search:
+volumes:
+  esdata:

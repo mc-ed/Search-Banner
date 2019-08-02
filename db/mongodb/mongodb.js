@@ -1,13 +1,7 @@
 const { MongoClient } = require('mongodb');
-const { MONGO_DOCKER_CONNECTION_STRING, NODE_ENV } = require('../../config');
+const { MONGO_ATLAS_CONNECTION_STRING } = require('../../config');
 
-const connectionString =
-  NODE_ENV === 'production'
-    ? `mongodb://mongo:27017`
-    : MONGO_DOCKER_CONNECTION_STRING;
-
-// MONGO_DOCKER_CONNECTION_STRING ||
-// `mongodb://${MONGO_USER}:${MONGO_PASS}:27017/testdb?retryWrites=true&w=majority`;
+const connectionString = MONGO_ATLAS_CONNECTION_STRING;
 
 const options = {
   useNewUrlParser: true
@@ -23,7 +17,11 @@ const databases = {};
  * @returns {promise} that resolves to database connection
  */
 function connect(url, database) {
-  return MongoClient.connect(url, options).then(client => client.db(database));
+  return MongoClient.connect(url, options)
+    .then(client => client.db(database))
+    .catch(err => {
+      throw err;
+    });
 }
 
 /**

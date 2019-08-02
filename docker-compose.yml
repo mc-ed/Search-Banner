@@ -5,33 +5,23 @@ services:
   search-server:
     image: bleafman/searchbar
     container_name: search-server
-    command:
-      [
-        './wait-for-it.sh',
-        'mongo:27017',
-        '--timeout=120',
-        '--',
+    command: [
+        # './wait-for-it.sh',
+        # 'mongo:27017',
+        # '--timeout=120',
+        # '--',
         'npm',
         'run',
         'start',
       ]
     depends_on:
-      - mongo
       - es
     ports:
       - 3002:3002
-    environment:
-      MONGO_USER: root
-      MONGO_PASS: example
+    env_file:
+      - .env
     volumes:
       - ./search-banner:/opt/search-banner
-  mongo:
-    image: mongo
-    container_name: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - $HOME/docker/volumes/mongodb:/data/db
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
     container_name: es
@@ -41,13 +31,21 @@ services:
       - 9200:9200
     volumes:
       - sdc-esdata:/usr/share/elasticsearch/data
-#   kibana:
-#     image: docker.elastic.co/kibana/kibana:7.3.0
-#     container_name: kibana
-#     depends_on:
-#       - es
-#     ports:
-#       - 5601:5601
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_HOSTS: 'http://es:9200'
+    depends_on:
+      - es
+    ports:
+      - 5601:5601
+  # mongo:
+  #   image: mongo
+  #   container_name: mongo
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - $HOME/docker/volumes/mongodb:/data/db
 volumes:
   sdc-esdata:
-    external: true

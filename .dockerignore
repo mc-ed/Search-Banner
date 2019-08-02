@@ -10,3 +10,4 @@ coverage
 DevJournal.md
 #seed data
 db/data/seedData.csv
+db/data/Seed_1M_1.csv

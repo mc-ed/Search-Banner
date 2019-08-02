@@ -20,7 +20,7 @@
     "es-local": "docker run --rm --name es -p 9200:9200 -p 9300:9300 --net search-net -e 'discovery.type=single-node' -v sdc-esdata:/usr/share/elasticsearch/data -d docker.elastic.co/elasticsearch/elasticsearch:7.3.0",
     "kibana": "docker run --rm --name kibana --link es:elasticsearch --net search-net -p 5601:5601 -d docker.elastic.co/kibana/kibana:7.3.0",
     "mongo-docker-start": "docker run  --rm --name mongo-docker --net search-net -p 27017:27017 -v $HOME/docker/volumes/mongodb:/data/db -d mongo",
-    "mongo-bulk-import": "mongoimport -d searchbar -c test --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/tests/tools/artillery/dbSample.csv --headerline"
+    "mongo-bulk-import": "mongoimport -d searchbar -c items --type csv --file /Users/owner/Desktop/HRATX/Search-Banner/tests/tools/artillery/dbSample.csv --headerline"
   },
   "repository": {
     "type": "git",

@@ -225,7 +225,7 @@ Kibana has an experimental tool for uploading a CSV as the intial seed(can't add
 
 2. Succesfully got enough data into Elastic to decide it would be a good way to go. The setup costs for an actual syncing system are pretty high for a sprint though.
 
-## Date: July 31, 2019
+## Date: August 1, 2019
 
 ### Challenges faced:
 
@@ -244,3 +244,19 @@ Kibana has an experimental tool for uploading a CSV as the intial seed(can't add
 1. At this point I've developed the intution that ENV variables of one kind our another are the first thing to check so that wasn't frustrating, just a bit time consuming.
 2. I could have deployed to EC2 but there wasn't much point since the amount of time I have left won't allow me to set up a JDBC.
 3. Do you like a tool? Does it have advanced features that might solve your issue? LOOK AT THOSE FIRST! I spent a bunch of time investigating k8s which is really cool but way overkill for what I need right now and AWS/GCP both have really advanced solutions. After reviewing the docs I'm basically ready to rock on Docker Engine with a small amount of work.
+
+## Date: August 2, 2019
+
+### Challenges faced:
+
+1.
+
+### Action taken:
+
+1.
+
+### Results/Takeaways:
+
+1. 250CPS: https://ldr.io/2YMtNCY
+2. 500CPS: https://ldr.io/2KlKOuh
+3. 250-1k CPS: https://ldr.io/2LWK6H5

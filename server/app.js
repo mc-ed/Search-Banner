@@ -18,6 +18,12 @@ app.use('/', express.static('public'));
 
 app.use('/items', require('./routes/items.routes.js'));
 
+/** LOADER IO ROUTE */
+
+app.use('/loaderio-293f47a73efae670f61436b41be20f79', (req, res) => {
+  res.send('loaderio-293f47a73efae670f61436b41be20f79');
+});
+
 /* *
  *
  * LEGACY ROUTES

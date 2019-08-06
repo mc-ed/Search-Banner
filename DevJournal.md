@@ -249,13 +249,17 @@ Kibana has an experimental tool for uploading a CSV as the intial seed(can't add
 
 ### Challenges faced:
 
-1.
+1. Reconfiguring Docker config to properly deploy with Docker Swarm / Docker Machine.
 
 ### Action taken:
 
-1.
+1. Successfully deployed and tested after multiple iterations and switching back and forth between local/cloud deploy for troubleshooting.
 
 ### Results/Takeaways:
+
+1. Deploying is actually not too problematic but I likely would use Elasticsearch as a service(similar to a database deployment) vs a cache if I had to use small machines for the swarm. The cache is highly performant but puts strain on the swarm since(based on what I was able to configure within the time limit) it needs to be on a manager.
+
+Testing results:
 
 1. 250CPS: https://ldr.io/2YMtNCY
 2. 500CPS: https://ldr.io/2KlKOuh

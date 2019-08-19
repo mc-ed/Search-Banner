@@ -37,7 +37,7 @@ class SearchBarSuggestions extends Component {
       <div className={`col-4 ${style.child}`} >
         {
           this.props.suggestion ? 
-              <img className={`${style.suggestion}`} src={`https://fecdj.s3.amazonaws.com/photo/${this.props.suggestion.id}.jpg`}/>
+              <img className={`${style.suggestion}`} src={`https://elasticbeanstalk-us-east-1-409158756005.s3.amazonaws.com/fec/${this.props.suggestion.id}.jpg`}/>
             : 
               null
           }

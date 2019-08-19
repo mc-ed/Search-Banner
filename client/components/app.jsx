@@ -69,7 +69,7 @@ class App extends Component {
   componentDidMount() {
     window.addEventListener('stars', e => {
       const id = e.detail.id;
-      axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/${id}`, {withCredentials: true}).then((reviews) => {
+      axios.get(`http://ec2-13-59-164-4.us-east-2.compute.amazonaws.com/api/stats/${id}`, {withCredentials: true}).then((reviews) => {
         this.state.reviewStat[id-1] = reviews.data;
         this.setState({reviewStat: this.state.reviewStat})
       })
@@ -124,7 +124,7 @@ class App extends Component {
       // console.log('got response from itemlist: ', itemlist)
       let promises =[];
       promises.push(axios.get( `http://search-banner.us-east-1.elasticbeanstalk.com/getcart`, {withCredentials: true}))
-      promises.push(axios.get('http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
+      promises.push(axios.get('http://ec2-13-59-164-4.us-east-2.compute.amazonaws.com/api/stats/all', {withCredentials: true}))
       const keyWordsList = [];
       const keywordObj = {}
       let data = {};

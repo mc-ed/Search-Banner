@@ -30,7 +30,7 @@ class SubMenuCategory extends Component {
                 {this.state.items.map((item, i) => {
                   return (
                     <Carousel.Item key={i}>
-                      <img className={`${style['carousel-img']}`} src={`https://fecdj.s3.amazonaws.com/photo/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: item.id}})))}/>
+                      <img className={`${style['carousel-img']}`} src={`https://elasticbeanstalk-us-east-1-409158756005.s3.amazonaws.com/fec/${item.id}.jpg`} alt="" onClick={() => (window.dispatchEvent(new CustomEvent('product',{detail: {product_id: item.id}})))}/>
                     </Carousel.Item>
                     )
                 })}

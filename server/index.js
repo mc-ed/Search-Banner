@@ -11,7 +11,14 @@ const bcrypt = require('bcrypt');
 const round = 10;
 
 
-const whitelist = ['http://localhost:3000', 'http://fec-proxy.us-east-1.elasticbeanstalk.com', 'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 'http://search-banner.us-east-1.elasticbeanstalk.com', 'http://fec-lowes-proxy.us-east-2.elasticbeanstalk.com', 'http://lowesproductoverview-env.mk2qecy2ne.us-east-2.elasticbeanstalk.com']
+const whitelist = ['http://localhost:3000', 
+                   'http://fec-proxy.us-east-1.elasticbeanstalk.com', 
+                   'http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com', 
+                   'http://search-banner.us-east-1.elasticbeanstalk.com', 
+                   'http://fec-lowes-proxy.us-east-2.elasticbeanstalk.com', 
+                   'http://lowesproductoverview-env.mk2qecy2ne.us-east-2.elasticbeanstalk.com',
+                   'http://ec2-13-59-164-4.us-east-2.compute.amazonaws.com',
+                   'http://ec2-18-222-25-151.us-east-2.compute.amazonaws.com']
 const whitelistRegex = /http:\/\/localhost.*/;
 const corsOptions = {
   credentials: true,

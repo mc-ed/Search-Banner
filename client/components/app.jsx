@@ -482,7 +482,7 @@ class App extends Component {
                 <div className="row">
                   <div className="col-4">
                     {this.state.showToast ? 
-                      <img style={{width: '100px', height: '100px'}} src={`https://fecdj.s3.amazonaws.com/photo/${this.state.favorite['product_id']}.jpg`}/>
+                      <img style={{width: '100px', height: '100px'}} src={`https://elasticbeanstalk-us-east-1-409158756005.s3.amazonaws.com/fec/${this.state.favorite['product_id']}.jpg`}/>
                     :
                       null
                     }
